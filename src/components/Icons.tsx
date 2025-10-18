@@ -1,6 +1,33 @@
+/**
+ * Icons Library
+ * 
+ * Biblioteca centralizada de todos os ícones SVG usados no projeto.
+ * Todos os ícones são componentes React que aceitam props padrão de SVG.
+ * 
+ * Para adicionar novo ícone:
+ * 1. Copie o SVG desejado
+ * 2. Crie uma nova função abaixo seguindo o padrão
+ * 3. Exporte o componente
+ * 4. Use em src/data/portfolio.ts
+ * 
+ * @example
+ * ```tsx
+ * import { NovoIcon } from './Icons';
+ * <NovoIcon className="w-6 h-6 text-primary" />
+ * ```
+ */
+
 import React from 'react';
 
+/**
+ * Props padrão para todos os ícones
+ * Aceita todas as props de SVG HTML5
+ */
 type IconProps = React.SVGProps<SVGSVGElement>;
+
+/* ============================================
+   ÍCONES GERAIS
+   ============================================ */
 
 export const BriefcaseIcon: React.FC<IconProps> = (props) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

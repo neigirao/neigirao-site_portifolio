@@ -1,7 +1,34 @@
+/**
+ * Experience Item Component
+ * 
+ * Renderiza um item individual de experiência profissional em formato de timeline.
+ * Inclui período, cargo, empresa e lista de responsabilidades.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <ExperienceItem 
+ *   experience={{
+ *     period: "2023-Presente",
+ *     role: "Senior Analyst",
+ *     company: "Tech Corp",
+ *     description: ["Responsabilidade 1", "Responsabilidade 2"]
+ *   }}
+ * />
+ * ```
+ */
+
 import React from 'react';
 import type { Experience } from '../types';
 
+/**
+ * Props do ExperienceItem
+ * 
+ * @interface ExperienceItemProps
+ * @property {Experience} experience - Objeto com dados da experiência profissional
+ */
 interface ExperienceItemProps {
+  /** Dados completos da experiência profissional */
   experience: Experience;
 }
 

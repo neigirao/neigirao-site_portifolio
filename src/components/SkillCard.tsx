@@ -1,9 +1,34 @@
+/**
+ * Skill Card Component
+ * 
+ * Card animado que exibe uma habilidade técnica com ícone.
+ * Inclui animações de hover e entrada escalonada baseada no índice.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <SkillCard 
+ *   skill={{ name: "React", icon: ReactIcon }}
+ *   index={0}
+ * />
+ * ```
+ */
+
 import React from 'react';
 import { Card, CardContent } from './ui/card';
 import type { Skill } from '../types';
 
+/**
+ * Props do SkillCard
+ * 
+ * @interface SkillCardProps
+ * @property {Skill} skill - Objeto com nome e ícone da habilidade
+ * @property {number} index - Índice do card (para delay de animação)
+ */
 interface SkillCardProps {
+  /** Dados da habilidade (nome e ícone) */
   skill: Skill;
+  /** Índice para calcular delay de animação (index * 0.1s) */
   index: number;
 }
 

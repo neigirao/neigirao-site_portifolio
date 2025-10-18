@@ -1,3 +1,19 @@
+/**
+ * Index Page - Main Portfolio Page
+ * 
+ * Página principal do portfolio com todas as seções:
+ * - Hero: Apresentação e CTAs
+ * - About: Informações sobre o profissional
+ * - Skills: Habilidades técnicas em cards
+ * - Experience: Timeline de experiências profissionais
+ * - Contact: Links para contato e redes sociais
+ * 
+ * Navegação:
+ * - Usa smooth scroll para navegação entre seções
+ * - Estado local para rastrear seção ativa
+ * - Menu fixo no topo
+ */
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,8 +23,13 @@ import { MailIcon, LinkedInIcon, GithubIcon } from "@/components/Icons";
 import { experiences, skills } from "@/data/portfolio";
 
 const Index = () => {
+  // Estado para rastrear seção ativa no menu
   const [activeSection, setActiveSection] = useState("home");
 
+  /**
+   * Navega suavemente para uma seção específica
+   * @param sectionId - ID da seção HTML
+   */
   const scrollToSection = (sectionId: string) => {
     setActiveSection(sectionId);
     document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
@@ -16,13 +37,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
+      {/* ==================== NAVIGATION ==================== */}
       <nav className="fixed top-0 w-full bg-card/80 backdrop-blur-lg border-b border-border z-50 shadow-elegant">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
               Nei Girão
             </h1>
+            {/* Menu de navegação - desktop only */}
             <div className="hidden md:flex space-x-8">
               {["home", "about", "skills", "experience", "contact"].map((section) => (
                 <button
@@ -40,7 +62,7 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* ==================== HERO SECTION ==================== */}
       <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-hero pt-20">
         <div className="max-w-7xl mx-auto px-6 py-20 text-center">
           <div className="animate-fade-in-up">
@@ -53,6 +75,7 @@ const Index = () => {
             <p className="text-xl md:text-2xl text-white/80 mb-8 max-w-2xl mx-auto">
               Transforming data into actionable insights with modern analytics tools
             </p>
+            {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 size="lg"
@@ -74,12 +97,16 @@ const Index = () => {
         </div>
       </section>
 
-      {/* About Section */}
+      {/* ==================== ABOUT SECTION ==================== */}
       <section id="about" className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-4xl font-bold text-center mb-12 text-foreground">About Me</h2>
           <Card className="max-w-4xl mx-auto shadow-elegant">
             <CardContent className="p-8 md:p-12">
+              {/* 
+                ⚠️ EDITAR AQUI: Texto sobre o profissional
+                Mantenha 2-3 parágrafos descritivos
+              */}
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
                 I'm a passionate data analyst with expertise in cloud technologies and modern analytics platforms. 
                 With years of experience in transforming complex data into clear, actionable insights, I help 
@@ -94,13 +121,14 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Skills Section */}
+      {/* ==================== SKILLS SECTION ==================== */}
       <section id="skills" className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-4xl font-bold text-center mb-4 text-foreground">Skills & Expertise</h2>
           <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
             Proficient in a wide range of analytics and cloud technologies
           </p>
+          {/* Grid de skills - responsivo */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {skills.map((skill, index) => (
               <SkillCard key={skill.name} skill={skill} index={index} />
@@ -109,7 +137,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Experience Section */}
+      {/* ==================== EXPERIENCE SECTION ==================== */}
       <section id="experience" className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-4xl font-bold text-center mb-4 text-foreground">Professional Experience</h2>
@@ -118,6 +146,7 @@ const Index = () => {
           </p>
           <Card className="max-w-4xl mx-auto shadow-elegant">
             <CardContent className="p-8">
+              {/* Timeline de experiências */}
               <div className="space-y-8">
                 {experiences.map((experience, index) => (
                   <ExperienceItem key={index} experience={experience} />
@@ -128,13 +157,17 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Contact Section */}
+      {/* ==================== CONTACT SECTION ==================== */}
       <section id="contact" className="py-20 bg-gradient-hero">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-4xl font-bold text-center mb-4 text-white">Let's Connect</h2>
           <p className="text-center text-white/80 mb-12 max-w-2xl mx-auto">
             I'm always interested in hearing about new opportunities and collaborations
           </p>
+          {/* 
+            ⚠️ EDITAR AQUI: Links de contato
+            Atualize os URLs abaixo com informações reais
+          */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <Button
               size="lg"
@@ -166,7 +199,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* ==================== FOOTER ==================== */}
       <footer className="py-8 bg-card border-t border-border">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <p className="text-muted-foreground">
