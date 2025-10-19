@@ -37,14 +37,16 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, index }) => {
   
   return (
     <Card 
-      className="group hover:shadow-glow transition-all duration-300 hover:-translate-y-1 bg-card border-border"
+      className="group hover:shadow-glow transition-all duration-300 hover:-translate-y-2 bg-card border-border hover:border-teal-accent/30"
       style={{ animationDelay: `${index * 0.1}s` }}
     >
-      <CardContent className="p-6 flex flex-col items-center text-center space-y-3">
-        <div className="w-16 h-16 flex items-center justify-center rounded-xl bg-gradient-primary group-hover:scale-110 transition-transform duration-300">
-          <Icon className="w-10 h-10 text-white" />
+      <CardContent className="p-8 flex flex-col items-center text-center space-y-4">
+        <div className="w-20 h-20 flex items-center justify-center rounded-2xl bg-gradient-primary group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
+          <Icon className="w-12 h-12 text-white" />
         </div>
-        <h3 className="font-semibold text-foreground">{skill.name}</h3>
+        <h3 className="font-semibold text-foreground group-hover:text-teal-accent transition-colors duration-300 text-base">
+          {skill.name}
+        </h3>
       </CardContent>
     </Card>
   );
