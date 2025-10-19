@@ -23,7 +23,6 @@ import EducationItem from "@/components/EducationItem";
 import ProjectCard from "@/components/ProjectCard";
 import { MailIcon, LinkedInIcon, PhoneIcon } from "@/components/Icons";
 import { experiences, skills, education, projects } from "@/data/portfolio";
-
 const Index = () => {
   // Estado para rastrear seção ativa no menu
   const [activeSection, setActiveSection] = useState("home");
@@ -34,11 +33,11 @@ const Index = () => {
    */
   const scrollToSection = (sectionId: string) => {
     setActiveSection(sectionId);
-    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById(sectionId)?.scrollIntoView({
+      behavior: "smooth"
+    });
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* ==================== NAVIGATION ==================== */}
       <nav className="fixed top-0 w-full bg-card/90 backdrop-blur-xl border-b border-border z-50 shadow-elegant transition-all duration-300">
         <div className="max-w-7xl mx-auto px-6 py-5">
@@ -48,23 +47,9 @@ const Index = () => {
             </h1>
             {/* Menu de navegação - desktop only */}
             <div className="hidden md:flex space-x-6">
-              {["home", "about", "skills", "education", "experience", "projects", "contact"].map((section) => (
-                <button
-                  key={section}
-                  onClick={() => scrollToSection(section)}
-                  className={`text-sm font-medium transition-colors hover:text-secondary ${
-                    activeSection === section ? "text-secondary" : "text-muted-foreground"
-                  }`}
-                >
-                  {section === "home" ? "Início" :
-                   section === "about" ? "Resumo" :
-                   section === "education" ? "Formação" :
-                   section === "skills" ? "Skills" :
-                   section === "experience" ? "Experiência" :
-                   section === "projects" ? "Projetos" :
-                   "Contato"}
-                </button>
-              ))}
+              {["home", "about", "skills", "education", "experience", "projects", "contact"].map(section => <button key={section} onClick={() => scrollToSection(section)} className={`text-sm font-medium transition-colors hover:text-secondary ${activeSection === section ? "text-secondary" : "text-muted-foreground"}`}>
+                  {section === "home" ? "Início" : section === "about" ? "Resumo" : section === "education" ? "Formação" : section === "skills" ? "Skills" : section === "experience" ? "Experiência" : section === "projects" ? "Projetos" : "Contato"}
+                </button>)}
             </div>
           </div>
         </div>
@@ -74,7 +59,9 @@ const Index = () => {
       <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-hero pt-20 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-accent/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-accent/10 rounded-full blur-3xl animate-pulse" style={{
+        animationDelay: '1.5s'
+      }} />
         
         <div className="max-w-7xl mx-auto px-6 py-20 text-center relative">
           <div className="animate-fade-in-up">
@@ -103,19 +90,10 @@ const Index = () => {
             
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Button
-                size="lg"
-                onClick={() => scrollToSection("contact")}
-                className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold"
-              >
+              <Button size="lg" onClick={() => scrollToSection("contact")} className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold">
                 Entre em Contato
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => scrollToSection("projects")}
-                className="border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 transition-all duration-300 px-8 py-6 text-lg font-semibold hover:scale-105"
-              >
+              <Button size="lg" variant="outline" onClick={() => scrollToSection("projects")} className="border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 transition-all duration-300 px-8 py-6 text-lg font-semibold hover:scale-105">
                 Ver Projetos
               </Button>
             </div>
@@ -189,7 +167,7 @@ const Index = () => {
       <section id="skills" className="py-24 bg-muted/30">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Habilidades & Expertise</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Habilidades</h2>
             <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Especializado em observabilidade, product management e análise de dados
@@ -197,9 +175,7 @@ const Index = () => {
           </div>
           {/* Grid de skills - responsivo */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
-            {skills.map((skill, index) => (
-              <SkillCard key={skill.name} skill={skill} index={index} />
-            ))}
+            {skills.map((skill, index) => <SkillCard key={skill.name} skill={skill} index={index} />)}
           </div>
         </div>
       </section>
@@ -221,9 +197,7 @@ const Index = () => {
           <Card className="max-w-5xl mx-auto shadow-elegant border-2 border-border/50 backdrop-blur-sm bg-card/95">
             <CardContent className="p-10 md:p-12">
               <div className="space-y-10">
-                {education.map((edu, index) => (
-                  <EducationItem key={index} education={edu} />
-                ))}
+                {education.map((edu, index) => <EducationItem key={index} education={edu} />)}
               </div>
             </CardContent>
           </Card>
@@ -249,9 +223,7 @@ const Index = () => {
             <CardContent className="p-10 md:p-12">
               {/* Timeline de experiências */}
               <div className="space-y-10">
-                {experiences.map((experience, index) => (
-                  <ExperienceItem key={index} experience={experience} />
-                ))}
+                {experiences.map((experience, index) => <ExperienceItem key={index} experience={experience} />)}
               </div>
             </CardContent>
           </Card>
@@ -273,9 +245,7 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {projects.map((project, index) => (
-              <ProjectCard key={index} project={project} />
-            ))}
+            {projects.map((project, index) => <ProjectCard key={index} project={project} />)}
           </div>
         </div>
       </section>
@@ -284,7 +254,9 @@ const Index = () => {
       <section id="contact" className="py-28 bg-gradient-hero relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute top-10 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-teal-accent/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-teal-accent/10 rounded-full blur-3xl animate-pulse" style={{
+        animationDelay: '1s'
+      }} />
         
         <div className="max-w-7xl mx-auto px-6 relative">
           <div className="text-center mb-16 animate-fade-in">
@@ -296,29 +268,15 @@ const Index = () => {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center max-w-3xl mx-auto">
-            <Button
-              size="lg"
-              className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg"
-              onClick={() => window.location.href = "mailto:neigirao@gmail.com"}
-            >
+            <Button size="lg" className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg" onClick={() => window.location.href = "mailto:neigirao@gmail.com"}>
               <MailIcon className="w-6 h-6 mr-3" />
               Email
             </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg hover:scale-105"
-              onClick={() => window.open("https://linkedin.com/in/neigirao", "_blank")}
-            >
+            <Button size="lg" variant="outline" className="border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg hover:scale-105" onClick={() => window.open("https://linkedin.com/in/neigirao", "_blank")}>
               <LinkedInIcon className="w-6 h-6 mr-3" />
               LinkedIn
             </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg hover:scale-105"
-              onClick={() => window.open("tel:21989921711", "_blank")}
-            >
+            <Button size="lg" variant="outline" className="border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg hover:scale-105" onClick={() => window.open("tel:21989921711", "_blank")}>
               <PhoneIcon className="w-6 h-6 mr-3" />
               (21) 98992-1711
             </Button>
@@ -334,8 +292,6 @@ const Index = () => {
           </p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
