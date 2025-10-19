@@ -19,8 +19,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import ExperienceItem from "@/components/ExperienceItem";
 import SkillCard from "@/components/SkillCard";
-import { MailIcon, LinkedInIcon, GithubIcon } from "@/components/Icons";
-import { experiences, skills } from "@/data/portfolio";
+import EducationItem from "@/components/EducationItem";
+import ProjectCard from "@/components/ProjectCard";
+import { MailIcon, LinkedInIcon, PhoneIcon } from "@/components/Icons";
+import { experiences, skills, education, projects } from "@/data/portfolio";
 
 const Index = () => {
   // Estado para rastrear seção ativa no menu
@@ -45,8 +47,8 @@ const Index = () => {
               Nei Girão
             </h1>
             {/* Menu de navegação - desktop only */}
-            <div className="hidden md:flex space-x-8">
-              {["home", "about", "skills", "experience", "contact"].map((section) => (
+            <div className="hidden md:flex space-x-6">
+              {["home", "about", "education", "skills", "experience", "projects", "contact"].map((section) => (
                 <button
                   key={section}
                   onClick={() => scrollToSection(section)}
@@ -54,7 +56,13 @@ const Index = () => {
                     activeSection === section ? "text-secondary" : "text-muted-foreground"
                   }`}
                 >
-                  {section.charAt(0).toUpperCase() + section.slice(1)}
+                  {section === "home" ? "Início" :
+                   section === "about" ? "Resumo" :
+                   section === "education" ? "Formação" :
+                   section === "skills" ? "Skills" :
+                   section === "experience" ? "Experiência" :
+                   section === "projects" ? "Projetos" :
+                   "Contato"}
                 </button>
               ))}
             </div>
@@ -67,13 +75,13 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-6 py-20 text-center">
           <div className="animate-fade-in-up">
             <h2 className="text-5xl md:text-7xl font-bold text-white mb-6">
-              Data Analyst & <br />
+              Product Manager & <br />
               <span className="bg-gradient-primary bg-clip-text text-transparent">
-                Cloud Specialist
+                Observabilidade
               </span>
             </h2>
             <p className="text-xl md:text-2xl text-white/80 mb-8 max-w-2xl mx-auto">
-              Transforming data into actionable insights with modern analytics tools
+              Transformando produtos digitais em experiências de sucesso
             </p>
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -82,15 +90,15 @@ const Index = () => {
                 onClick={() => scrollToSection("contact")}
                 className="bg-secondary hover:bg-secondary/90 text-white shadow-glow"
               >
-                Get in Touch
+                Entre em Contato
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                onClick={() => scrollToSection("experience")}
+                onClick={() => scrollToSection("projects")}
                 className="border-white/20 text-white hover:bg-white/10"
               >
-                View My Work
+                Ver Projetos
               </Button>
             </div>
           </div>
@@ -100,33 +108,56 @@ const Index = () => {
       {/* ==================== ABOUT SECTION ==================== */}
       <section id="about" className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-12 text-foreground">About Me</h2>
+          <h2 className="text-4xl font-bold text-center mb-12 text-foreground">Resumo Profissional</h2>
           <Card className="max-w-4xl mx-auto shadow-elegant">
             <CardContent className="p-8 md:p-12">
-              {/* 
-                ⚠️ EDITAR AQUI: Texto sobre o profissional
-                Mantenha 2-3 parágrafos descritivos
-              */}
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                I'm a passionate data analyst with expertise in cloud technologies and modern analytics platforms. 
-                With years of experience in transforming complex data into clear, actionable insights, I help 
-                organizations make data-driven decisions.
+                Sou um profissional especializado em gestão estratégica de produtos digitais e Observabilidade, 
+                com mais de 5 anos de experiência na liderança de equipes ágeis e multidisciplinares. Minha 
+                trajetória inclui atuação em empresas de grande porte como Icatu Seguros, Oi, TIM Brasil e 
+                Rede Globo, nas quais liderei iniciativas de alta relevância envolvendo produtos digitais, 
+                performance, qualidade e inovação.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-6">
+                Possuo sólida experiência em todo o ciclo de vida dos produtos digitais, desde a concepção e 
+                lançamento até estratégias de atendimento pós-venda. Meu forte está em liderar equipes ágeis, 
+                cultivando uma cultura analítica e data-driven.
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                My approach combines technical expertise in tools like Dynatrace, Google Analytics, Azure, and 
-                Grafana with strong business acumen to deliver solutions that drive real results.
+                Utilizo ferramentas como Dynatrace, Grafana, Azure Monitor e Google Analytics para implementar 
+                estratégias robustas de Observabilidade, elevando significativamente a eficiência operacional 
+                e a resiliência dos produtos.
               </p>
             </CardContent>
           </Card>
         </div>
       </section>
 
-      {/* ==================== SKILLS SECTION ==================== */}
-      <section id="skills" className="py-20 bg-muted/30">
+      {/* ==================== EDUCATION SECTION ==================== */}
+      <section id="education" className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-4 text-foreground">Skills & Expertise</h2>
+          <h2 className="text-4xl font-bold text-center mb-4 text-foreground">Formação Acadêmica</h2>
           <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-            Proficient in a wide range of analytics and cloud technologies
+            Sólida formação acadêmica em tecnologia e marketing digital
+          </p>
+          <Card className="max-w-4xl mx-auto shadow-elegant">
+            <CardContent className="p-8">
+              <div className="space-y-8">
+                {education.map((edu, index) => (
+                  <EducationItem key={index} education={edu} />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* ==================== SKILLS SECTION ==================== */}
+      <section id="skills" className="py-20 bg-background">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-4xl font-bold text-center mb-4 text-foreground">Habilidades & Expertise</h2>
+          <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+            Especializado em observabilidade, product management e análise de dados
           </p>
           {/* Grid de skills - responsivo */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -138,11 +169,11 @@ const Index = () => {
       </section>
 
       {/* ==================== EXPERIENCE SECTION ==================== */}
-      <section id="experience" className="py-20 bg-background">
+      <section id="experience" className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-4 text-foreground">Professional Experience</h2>
+          <h2 className="text-4xl font-bold text-center mb-4 text-foreground">Experiência Profissional</h2>
           <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-            My journey in data analytics and cloud technologies
+            Mais de 15 anos liderando produtos digitais e equipes em grandes empresas
           </p>
           <Card className="max-w-4xl mx-auto shadow-elegant">
             <CardContent className="p-8">
@@ -157,25 +188,36 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ==================== PROJECTS SECTION ==================== */}
+      <section id="projects" className="py-20 bg-background">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-4xl font-bold text-center mb-4 text-foreground">Principais Projetos</h2>
+          <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+            Projetos de destaque que geraram impacto significativo
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {projects.map((project, index) => (
+              <ProjectCard key={index} project={project} />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ==================== CONTACT SECTION ==================== */}
       <section id="contact" className="py-20 bg-gradient-hero">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-4 text-white">Let's Connect</h2>
+          <h2 className="text-4xl font-bold text-center mb-4 text-white">Vamos Conectar</h2>
           <p className="text-center text-white/80 mb-12 max-w-2xl mx-auto">
-            I'm always interested in hearing about new opportunities and collaborations
+            Estou sempre interessado em ouvir sobre novas oportunidades e colaborações
           </p>
-          {/* 
-            ⚠️ EDITAR AQUI: Links de contato
-            Atualize os URLs abaixo com informações reais
-          */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <Button
               size="lg"
               className="bg-white text-primary hover:bg-white/90 shadow-glow"
-              onClick={() => window.location.href = "mailto:nei.girao@example.com"}
+              onClick={() => window.location.href = "mailto:neigirao@gmail.com"}
             >
               <MailIcon className="w-5 h-5 mr-2" />
-              Email Me
+              Email
             </Button>
             <Button
               size="lg"
@@ -190,10 +232,10 @@ const Index = () => {
               size="lg"
               variant="outline"
               className="border-white/20 text-white hover:bg-white/10"
-              onClick={() => window.open("https://github.com/neigirao", "_blank")}
+              onClick={() => window.open("tel:21989921711", "_blank")}
             >
-              <GithubIcon className="w-5 h-5 mr-2" />
-              GitHub
+              <PhoneIcon className="w-5 h-5 mr-2" />
+              (21) 98992-1711
             </Button>
           </div>
         </div>
