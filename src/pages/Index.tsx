@@ -323,8 +323,7 @@ const Index = () => {
             </Button>
             <Button
               size="lg"
-              variant="outline"
-              className="border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg hover:scale-105"
+              className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg"
               onClick={() => window.open("https://linkedin.com/in/neigirao", "_blank")}
             >
               <LinkedInIcon className="w-6 h-6 mr-3" />
@@ -332,8 +331,7 @@ const Index = () => {
             </Button>
             <Button
               size="lg"
-              variant="outline"
-              className="border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg hover:scale-105"
+              className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg"
               onClick={() => window.open("tel:21989921711", "_blank")}
             >
               <PhoneIcon className="w-6 h-6 mr-3" />
