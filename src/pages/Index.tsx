@@ -36,11 +36,10 @@ const Index = () => {
   useEffect(() => {
     const handleScroll = () => {
       const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const progress = (window.scrollY / totalHeight) * 100;
+      const progress = window.scrollY / totalHeight * 100;
       setScrollProgress(progress);
       setShowBackToTop(window.scrollY > 500);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -53,61 +52,59 @@ const Index = () => {
     setActiveSection(sectionId);
     setIsMenuOpen(false);
     document.getElementById(sectionId)?.scrollIntoView({
-      behavior: "smooth",
+      behavior: "smooth"
     });
   };
-
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
   };
-
-  const menuItems = [
-    { id: "home", label: "Início" },
-    { id: "about", label: "Resumo" },
-    { id: "skills", label: "Skills" },
-    { id: "education", label: "Formação" },
-    { id: "experience", label: "Experiência" },
-    { id: "projects", label: "Projetos" },
-    { id: "contact", label: "Contato" },
-  ];
-  return (
-    <div className="min-h-screen bg-background">
+  const menuItems = [{
+    id: "home",
+    label: "Início"
+  }, {
+    id: "about",
+    label: "Resumo"
+  }, {
+    id: "skills",
+    label: "Skills"
+  }, {
+    id: "education",
+    label: "Formação"
+  }, {
+    id: "experience",
+    label: "Experiência"
+  }, {
+    id: "projects",
+    label: "Projetos"
+  }, {
+    id: "contact",
+    label: "Contato"
+  }];
+  return <div className="min-h-screen bg-background">
       {/* Scroll Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-1 bg-border z-[60]">
-        <div
-          className="h-full bg-gradient-primary transition-all duration-300"
-          style={{ width: `${scrollProgress}%` }}
-        />
+        <div className="h-full bg-gradient-primary transition-all duration-300" style={{
+        width: `${scrollProgress}%`
+      }} />
       </div>
 
       {/* ==================== NAVIGATION ==================== */}
       <nav className="fixed top-0 w-full bg-card/90 backdrop-blur-xl border-b border-border z-50 shadow-elegant transition-all duration-300">
         <div className="max-w-7xl mx-auto px-6 py-5">
           <div className="flex justify-between items-center">
-            <span
-              className="text-2xl md:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer"
-              onClick={() => scrollToSection("home")}
-            >
+            <span className="text-2xl md:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer" onClick={() => scrollToSection("home")}>
               Nei Girão
             </span>
 
             {/* Menu de navegação - desktop */}
             <div className="hidden md:flex items-center space-x-6">
-              {menuItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className={`text-sm font-medium transition-colors hover:text-secondary ${activeSection === item.id ? "text-secondary" : "text-muted-foreground"}`}
-                >
+              {menuItems.map(item => <button key={item.id} onClick={() => scrollToSection(item.id)} className={`text-sm font-medium transition-colors hover:text-secondary ${activeSection === item.id ? "text-secondary" : "text-muted-foreground"}`}>
                   {item.label}
-                </button>
-              ))}
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => window.open("/cv-nei-girao.pdf", "_blank")}
-                className="ml-4"
-              >
+                </button>)}
+              <Button size="sm" variant="outline" onClick={() => window.open("/cv-nei-girao.pdf", "_blank")} className="ml-4">
                 <Download className="w-4 h-4 mr-2" />
                 CV
               </Button>
@@ -127,19 +124,10 @@ const Index = () => {
                       Menu
                     </span>
                   </div>
-                  {menuItems.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => scrollToSection(item.id)}
-                      className={`text-left text-lg font-medium transition-colors hover:text-secondary py-2 ${activeSection === item.id ? "text-secondary border-l-4 border-secondary pl-4" : "text-muted-foreground pl-4"}`}
-                    >
+                  {menuItems.map(item => <button key={item.id} onClick={() => scrollToSection(item.id)} className={`text-left text-lg font-medium transition-colors hover:text-secondary py-2 ${activeSection === item.id ? "text-secondary border-l-4 border-secondary pl-4" : "text-muted-foreground pl-4"}`}>
                       {item.label}
-                    </button>
-                  ))}
-                  <Button
-                    onClick={() => window.open("/cv-nei-girao.pdf", "_blank")}
-                    className="mt-4"
-                  >
+                    </button>)}
+                  <Button onClick={() => window.open("/cv-nei-girao.pdf", "_blank")} className="mt-4">
                     <Download className="w-4 h-4 mr-2" />
                     Download CV
                   </Button>
@@ -151,53 +139,27 @@ const Index = () => {
       </nav>
 
       {/* Floating CTA - WhatsApp */}
-      <a
-        href="https://wa.me/5521989921711"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-8 right-8 z-40 bg-teal-accent text-white p-4 rounded-full shadow-glow hover:scale-110 transition-all duration-300 animate-pulse"
-        aria-label="Contato via WhatsApp"
-      >
+      <a href="https://wa.me/5521989921711" target="_blank" rel="noopener noreferrer" className="fixed bottom-8 right-8 z-40 bg-teal-accent text-white p-4 rounded-full shadow-glow hover:scale-110 transition-all duration-300 animate-pulse" aria-label="Contato via WhatsApp">
         <MessageCircle className="w-6 h-6" />
       </a>
 
       {/* Back to Top Button */}
-      {showBackToTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-24 right-8 z-40 bg-card border-2 border-border text-foreground p-3 rounded-full shadow-elegant hover:scale-110 hover:bg-muted transition-all duration-300"
-          aria-label="Voltar ao topo"
-        >
+      {showBackToTop && <button onClick={scrollToTop} className="fixed bottom-24 right-8 z-40 bg-card border-2 border-border text-foreground p-3 rounded-full shadow-elegant hover:scale-110 hover:bg-muted transition-all duration-300" aria-label="Voltar ao topo">
           <ArrowUp className="w-5 h-5" />
-        </button>
-      )}
+        </button>}
 
       {/* ==================== HERO SECTION ==================== */}
-      <section
-        id="home"
-        className="min-h-screen flex items-center justify-center bg-gradient-hero pt-20 relative overflow-hidden"
-      >
+      <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-hero pt-20 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse" />
-        <div
-          className="absolute bottom-20 right-10 w-96 h-96 bg-teal-accent/10 rounded-full blur-3xl animate-pulse"
-          style={{
-            animationDelay: "1.5s",
-          }}
-        />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-accent/10 rounded-full blur-3xl animate-pulse" style={{
+        animationDelay: "1.5s"
+      }} />
 
         <div className="max-w-7xl mx-auto px-6 py-20 text-center relative">
           <div className="animate-fade-in-up">
             {/* Availability Badge */}
-            <div className="inline-flex items-center gap-3 mb-4 px-6 py-3 bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-full">
-              <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-              </span>
-              <span className="text-white text-sm font-semibold tracking-wide">
-                Disponível para novas oportunidades
-              </span>
-            </div>
+            
 
             {/* Badge/Tag */}
             <div className="inline-block mb-8 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full">
@@ -220,19 +182,10 @@ const Index = () => {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Button
-                size="lg"
-                onClick={() => scrollToSection("contact")}
-                className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold"
-              >
+              <Button size="lg" onClick={() => scrollToSection("contact")} className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold">
                 Entre em Contato
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => window.open("/cv-nei-girao.pdf", "_blank")}
-                className="bg-white/10 text-white border-white/30 hover:bg-white/20 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold backdrop-blur-sm"
-              >
+              <Button size="lg" variant="outline" onClick={() => window.open("/cv-nei-girao.pdf", "_blank")} className="bg-white/10 text-white border-white/30 hover:bg-white/20 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold backdrop-blur-sm">
                 <Download className="w-5 h-5 mr-2" />
                 Download CV
               </Button>
@@ -317,9 +270,7 @@ const Index = () => {
           </div>
           {/* Grid de skills - responsivo */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
-            {skills.map((skill, index) => (
-              <SkillCard key={skill.name} skill={skill} index={index} />
-            ))}
+            {skills.map((skill, index) => <SkillCard key={skill.name} skill={skill} index={index} />)}
           </div>
         </div>
       </section>
@@ -341,9 +292,7 @@ const Index = () => {
           <Card className="max-w-5xl mx-auto shadow-elegant border-2 border-border/50 backdrop-blur-sm bg-card/95">
             <CardContent className="p-10 md:p-12">
               <div className="space-y-10">
-                {education.map((edu, index) => (
-                  <EducationItem key={index} education={edu} />
-                ))}
+                {education.map((edu, index) => <EducationItem key={index} education={edu} />)}
               </div>
             </CardContent>
           </Card>
@@ -369,9 +318,7 @@ const Index = () => {
             <CardContent className="p-10 md:p-12">
               {/* Timeline de experiências */}
               <div className="space-y-10">
-                {experiences.map((experience, index) => (
-                  <ExperienceItem key={index} experience={experience} />
-                ))}
+                {experiences.map((experience, index) => <ExperienceItem key={index} experience={experience} />)}
               </div>
             </CardContent>
           </Card>
@@ -393,9 +340,7 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {projects.map((project, index) => (
-              <ProjectCard key={index} project={project} />
-            ))}
+            {projects.map((project, index) => <ProjectCard key={index} project={project} />)}
           </div>
         </div>
       </section>
@@ -404,12 +349,9 @@ const Index = () => {
       <section id="contact" className="py-28 bg-gradient-hero relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute top-10 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse" />
-        <div
-          className="absolute bottom-10 right-10 w-96 h-96 bg-teal-accent/10 rounded-full blur-3xl animate-pulse"
-          style={{
-            animationDelay: "1s",
-          }}
-        />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-teal-accent/10 rounded-full blur-3xl animate-pulse" style={{
+        animationDelay: "1s"
+      }} />
 
         <div className="max-w-7xl mx-auto px-6 relative">
           <div className="text-center mb-16 animate-fade-in">
@@ -421,27 +363,15 @@ const Index = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center max-w-3xl mx-auto">
-            <Button
-              size="lg"
-              className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg"
-              onClick={() => (window.location.href = "mailto:neigirao@gmail.com")}
-            >
+            <Button size="lg" className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg" onClick={() => window.location.href = "mailto:neigirao@gmail.com"}>
               <MailIcon className="w-6 h-6 mr-3" />
               Email
             </Button>
-            <Button
-              size="lg"
-              className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg"
-              onClick={() => window.open("https://linkedin.com/in/neigirao", "_blank")}
-            >
+            <Button size="lg" className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg" onClick={() => window.open("https://linkedin.com/in/neigirao", "_blank")}>
               <LinkedInIcon className="w-6 h-6 mr-3" />
               LinkedIn
             </Button>
-            <Button
-              size="lg"
-              className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg"
-              onClick={() => window.open("tel:21989921711", "_blank")}
-            >
+            <Button size="lg" className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 w-full sm:w-auto px-8 py-6 text-lg" onClick={() => window.open("tel:21989921711", "_blank")}>
               <PhoneIcon className="w-6 h-6 mr-3" />
               (21) 98992-1711
             </Button>
@@ -455,7 +385,6 @@ const Index = () => {
           <p className="text-muted-foreground">© {new Date().getFullYear()} Nei Girão. All rights reserved.</p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
 export default Index;
