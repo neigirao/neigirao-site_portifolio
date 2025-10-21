@@ -12,3 +12,13 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Sitemap
+Sitemap: https://neigirao.lovable.app/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 0
+
+# Disallow specific paths (if needed in future)
+# Disallow: /admin/
+# Disallow: /private/

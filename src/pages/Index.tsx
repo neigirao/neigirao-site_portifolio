@@ -14,18 +14,36 @@
  * - Menu fixo no topo
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import ExperienceItem from "@/components/ExperienceItem";
 import SkillCard from "@/components/SkillCard";
 import EducationItem from "@/components/EducationItem";
 import ProjectCard from "@/components/ProjectCard";
 import { MailIcon, LinkedInIcon, PhoneIcon } from "@/components/Icons";
+import { Menu, X, Download, ArrowUp, MessageCircle } from "lucide-react";
 import { experiences, skills, education, projects } from "@/data/portfolio";
 const Index = () => {
   // Estado para rastrear seção ativa no menu
   const [activeSection, setActiveSection] = useState("home");
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Track scroll progress
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = (window.scrollY / totalHeight) * 100;
+      setScrollProgress(progress);
+      setShowBackToTop(window.scrollY > 500);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   /**
    * Navega suavemente para uma seção específica
@@ -33,49 +51,126 @@ const Index = () => {
    */
   const scrollToSection = (sectionId: string) => {
     setActiveSection(sectionId);
+    setIsMenuOpen(false);
     document.getElementById(sectionId)?.scrollIntoView({
       behavior: "smooth",
     });
   };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const menuItems = [
+    { id: "home", label: "Início" },
+    { id: "about", label: "Resumo" },
+    { id: "skills", label: "Skills" },
+    { id: "education", label: "Formação" },
+    { id: "experience", label: "Experiência" },
+    { id: "projects", label: "Projetos" },
+    { id: "contact", label: "Contato" },
+  ];
   return (
     <div className="min-h-screen bg-background">
+      {/* Scroll Progress Bar */}
+      <div className="fixed top-0 left-0 w-full h-1 bg-border z-[60]">
+        <div
+          className="h-full bg-gradient-primary transition-all duration-300"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
       {/* ==================== NAVIGATION ==================== */}
       <nav className="fixed top-0 w-full bg-card/90 backdrop-blur-xl border-b border-border z-50 shadow-elegant transition-all duration-300">
         <div className="max-w-7xl mx-auto px-6 py-5">
           <div className="flex justify-between items-center">
-            <h1
+            <span
               className="text-2xl md:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer"
               onClick={() => scrollToSection("home")}
             >
               Nei Girão
-            </h1>
-            {/* Menu de navegação - desktop only */}
-            <div className="hidden md:flex space-x-6">
-              {["home", "about", "skills", "education", "experience", "projects", "contact"].map((section) => (
+            </span>
+
+            {/* Menu de navegação - desktop */}
+            <div className="hidden md:flex items-center space-x-6">
+              {menuItems.map((item) => (
                 <button
-                  key={section}
-                  onClick={() => scrollToSection(section)}
-                  className={`text-sm font-medium transition-colors hover:text-secondary ${activeSection === section ? "text-secondary" : "text-muted-foreground"}`}
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className={`text-sm font-medium transition-colors hover:text-secondary ${activeSection === item.id ? "text-secondary" : "text-muted-foreground"}`}
                 >
-                  {section === "home"
-                    ? "Início"
-                    : section === "about"
-                      ? "Resumo"
-                      : section === "education"
-                        ? "Formação"
-                        : section === "skills"
-                          ? "Skills"
-                          : section === "experience"
-                            ? "Experiência"
-                            : section === "projects"
-                              ? "Projetos"
-                              : "Contato"}
+                  {item.label}
                 </button>
               ))}
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => window.open("/cv-nei-girao.pdf", "_blank")}
+                className="ml-4"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                CV
+              </Button>
             </div>
+
+            {/* Mobile Menu */}
+            <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="w-6 h-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <div className="flex flex-col gap-6 mt-8">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                      Menu
+                    </span>
+                  </div>
+                  {menuItems.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => scrollToSection(item.id)}
+                      className={`text-left text-lg font-medium transition-colors hover:text-secondary py-2 ${activeSection === item.id ? "text-secondary border-l-4 border-secondary pl-4" : "text-muted-foreground pl-4"}`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                  <Button
+                    onClick={() => window.open("/cv-nei-girao.pdf", "_blank")}
+                    className="mt-4"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download CV
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </nav>
+
+      {/* Floating CTA - WhatsApp */}
+      <a
+        href="https://wa.me/5521989921711"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-8 right-8 z-40 bg-teal-accent text-white p-4 rounded-full shadow-glow hover:scale-110 transition-all duration-300 animate-pulse"
+        aria-label="Contato via WhatsApp"
+      >
+        <MessageCircle className="w-6 h-6" />
+      </a>
+
+      {/* Back to Top Button */}
+      {showBackToTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-24 right-8 z-40 bg-card border-2 border-border text-foreground p-3 rounded-full shadow-elegant hover:scale-110 hover:bg-muted transition-all duration-300"
+          aria-label="Voltar ao topo"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </button>
+      )}
 
       {/* ==================== HERO SECTION ==================== */}
       <section
@@ -93,6 +188,17 @@ const Index = () => {
 
         <div className="max-w-7xl mx-auto px-6 py-20 text-center relative">
           <div className="animate-fade-in-up">
+            {/* Availability Badge */}
+            <div className="inline-flex items-center gap-3 mb-4 px-6 py-3 bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-full">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+              </span>
+              <span className="text-white text-sm font-semibold tracking-wide">
+                Disponível para novas oportunidades
+              </span>
+            </div>
+
             {/* Badge/Tag */}
             <div className="inline-block mb-8 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full">
               <span className="text-white/90 text-sm font-semibold tracking-wide">
@@ -123,10 +229,12 @@ const Index = () => {
               </Button>
               <Button
                 size="lg"
-                onClick={() => scrollToSection("projects")}
-                className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold"
+                variant="outline"
+                onClick={() => window.open("/cv-nei-girao.pdf", "_blank")}
+                className="bg-white/10 text-white border-white/30 hover:bg-white/20 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold backdrop-blur-sm"
               >
-                Ver Projetos
+                <Download className="w-5 h-5 mr-2" />
+                Download CV
               </Button>
             </div>
 
