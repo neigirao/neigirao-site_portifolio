@@ -109,6 +109,18 @@ export const experiences: Experience[] = [
       "Gerenciei operações reduzindo tempo de carregamento de páginas",
       "Coordenei transmissões ao vivo de eventos esportivos"
     ]
+  },
+  {
+    period: "2009-2016",
+    role: "Product Owner (PO)",
+    company: "Oi",
+    description: [
+      "Mapeei KPIs de negócios para estratégia de precision marketing com Adobe SiteCatalyst, Ensighten e Responsys",
+      "Implementei nova plataforma de Web Analytics com dashboards executivos e operacionais para maior precisão",
+      "Criei áreas de mídias no Portal Minha Oi, aumentando wallet share através de gerenciamento de mídias",
+      "Gerenciei mídias de performance (Links Patrocinados) e produto Recarga nos canais digitais",
+      "P.O dos canais digitais de Selfcare, focando em rentabilização através de canais digitais"
+    ]
   }
 ];
 
