@@ -80,6 +80,9 @@ const Index = () => {
     id: "projects",
     label: "Projetos"
   }, {
+    id: "faq",
+    label: "FAQ"
+  }, {
     id: "contact",
     label: "Contato"
   }];
@@ -342,6 +345,77 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {projects.map((project, index) => <ProjectCard key={index} project={project} />)}
           </div>
+        </div>
+      </section>
+
+      {/* ==================== FAQ SECTION ==================== */}
+      <section id="faq" className="py-24 bg-muted/30 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16 animate-fade-in">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Perguntas Frequentes</h2>
+            <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Respostas para as dúvidas mais comuns sobre minha experiência
+            </p>
+          </div>
+
+          <Card className="max-w-5xl mx-auto shadow-elegant border-2 border-border/50 backdrop-blur-sm bg-card/95">
+            <CardContent className="p-10 md:p-12">
+              <div className="space-y-8">
+                <div className="space-y-3">
+                  <h3 className="text-xl font-bold text-foreground">Quais são as principais habilidades de Nei Girão?</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Sou especializado em <span className="text-teal-accent font-semibold">Product Management</span>, <span className="text-teal-accent font-semibold">Observabilidade</span> (Dynatrace, Grafana, Azure Monitor), Google Analytics, metodologias ágeis (Scrum), análise de dados e gestão de produtos digitais.
+                  </p>
+                </div>
+
+                <div className="h-px bg-border/50" />
+
+                <div className="space-y-3">
+                  <h3 className="text-xl font-bold text-foreground">Quantos anos de experiência você possui?</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Possuo mais de <span className="text-teal-accent font-semibold">15 anos de experiência</span> em gestão de produtos digitais e observabilidade, tendo trabalhado em empresas como Icatu Seguros, Oi, TIM Brasil e Globo.com, liderando equipes de até 35 pessoas.
+                  </p>
+                </div>
+
+                <div className="h-px bg-border/50" />
+
+                <div className="space-y-3">
+                  <h3 className="text-xl font-bold text-foreground">Em quais empresas você trabalhou?</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Trabalhei em grandes empresas brasileiras: <span className="text-teal-accent font-semibold">Icatu Seguros</span> (2021-Presente) como Product Manager de Observabilidade, <span className="text-teal-accent font-semibold">Oi</span> (2009-2021) liderando transformação digital, <span className="text-teal-accent font-semibold">TIM Brasil</span> (2017-2019) melhorando o app Meu TIM de 1,5 para 4,5 estrelas, e <span className="text-teal-accent font-semibold">Globo.com</span> (2016-2017) integrando Globoesporte.com.
+                  </p>
+                </div>
+
+                <div className="h-px bg-border/50" />
+
+                <div className="space-y-3">
+                  <h3 className="text-xl font-bold text-foreground">Quais ferramentas de observabilidade você domina?</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Possuo expertise avançada em <span className="text-teal-accent font-semibold">Dynatrace</span> (APM e monitoramento distribuído), <span className="text-teal-accent font-semibold">Grafana</span> (dashboards customizados), <span className="text-teal-accent font-semibold">Azure Monitor</span> (cloud observability) e <span className="text-teal-accent font-semibold">Google Analytics</span> (análise comportamental), utilizando essas ferramentas para implementar estratégias que reduziram incidentes críticos e melhoraram MTTR.
+                  </p>
+                </div>
+
+                <div className="h-px bg-border/50" />
+
+                <div className="space-y-3">
+                  <h3 className="text-xl font-bold text-foreground">Qual é sua formação acadêmica?</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Possuo <span className="text-teal-accent font-semibold">MBA em Marketing Digital</span> pelo Instituto Infnet (2011-2013), <span className="text-teal-accent font-semibold">Bacharelado em Sistema de Informação</span> pela Universidade Estácio de Sá (2006-2010) e formação técnica em Eletrônica e Telecomunicações pela Escola Técnica Resende Rammel.
+                  </p>
+                </div>
+
+                <div className="h-px bg-border/50" />
+
+                <div className="space-y-3">
+                  <h3 className="text-xl font-bold text-foreground">Quais resultados você alcançou como Product Manager?</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Entreguei resultados mensuráveis como: <span className="text-teal-accent font-semibold">aumento de 15% na conversão</span> do ecommerce de seguros, <span className="text-teal-accent font-semibold">redução de 40% nos custos</span> de atendimento digital, melhoria do <span className="text-teal-accent font-semibold">app rating de 1,5 para 4,5 estrelas</span>, e implementação de estratégias de observabilidade que reduziram incidentes críticos em grandes operações.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 

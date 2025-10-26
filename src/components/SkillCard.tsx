@@ -43,10 +43,15 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, index }) => {
       <CardContent className="p-8 flex flex-col items-center text-center space-y-4">
         <div className="w-20 h-20 flex items-center justify-center rounded-2xl bg-gradient-primary group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
           {isImageUrl ? (
-            <img src={skill.icon as string} alt={skill.name} className="w-12 h-12 object-contain" />
+            <img 
+              src={skill.icon as string} 
+              alt={`${skill.name} logo - ferramenta de ${skill.name.includes('Analytics') ? 'análise' : skill.name.includes('Monitor') ? 'monitoramento' : 'observabilidade'}`} 
+              className="w-12 h-12 object-contain" 
+            />
           ) : (
             React.createElement(skill.icon as React.ComponentType<React.SVGProps<SVGSVGElement>>, {
-              className: "w-12 h-12 text-white"
+              className: "w-12 h-12 text-white",
+              'aria-label': `Ícone de ${skill.name}`
             })
           )}
         </div>
