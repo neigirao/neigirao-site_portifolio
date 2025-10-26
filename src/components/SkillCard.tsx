@@ -33,7 +33,7 @@ interface SkillCardProps {
 }
 
 const SkillCard: React.FC<SkillCardProps> = ({ skill, index }) => {
-  const Icon = skill.icon;
+  const isImageUrl = typeof skill.icon === 'string';
   
   return (
     <Card 
@@ -42,7 +42,13 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, index }) => {
     >
       <CardContent className="p-8 flex flex-col items-center text-center space-y-4">
         <div className="w-20 h-20 flex items-center justify-center rounded-2xl bg-gradient-primary group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
-          <Icon className="w-12 h-12 text-white" />
+          {isImageUrl ? (
+            <img src={skill.icon as string} alt={skill.name} className="w-12 h-12 object-contain" />
+          ) : (
+            React.createElement(skill.icon as React.ComponentType<React.SVGProps<SVGSVGElement>>, {
+              className: "w-12 h-12 text-white"
+            })
+          )}
         </div>
         <h3 className="font-semibold text-foreground group-hover:text-teal-accent transition-colors duration-300 text-base">
           {skill.name}

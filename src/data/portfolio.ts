@@ -28,10 +28,7 @@ export interface Education {
   institution: string;
 }
 import {
-  DynatraceIcon,
-  GoogleAnalyticsIcon,
   AzureIcon,
-  GrafanaIcon,
   LaptopIcon,
   BarChartIcon,
   DonutChartIcon,
@@ -39,6 +36,10 @@ import {
   BriefcaseIcon,
   LightbulbIcon,
 } from '../components/Icons';
+
+import dynatraceLogo from '../assets/dynatrace-logo.svg';
+import grafanaLogo from '../assets/grafana-logo.svg';
+import googleAnalyticsLogo from '../assets/google-analytics-logo.svg';
 
 /**
  * Experiências Profissionais
@@ -128,10 +129,10 @@ export const experiences: Experience[] = [
  * Habilidades Técnicas
  */
 export const skills: Skill[] = [
-  { name: "Dynatrace", icon: DynatraceIcon },
-  { name: "Grafana", icon: GrafanaIcon },
+  { name: "Dynatrace", icon: dynatraceLogo },
+  { name: "Grafana", icon: grafanaLogo },
   { name: "Azure Monitor", icon: AzureIcon },
-  { name: "Google Analytics", icon: GoogleAnalyticsIcon },
+  { name: "Google Analytics", icon: googleAnalyticsLogo },
   { name: "Product Management", icon: BriefcaseIcon },
   { name: "Observabilidade", icon: BarChartIcon },
   { name: "Agile/Scrum", icon: LaptopIcon },
