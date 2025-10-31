@@ -178,10 +178,7 @@ const Index = () => {
               <span className="bg-gradient-primary bg-clip-text text-transparent">experiências de sucesso</span>
             </h2>
 
-            <p className="text-lg md:text-xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Especialista em liderar equipes ágeis e implementar estratégias de observabilidade que elevam a eficiência
-              operacional e a resiliência dos produtos digitais
-            </p>
+            <p className="text-lg md:text-xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">Especialista em liderar equipes de Produtos Digitais e implementar estratégias de observabilidade e dados que elevam a eficiência operacional e a resiliência dos produtos digitais</p>
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
