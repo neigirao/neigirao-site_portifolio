@@ -23,9 +23,11 @@ import SkillCard from "@/components/SkillCard";
 import EducationItem from "@/components/EducationItem";
 import ProjectCard from "@/components/ProjectCard";
 import { MailIcon, LinkedInIcon, PhoneIcon } from "@/components/Icons";
-import { Menu, X, Download, ArrowUp, MessageCircle } from "lucide-react";
+import { Menu, X, Download, ArrowUp, MessageCircle, Lock } from "lucide-react";
 import { experiences, skills, education, projects } from "@/data/portfolio";
+import { useNavigate } from "react-router-dom";
 const Index = () => {
+  const navigate = useNavigate();
   // Estado para rastrear seção ativa no menu
   const [activeSection, setActiveSection] = useState("home");
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -111,6 +113,10 @@ const Index = () => {
                 <Download className="w-4 h-4 mr-2" />
                 CV
               </Button>
+              <Button size="sm" variant="ghost" onClick={() => navigate("/admin/login")}>
+                <Lock className="w-4 h-4 mr-2" />
+                Admin
+              </Button>
             </div>
 
             {/* Mobile Menu */}
@@ -133,6 +139,10 @@ const Index = () => {
                   <Button onClick={() => window.open("/cv-nei-girao.pdf", "_blank")} className="mt-4">
                     <Download className="w-4 h-4 mr-2" />
                     Download CV
+                  </Button>
+                  <Button variant="outline" onClick={() => { setIsMenuOpen(false); navigate("/admin/login"); }} className="mt-2">
+                    <Lock className="w-4 h-4 mr-2" />
+                    Área Admin
                   </Button>
                 </div>
               </SheetContent>
