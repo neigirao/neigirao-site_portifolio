@@ -178,7 +178,7 @@ const Index = () => {
               <span className="bg-gradient-primary bg-clip-text text-transparent">experiências de sucesso</span>
             </h2>
 
-            <p className="text-lg md:text-xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">Especialista em liderar equipes de Produtos Digitais e implementar estratégias de observabilidade e dados que elevam a eficiência operacional e a resiliência dos produtos digitais</p>
+            <p className="text-lg md:text-xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">Sou Product Manager e Estrategista de Dados, apaixonado por transformar observabilidade e cultura analítica em produtos digitais de alto impacto.</p>
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -228,10 +228,7 @@ const Index = () => {
           <Card className="max-w-5xl mx-auto shadow-elegant border-2 border-border/50 backdrop-blur-sm bg-card/95">
             <CardContent className="p-10 md:p-16">
               <div className="space-y-6">
-                <p className="text-xl text-foreground leading-relaxed font-medium">
-                  Sou um profissional especializado em gestão estratégica de produtos digitais e Observabilidade, com
-                  mais de 5 anos de experiência na liderança de equipes ágeis e multidisciplinares.
-                </p>
+                <p className="text-xl text-foreground leading-relaxed font-medium">Sou um profissional especializado em gestão estratégica de produtos digitais e Observabilidade, com mais de 7 anos de experiência na liderança de equipes ágeis e multidisciplinares.</p>
                 <p className="text-lg text-muted-foreground leading-relaxed">
                   Minha trajetória inclui atuação em empresas de grande porte como{" "}
                   <span className="text-teal-accent font-semibold">Icatu Seguros</span>,
