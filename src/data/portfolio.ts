@@ -170,7 +170,7 @@ export const projects: Project[] = [
     title: "Ecommerce Seguro de Vida",
     company: "Icatu Seguros",
     description: "Criação e operação de plataforma de ecommerce para seguro de vida, aumentando taxa de conversão em 15%",
-    link: "http://bit.ly/3Mjg0d9"
+    link: "https://digitallojas.com.br/icatuseguros/vidadigital/home"
   },
   {
     title: "Ecommerce Previdência Privada",
