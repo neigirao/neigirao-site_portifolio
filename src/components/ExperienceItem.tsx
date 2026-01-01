@@ -19,17 +19,17 @@
  */
 
 import React from 'react';
-import type { Experience } from '../types';
 
 /**
- * Props do ExperienceItem
- * 
- * @interface ExperienceItemProps
- * @property {Experience} experience - Objeto com dados da experiência profissional
+ * Props do ExperienceItem - suporta dados do banco ou estáticos
  */
 interface ExperienceItemProps {
-  /** Dados completos da experiência profissional */
-  experience: Experience;
+  experience: {
+    period: string;
+    role: string;
+    company: string;
+    description: string | string[];
+  };
 }
 
 const ExperienceItem: React.FC<ExperienceItemProps> = ({ experience }) => {
@@ -49,7 +49,10 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({ experience }) => {
         </div>
       </div>
       <ul className="space-y-3 mt-4">
-        {experience.description.map((point, index) => (
+        {(Array.isArray(experience.description) 
+          ? experience.description 
+          : experience.description.split('. ').filter(Boolean)
+        ).map((point, index) => (
           <li key={index} className="flex items-start text-muted-foreground leading-relaxed">
             <span className="text-teal-accent mr-3 mt-1 flex-shrink-0">▪</span>
             <span>{point}</span>

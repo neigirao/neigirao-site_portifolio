@@ -18,16 +18,24 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 import ExperienceItem from "@/components/ExperienceItem";
 import SkillCard from "@/components/SkillCard";
 import EducationItem from "@/components/EducationItem";
 import ProjectCard from "@/components/ProjectCard";
 import { MailIcon, LinkedInIcon, PhoneIcon } from "@/components/Icons";
 import { Menu, X, Download, ArrowUp, MessageCircle, Lock } from "lucide-react";
-import { experiences, skills, education, projects } from "@/data/portfolio";
+import { useExperiences, useSkills, useEducation, useProjects } from "@/hooks/usePortfolioData";
 import { useNavigate } from "react-router-dom";
+
 const Index = () => {
   const navigate = useNavigate();
+  
+  // Fetch data from database
+  const { experiences, isLoading: loadingExperiences } = useExperiences();
+  const { skills, isLoading: loadingSkills } = useSkills();
+  const { education, isLoading: loadingEducation } = useEducation();
+  const { projects, isLoading: loadingProjects } = useProjects();
   // Estado para rastrear seção ativa no menu
   const [activeSection, setActiveSection] = useState("home");
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -277,7 +285,13 @@ const Index = () => {
           </div>
           {/* Grid de skills - responsivo */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
-            {skills.map((skill, index) => <SkillCard key={skill.name} skill={skill} index={index} />)}
+            {loadingSkills ? (
+              Array.from({ length: 10 }).map((_, i) => (
+                <Skeleton key={i} className="h-40 rounded-lg" />
+              ))
+            ) : (
+              skills.map((skill, index) => <SkillCard key={skill.id || skill.name} skill={skill} index={index} />)
+            )}
           </div>
         </div>
       </section>
@@ -299,7 +313,13 @@ const Index = () => {
           <Card className="max-w-5xl mx-auto shadow-elegant border-2 border-border/50 backdrop-blur-sm bg-card/95">
             <CardContent className="p-10 md:p-12">
               <div className="space-y-10">
-                {education.map((edu, index) => <EducationItem key={index} education={edu} />)}
+                {loadingEducation ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <Skeleton key={i} className="h-24 rounded-lg" />
+                  ))
+                ) : (
+                  education.map((edu, index) => <EducationItem key={edu.id || index} education={edu} />)
+                )}
               </div>
             </CardContent>
           </Card>
@@ -325,7 +345,13 @@ const Index = () => {
             <CardContent className="p-10 md:p-12">
               {/* Timeline de experiências */}
               <div className="space-y-10">
-                {experiences.map((experience, index) => <ExperienceItem key={index} experience={experience} />)}
+                {loadingExperiences ? (
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <Skeleton key={i} className="h-32 rounded-lg" />
+                  ))
+                ) : (
+                  experiences.map((experience, index) => <ExperienceItem key={experience.id || index} experience={experience} />)
+                )}
               </div>
             </CardContent>
           </Card>
@@ -347,7 +373,13 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {projects.map((project, index) => <ProjectCard key={index} project={project} />)}
+            {loadingProjects ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-64 rounded-lg" />
+              ))
+            ) : (
+              projects.map((project, index) => <ProjectCard key={project.id || index} project={project} />)
+            )}
           </div>
         </div>
       </section>
