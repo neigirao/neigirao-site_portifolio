@@ -12,9 +12,10 @@ import { ExternalLink } from 'lucide-react';
 interface ProjectCardProps {
   project: {
     title: string;
-    company: string;
+    company?: string;
     description: string;
-    link?: string;
+    link?: string | null;
+    tags?: string[] | null;
   };
 }
 
@@ -30,11 +31,20 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             <ExternalLink className="w-5 h-5 text-muted-foreground group-hover:text-teal-accent transition-all flex-shrink-0 ml-3 group-hover:scale-110 group-hover:rotate-12" />
           )}
         </div>
-        <div className="inline-block mb-4">
-          <span className="text-sm text-teal-accent font-semibold bg-teal-accent/10 px-3 py-1 rounded-full border border-teal-accent/20">
-            {project.company}
-          </span>
-        </div>
+        {(project.company || (project.tags && project.tags.length > 0)) && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {project.company && (
+              <span className="text-sm text-teal-accent font-semibold bg-teal-accent/10 px-3 py-1 rounded-full border border-teal-accent/20">
+                {project.company}
+              </span>
+            )}
+            {project.tags?.slice(0, 2).map((tag, i) => (
+              <span key={i} className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
         <p className="text-muted-foreground leading-relaxed mb-6 flex-grow text-base">
           {project.description}
         </p>
