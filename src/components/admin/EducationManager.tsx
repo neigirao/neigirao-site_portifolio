@@ -1,3 +1,9 @@
+/**
+ * EducationManager Component
+ * 
+ * Gerenciador de educação com campos SEO, drag-and-drop e preview.
+ */
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -5,8 +11,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Eye } from 'lucide-react';
 import { toast } from 'sonner';
+import { SEOFields } from './SEOFields';
+import { SortableList } from './SortableList';
+import { PreviewModal } from './PreviewModal';
 
 interface Education {
   id: string;
@@ -15,17 +24,23 @@ interface Education {
   period: string;
   description: string | null;
   order_index: number;
+  meta_title: string | null;
+  meta_description: string | null;
+  slug: string | null;
 }
 
 export function EducationManager() {
   const [education, setEducation] = useState<Education[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState({
     institution: '',
     degree: '',
     period: '',
     description: '',
-    order_index: 0,
+    meta_title: '',
+    meta_description: '',
+    slug: '',
   });
 
   useEffect(() => {
@@ -49,10 +64,27 @@ export function EducationManager() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const nextOrderIndex = education.length > 0 
+      ? Math.max(...education.map(edu => edu.order_index)) + 1 
+      : 0;
+
+    const dataToSubmit = {
+      institution: formData.institution,
+      degree: formData.degree,
+      period: formData.period,
+      description: formData.description || null,
+      meta_title: formData.meta_title || null,
+      meta_description: formData.meta_description || null,
+      slug: formData.slug || null,
+      order_index: editingId 
+        ? education.find(e => e.id === editingId)?.order_index || 0
+        : nextOrderIndex,
+    };
+
     if (editingId) {
       const { error } = await supabase
         .from('education')
-        .update(formData)
+        .update(dataToSubmit)
         .eq('id', editingId);
 
       if (error) {
@@ -64,7 +96,7 @@ export function EducationManager() {
     } else {
       const { error } = await supabase
         .from('education')
-        .insert([formData]);
+        .insert([dataToSubmit]);
 
       if (error) {
         toast.error('Erro ao criar educação');
@@ -85,7 +117,9 @@ export function EducationManager() {
       degree: edu.degree,
       period: edu.period,
       description: edu.description || '',
-      order_index: edu.order_index,
+      meta_title: edu.meta_title || '',
+      meta_description: edu.meta_description || '',
+      slug: edu.slug || '',
     });
   };
 
@@ -106,6 +140,24 @@ export function EducationManager() {
     fetchEducation();
   };
 
+  const handleReorder = async (reorderedItems: Education[]) => {
+    setEducation(reorderedItems);
+
+    const updates = reorderedItems.map((item, index) => ({
+      id: item.id,
+      order_index: index,
+    }));
+
+    for (const update of updates) {
+      await supabase
+        .from('education')
+        .update({ order_index: update.order_index })
+        .eq('id', update.id);
+    }
+
+    toast.success('Ordem atualizada!');
+  };
+
   const resetForm = () => {
     setEditingId(null);
     setFormData({
@@ -113,7 +165,9 @@ export function EducationManager() {
       degree: '',
       period: '',
       description: '',
-      order_index: 0,
+      meta_title: '',
+      meta_description: '',
+      slug: '',
     });
   };
 
@@ -146,26 +200,14 @@ export function EducationManager() {
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="period">Período</Label>
-                <Input
-                  id="period"
-                  value={formData.period}
-                  onChange={(e) => setFormData({ ...formData, period: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="order_index">Ordem</Label>
-                <Input
-                  id="order_index"
-                  type="number"
-                  value={formData.order_index}
-                  onChange={(e) => setFormData({ ...formData, order_index: parseInt(e.target.value) })}
-                  required
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="period">Período</Label>
+              <Input
+                id="period"
+                value={formData.period}
+                onChange={(e) => setFormData({ ...formData, period: e.target.value })}
+                required
+              />
             </div>
 
             <div className="space-y-2">
@@ -178,9 +220,27 @@ export function EducationManager() {
               />
             </div>
 
+            <SEOFields
+              metaTitle={formData.meta_title}
+              metaDescription={formData.meta_description}
+              slug={formData.slug}
+              onMetaTitleChange={(value) => setFormData({ ...formData, meta_title: value })}
+              onMetaDescriptionChange={(value) => setFormData({ ...formData, meta_description: value })}
+              onSlugChange={(value) => setFormData({ ...formData, slug: value })}
+              titleSource={`${formData.degree} - ${formData.institution}`}
+            />
+
             <div className="flex gap-2">
               <Button type="submit">
                 {editingId ? 'Atualizar' : 'Criar'}
+              </Button>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setShowPreview(true)}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                Visualizar
               </Button>
               {editingId && (
                 <Button type="button" variant="outline" onClick={resetForm}>
@@ -192,32 +252,43 @@ export function EducationManager() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4">
-        {education.map((edu) => (
-          <Card key={edu.id}>
-            <CardContent className="pt-6">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-lg">{edu.degree}</h3>
-                  <p className="text-muted-foreground">{edu.institution}</p>
-                  <p className="text-sm text-muted-foreground">{edu.period}</p>
-                  {edu.description && (
-                    <p className="mt-2 text-sm">{edu.description}</p>
-                  )}
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground">
+          Arraste os itens para reordenar
+        </p>
+        <SortableList
+          items={education}
+          onReorder={handleReorder}
+          renderItem={(edu) => (
+            <Card>
+              <CardContent className="pt-4 pb-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-lg truncate">{edu.degree}</h3>
+                    <p className="text-muted-foreground truncate">{edu.institution}</p>
+                    <p className="text-sm text-muted-foreground">{edu.period}</p>
+                  </div>
+                  <div className="flex gap-2 flex-shrink-0 ml-4">
+                    <Button size="icon" variant="outline" onClick={() => handleEdit(edu)}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button size="icon" variant="destructive" onClick={() => handleDelete(edu.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button size="icon" variant="outline" onClick={() => handleEdit(edu)}>
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button size="icon" variant="destructive" onClick={() => handleDelete(edu.id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          )}
+        />
       </div>
+
+      <PreviewModal
+        open={showPreview}
+        onOpenChange={setShowPreview}
+        type="education"
+        data={formData}
+      />
     </div>
   );
 }
