@@ -1,12 +1,23 @@
+/**
+ * ProjectsManager Component
+ * 
+ * Gerenciador de projetos com upload de imagem, editor rico,
+ * campos SEO, drag-and-drop e preview.
+ */
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Eye } from 'lucide-react';
 import { toast } from 'sonner';
+import { ImageUploader } from './ImageUploader';
+import { RichTextEditor } from './RichTextEditor';
+import { SEOFields } from './SEOFields';
+import { SortableList } from './SortableList';
+import { PreviewModal } from './PreviewModal';
 
 interface Project {
   id: string;
@@ -16,18 +27,24 @@ interface Project {
   link: string | null;
   tags: string[];
   order_index: number;
+  meta_title: string | null;
+  meta_description: string | null;
+  slug: string | null;
 }
 
 export function ProjectsManager() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     image_url: '',
     link: '',
     tags: '',
-    order_index: 0,
+    meta_title: '',
+    meta_description: '',
+    slug: '',
   });
 
   useEffect(() => {
@@ -51,9 +68,22 @@ export function ProjectsManager() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const nextOrderIndex = projects.length > 0 
+      ? Math.max(...projects.map(p => p.order_index)) + 1 
+      : 0;
+
     const dataToSubmit = {
-      ...formData,
+      title: formData.title,
+      description: formData.description,
+      image_url: formData.image_url || null,
+      link: formData.link || null,
       tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+      meta_title: formData.meta_title || null,
+      meta_description: formData.meta_description || null,
+      slug: formData.slug || null,
+      order_index: editingId 
+        ? projects.find(p => p.id === editingId)?.order_index || 0
+        : nextOrderIndex,
     };
 
     if (editingId) {
@@ -93,7 +123,9 @@ export function ProjectsManager() {
       image_url: project.image_url || '',
       link: project.link || '',
       tags: project.tags.join(', '),
-      order_index: project.order_index,
+      meta_title: project.meta_title || '',
+      meta_description: project.meta_description || '',
+      slug: project.slug || '',
     });
   };
 
@@ -114,6 +146,24 @@ export function ProjectsManager() {
     fetchProjects();
   };
 
+  const handleReorder = async (reorderedItems: Project[]) => {
+    setProjects(reorderedItems);
+
+    const updates = reorderedItems.map((item, index) => ({
+      id: item.id,
+      order_index: index,
+    }));
+
+    for (const update of updates) {
+      await supabase
+        .from('projects')
+        .update({ order_index: update.order_index })
+        .eq('id', update.id);
+    }
+
+    toast.success('Ordem atualizada!');
+  };
+
   const resetForm = () => {
     setEditingId(null);
     setFormData({
@@ -122,7 +172,9 @@ export function ProjectsManager() {
       image_url: '',
       link: '',
       tags: '',
-      order_index: 0,
+      meta_title: '',
+      meta_description: '',
+      slug: '',
     });
   };
 
@@ -144,37 +196,29 @@ export function ProjectsManager() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Descrição</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                rows={3}
-                required
-              />
-            </div>
+            <RichTextEditor
+              value={formData.description}
+              onChange={(value) => setFormData({ ...formData, description: value })}
+              label="Descrição"
+            />
+
+            <ImageUploader
+              value={formData.image_url}
+              onChange={(url) => setFormData({ ...formData, image_url: url })}
+              label="Imagem do Projeto"
+              folder="projects"
+            />
             
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="image_url">URL da Imagem</Label>
-                <Input
-                  id="image_url"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                />
-              </div>
               <div className="space-y-2">
                 <Label htmlFor="link">Link do Projeto</Label>
                 <Input
                   id="link"
                   value={formData.link}
                   onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+                  placeholder="https://..."
                 />
               </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="tags">Tags (separadas por vírgula)</Label>
                 <Input
@@ -184,21 +228,29 @@ export function ProjectsManager() {
                   placeholder="React, TypeScript, Node.js"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="order_index">Ordem</Label>
-                <Input
-                  id="order_index"
-                  type="number"
-                  value={formData.order_index}
-                  onChange={(e) => setFormData({ ...formData, order_index: parseInt(e.target.value) })}
-                  required
-                />
-              </div>
             </div>
+
+            <SEOFields
+              metaTitle={formData.meta_title}
+              metaDescription={formData.meta_description}
+              slug={formData.slug}
+              onMetaTitleChange={(value) => setFormData({ ...formData, meta_title: value })}
+              onMetaDescriptionChange={(value) => setFormData({ ...formData, meta_description: value })}
+              onSlugChange={(value) => setFormData({ ...formData, slug: value })}
+              titleSource={formData.title}
+            />
 
             <div className="flex gap-2">
               <Button type="submit">
                 {editingId ? 'Atualizar' : 'Criar'}
+              </Button>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setShowPreview(true)}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                Visualizar
               </Button>
               {editingId && (
                 <Button type="button" variant="outline" onClick={resetForm}>
@@ -210,37 +262,53 @@ export function ProjectsManager() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4">
-        {projects.map((project) => (
-          <Card key={project.id}>
-            <CardContent className="pt-6">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-lg">{project.title}</h3>
-                  <p className="mt-2 text-sm">{project.description}</p>
-                  {project.tags.length > 0 && (
-                    <div className="flex gap-2 mt-2">
-                      {project.tags.map((tag, i) => (
-                        <span key={i} className="text-xs bg-muted px-2 py-1 rounded">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground">
+          Arraste os itens para reordenar
+        </p>
+        <SortableList
+          items={projects}
+          onReorder={handleReorder}
+          renderItem={(project) => (
+            <Card>
+              <CardContent className="pt-4 pb-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-lg truncate">{project.title}</h3>
+                    {project.tags.length > 0 && (
+                      <div className="flex gap-2 mt-1 flex-wrap">
+                        {project.tags.slice(0, 3).map((tag, i) => (
+                          <span key={i} className="text-xs bg-muted px-2 py-1 rounded">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-2 flex-shrink-0 ml-4">
+                    <Button size="icon" variant="outline" onClick={() => handleEdit(project)}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button size="icon" variant="destructive" onClick={() => handleDelete(project.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button size="icon" variant="outline" onClick={() => handleEdit(project)}>
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button size="icon" variant="destructive" onClick={() => handleDelete(project.id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          )}
+        />
       </div>
+
+      <PreviewModal
+        open={showPreview}
+        onOpenChange={setShowPreview}
+        type="project"
+        data={{
+          ...formData,
+          tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
+        }}
+      />
     </div>
   );
 }

@@ -21,8 +21,11 @@ export type Database = {
           description: string | null
           id: string
           institution: string
+          meta_description: string | null
+          meta_title: string | null
           order_index: number
           period: string
+          slug: string | null
           updated_at: string
         }
         Insert: {
@@ -31,8 +34,11 @@ export type Database = {
           description?: string | null
           id?: string
           institution: string
+          meta_description?: string | null
+          meta_title?: string | null
           order_index?: number
           period: string
+          slug?: string | null
           updated_at?: string
         }
         Update: {
@@ -41,8 +47,11 @@ export type Database = {
           description?: string | null
           id?: string
           institution?: string
+          meta_description?: string | null
+          meta_title?: string | null
           order_index?: number
           period?: string
+          slug?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -54,9 +63,12 @@ export type Database = {
           description: string
           id: string
           logo_url: string | null
+          meta_description: string | null
+          meta_title: string | null
           order_index: number
           period: string
           role: string
+          slug: string | null
           updated_at: string
         }
         Insert: {
@@ -65,9 +77,12 @@ export type Database = {
           description: string
           id?: string
           logo_url?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
           order_index?: number
           period: string
           role: string
+          slug?: string | null
           updated_at?: string
         }
         Update: {
@@ -76,9 +91,12 @@ export type Database = {
           description?: string
           id?: string
           logo_url?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
           order_index?: number
           period?: string
           role?: string
+          slug?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -117,7 +135,10 @@ export type Database = {
           id: string
           image_url: string | null
           link: string | null
+          meta_description: string | null
+          meta_title: string | null
           order_index: number
+          slug: string | null
           tags: string[] | null
           title: string
           updated_at: string
@@ -128,7 +149,10 @@ export type Database = {
           id?: string
           image_url?: string | null
           link?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
           order_index?: number
+          slug?: string | null
           tags?: string[] | null
           title: string
           updated_at?: string
@@ -139,7 +163,10 @@ export type Database = {
           id?: string
           image_url?: string | null
           link?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
           order_index?: number
+          slug?: string | null
           tags?: string[] | null
           title?: string
           updated_at?: string
@@ -152,8 +179,11 @@ export type Database = {
           created_at: string
           id: string
           logo_url: string | null
+          meta_description: string | null
+          meta_title: string | null
           name: string
           order_index: number
+          slug: string | null
           updated_at: string
         }
         Insert: {
@@ -161,8 +191,11 @@ export type Database = {
           created_at?: string
           id?: string
           logo_url?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
           name: string
           order_index?: number
+          slug?: string | null
           updated_at?: string
         }
         Update: {
@@ -170,8 +203,11 @@ export type Database = {
           created_at?: string
           id?: string
           logo_url?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
           name?: string
           order_index?: number
+          slug?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -202,6 +238,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_slug: { Args: { input_text: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

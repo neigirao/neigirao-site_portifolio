@@ -1,12 +1,23 @@
+/**
+ * ExperiencesManager Component
+ * 
+ * Gerenciador de experiências com upload de imagem, editor rico,
+ * campos SEO, drag-and-drop e preview.
+ */
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Eye } from 'lucide-react';
 import { toast } from 'sonner';
+import { ImageUploader } from './ImageUploader';
+import { RichTextEditor } from './RichTextEditor';
+import { SEOFields } from './SEOFields';
+import { SortableList } from './SortableList';
+import { PreviewModal } from './PreviewModal';
 
 interface Experience {
   id: string;
@@ -16,18 +27,24 @@ interface Experience {
   description: string;
   logo_url: string | null;
   order_index: number;
+  meta_title: string | null;
+  meta_description: string | null;
+  slug: string | null;
 }
 
 export function ExperiencesManager() {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState({
     company: '',
     role: '',
     period: '',
     description: '',
     logo_url: '',
-    order_index: 0,
+    meta_title: '',
+    meta_description: '',
+    slug: '',
   });
 
   useEffect(() => {
@@ -51,10 +68,28 @@ export function ExperiencesManager() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const nextOrderIndex = experiences.length > 0 
+      ? Math.max(...experiences.map(exp => exp.order_index)) + 1 
+      : 0;
+
+    const dataToSubmit = {
+      company: formData.company,
+      role: formData.role,
+      period: formData.period,
+      description: formData.description,
+      logo_url: formData.logo_url || null,
+      meta_title: formData.meta_title || null,
+      meta_description: formData.meta_description || null,
+      slug: formData.slug || null,
+      order_index: editingId 
+        ? experiences.find(e => e.id === editingId)?.order_index || 0
+        : nextOrderIndex,
+    };
+
     if (editingId) {
       const { error } = await supabase
         .from('experiences')
-        .update(formData)
+        .update(dataToSubmit)
         .eq('id', editingId);
 
       if (error) {
@@ -66,7 +101,7 @@ export function ExperiencesManager() {
     } else {
       const { error } = await supabase
         .from('experiences')
-        .insert([formData]);
+        .insert([dataToSubmit]);
 
       if (error) {
         toast.error('Erro ao criar experiência');
@@ -88,7 +123,9 @@ export function ExperiencesManager() {
       period: exp.period,
       description: exp.description,
       logo_url: exp.logo_url || '',
-      order_index: exp.order_index,
+      meta_title: exp.meta_title || '',
+      meta_description: exp.meta_description || '',
+      slug: exp.slug || '',
     });
   };
 
@@ -109,6 +146,25 @@ export function ExperiencesManager() {
     fetchExperiences();
   };
 
+  const handleReorder = async (reorderedItems: Experience[]) => {
+    setExperiences(reorderedItems);
+
+    // Update order_index for all items
+    const updates = reorderedItems.map((item, index) => ({
+      id: item.id,
+      order_index: index,
+    }));
+
+    for (const update of updates) {
+      await supabase
+        .from('experiences')
+        .update({ order_index: update.order_index })
+        .eq('id', update.id);
+    }
+
+    toast.success('Ordem atualizada!');
+  };
+
   const resetForm = () => {
     setEditingId(null);
     setFormData({
@@ -117,7 +173,9 @@ export function ExperiencesManager() {
       period: '',
       description: '',
       logo_url: '',
-      order_index: 0,
+      meta_title: '',
+      meta_description: '',
+      slug: '',
     });
   };
 
@@ -150,51 +208,50 @@ export function ExperiencesManager() {
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="period">Período</Label>
-                <Input
-                  id="period"
-                  value={formData.period}
-                  onChange={(e) => setFormData({ ...formData, period: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="order_index">Ordem</Label>
-                <Input
-                  id="order_index"
-                  type="number"
-                  value={formData.order_index}
-                  onChange={(e) => setFormData({ ...formData, order_index: parseInt(e.target.value) })}
-                  required
-                />
-              </div>
-            </div>
-
             <div className="space-y-2">
-              <Label htmlFor="logo_url">URL do Logo</Label>
+              <Label htmlFor="period">Período</Label>
               <Input
-                id="logo_url"
-                value={formData.logo_url}
-                onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Descrição</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                rows={4}
+                id="period"
+                value={formData.period}
+                onChange={(e) => setFormData({ ...formData, period: e.target.value })}
                 required
               />
             </div>
 
+            <ImageUploader
+              value={formData.logo_url}
+              onChange={(url) => setFormData({ ...formData, logo_url: url })}
+              label="Logo da Empresa"
+              folder="experiences"
+            />
+
+            <RichTextEditor
+              value={formData.description}
+              onChange={(value) => setFormData({ ...formData, description: value })}
+              label="Descrição"
+            />
+
+            <SEOFields
+              metaTitle={formData.meta_title}
+              metaDescription={formData.meta_description}
+              slug={formData.slug}
+              onMetaTitleChange={(value) => setFormData({ ...formData, meta_title: value })}
+              onMetaDescriptionChange={(value) => setFormData({ ...formData, meta_description: value })}
+              onSlugChange={(value) => setFormData({ ...formData, slug: value })}
+              titleSource={`${formData.role} - ${formData.company}`}
+            />
+
             <div className="flex gap-2">
               <Button type="submit">
                 {editingId ? 'Atualizar' : 'Criar'}
+              </Button>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setShowPreview(true)}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                Visualizar
               </Button>
               {editingId && (
                 <Button type="button" variant="outline" onClick={resetForm}>
@@ -206,30 +263,43 @@ export function ExperiencesManager() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4">
-        {experiences.map((exp) => (
-          <Card key={exp.id}>
-            <CardContent className="pt-6">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-lg">{exp.role}</h3>
-                  <p className="text-muted-foreground">{exp.company}</p>
-                  <p className="text-sm text-muted-foreground">{exp.period}</p>
-                  <p className="mt-2 text-sm">{exp.description}</p>
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground">
+          Arraste os itens para reordenar
+        </p>
+        <SortableList
+          items={experiences}
+          onReorder={handleReorder}
+          renderItem={(exp) => (
+            <Card>
+              <CardContent className="pt-4 pb-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-lg truncate">{exp.role}</h3>
+                    <p className="text-muted-foreground truncate">{exp.company}</p>
+                    <p className="text-sm text-muted-foreground">{exp.period}</p>
+                  </div>
+                  <div className="flex gap-2 flex-shrink-0 ml-4">
+                    <Button size="icon" variant="outline" onClick={() => handleEdit(exp)}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button size="icon" variant="destructive" onClick={() => handleDelete(exp.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button size="icon" variant="outline" onClick={() => handleEdit(exp)}>
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button size="icon" variant="destructive" onClick={() => handleDelete(exp.id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          )}
+        />
       </div>
+
+      <PreviewModal
+        open={showPreview}
+        onOpenChange={setShowPreview}
+        type="experience"
+        data={formData}
+      />
     </div>
   );
 }
