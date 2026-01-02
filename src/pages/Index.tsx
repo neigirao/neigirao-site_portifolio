@@ -27,6 +27,7 @@ import { MailIcon, LinkedInIcon, PhoneIcon } from "@/components/Icons";
 import { Menu, X, Download, ArrowUp, MessageCircle, Lock } from "lucide-react";
 import { useExperiences, useSkills, useEducation, useProjects } from "@/hooks/usePortfolioData";
 import { useNavigate } from "react-router-dom";
+import { HomeSEOHead, DynamicSchema } from "@/components/SEO";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -96,7 +97,10 @@ const Index = () => {
     id: "contact",
     label: "Contato"
   }];
-  return <div className="min-h-screen bg-background">
+  return <>
+      <HomeSEOHead />
+      <DynamicSchema />
+      <div className="min-h-screen bg-background">
       {/* Scroll Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-1 bg-border z-[60]">
         <div className="h-full bg-gradient-primary transition-all duration-300" style={{
@@ -495,6 +499,7 @@ const Index = () => {
           <p className="text-muted-foreground">© {new Date().getFullYear()} Nei Girão. All rights reserved.</p>
         </div>
       </footer>
-    </div>;
+    </div>
+  </>;
 };
 export default Index;
