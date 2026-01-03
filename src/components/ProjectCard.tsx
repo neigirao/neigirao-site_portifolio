@@ -1,16 +1,19 @@
 /**
  * Project Card Component
  * 
- * Card para exibir projeto individual com link opcional.
+ * Card para exibir projeto individual com link para página de detalhes.
  */
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, ChevronRight } from 'lucide-react';
 
 interface ProjectCardProps {
   project: {
+    id?: string;
+    slug?: string | null;
     title: string;
     company?: string;
     description: string;
@@ -20,6 +23,10 @@ interface ProjectCardProps {
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
+  const detailUrl = project.id 
+    ? `/projeto/${project.slug || project.id}` 
+    : null;
+
   return (
     <Card className="group hover:shadow-glow transition-all duration-300 hover:-translate-y-2 bg-card border-border hover:border-teal-accent/30 h-full">
       <CardContent className="p-8 flex flex-col h-full">
@@ -45,20 +52,38 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             ))}
           </div>
         )}
-        <p className="text-muted-foreground leading-relaxed mb-6 flex-grow text-base">
+        <p className="text-muted-foreground leading-relaxed mb-6 flex-grow text-base line-clamp-3">
           {project.description}
         </p>
-        {project.link && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full mt-auto group-hover:bg-teal-accent/10 group-hover:border-teal-accent group-hover:text-teal-accent transition-all"
-            onClick={() => window.open(project.link, "_blank")}
-          >
-            Ver Projeto
-            <ExternalLink className="w-4 h-4 ml-2" />
-          </Button>
-        )}
+        <div className="flex gap-2 mt-auto">
+          {detailUrl && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 group-hover:bg-muted transition-all"
+              asChild
+            >
+              <Link to={detailUrl}>
+                Ver Detalhes
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Link>
+            </Button>
+          )}
+          {project.link && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="group-hover:bg-teal-accent/10 group-hover:border-teal-accent group-hover:text-teal-accent transition-all"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.open(project.link!, "_blank");
+              }}
+            >
+              <ExternalLink className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
