@@ -15,6 +15,18 @@ const corsHeaders = {
 
 const BASE_URL = "https://neigirao.lovable.app";
 
+// Helper to generate slug from text
+function generateSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim();
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -31,17 +43,21 @@ serve(async (req) => {
 
     // Fetch all content from database
     const [experiencesRes, projectsRes, skillsRes, educationRes] = await Promise.all([
-      supabase.from('experiences').select('updated_at').order('updated_at', { ascending: false }).limit(1),
-      supabase.from('projects').select('updated_at').order('updated_at', { ascending: false }).limit(1),
-      supabase.from('skills').select('updated_at').order('updated_at', { ascending: false }).limit(1),
+      supabase.from('experiences').select('id, company, slug, updated_at').order('order_index'),
+      supabase.from('projects').select('id, title, slug, updated_at').order('order_index'),
+      supabase.from('skills').select('id, name, slug, updated_at').order('order_index'),
       supabase.from('education').select('updated_at').order('updated_at', { ascending: false }).limit(1),
     ]);
 
+    const experiences = experiencesRes.data || [];
+    const projects = projectsRes.data || [];
+    const skills = skillsRes.data || [];
+
     // Get the most recent update date across all tables
     const allDates = [
-      experiencesRes.data?.[0]?.updated_at,
-      projectsRes.data?.[0]?.updated_at,
-      skillsRes.data?.[0]?.updated_at,
+      ...experiences.map(e => e.updated_at),
+      ...projects.map(p => p.updated_at),
+      ...skills.map(s => s.updated_at),
       educationRes.data?.[0]?.updated_at,
     ].filter(Boolean);
 
@@ -50,6 +66,44 @@ serve(async (req) => {
       : new Date().toISOString().split('T')[0];
 
     console.log(`Most recent content update: ${mostRecentUpdate}`);
+    console.log(`Found: ${experiences.length} experiences, ${projects.length} projects, ${skills.length} skills`);
+
+    // Generate individual page URLs
+    const experienceUrls = experiences.map(exp => {
+      const slug = exp.slug || generateSlug(exp.company);
+      const lastmod = exp.updated_at?.split('T')[0] || mostRecentUpdate;
+      return `
+  <url>
+    <loc>${BASE_URL}/experiencia/${slug}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>`;
+    }).join('');
+
+    const projectUrls = projects.map(proj => {
+      const slug = proj.slug || generateSlug(proj.title);
+      const lastmod = proj.updated_at?.split('T')[0] || mostRecentUpdate;
+      return `
+  <url>
+    <loc>${BASE_URL}/projeto/${slug}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>`;
+    }).join('');
+
+    const skillUrls = skills.map(skill => {
+      const slug = skill.slug || generateSlug(skill.name);
+      const lastmod = skill.updated_at?.split('T')[0] || mostRecentUpdate;
+      return `
+  <url>
+    <loc>${BASE_URL}/skill/${slug}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>`;
+    }).join('');
 
     // Build sitemap XML
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -76,7 +130,7 @@ serve(async (req) => {
   <!-- Skills Section -->
   <url>
     <loc>${BASE_URL}/#skills</loc>
-    <lastmod>${skillsRes.data?.[0]?.updated_at?.split('T')[0] || mostRecentUpdate}</lastmod>
+    <lastmod>${skills[0]?.updated_at?.split('T')[0] || mostRecentUpdate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -92,7 +146,7 @@ serve(async (req) => {
   <!-- Experiência / Experience Section -->
   <url>
     <loc>${BASE_URL}/#experience</loc>
-    <lastmod>${experiencesRes.data?.[0]?.updated_at?.split('T')[0] || mostRecentUpdate}</lastmod>
+    <lastmod>${experiences[0]?.updated_at?.split('T')[0] || mostRecentUpdate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -100,7 +154,7 @@ serve(async (req) => {
   <!-- Projetos / Projects Section -->
   <url>
     <loc>${BASE_URL}/#projects</loc>
-    <lastmod>${projectsRes.data?.[0]?.updated_at?.split('T')[0] || mostRecentUpdate}</lastmod>
+    <lastmod>${projects[0]?.updated_at?.split('T')[0] || mostRecentUpdate}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -128,9 +182,15 @@ serve(async (req) => {
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+  
+  <!-- Individual Experience Pages -->${experienceUrls}
+  
+  <!-- Individual Project Pages -->${projectUrls}
+  
+  <!-- Individual Skill Pages -->${skillUrls}
 </urlset>`;
 
-    console.log("Sitemap generated successfully");
+    console.log("Sitemap generated successfully with individual pages");
 
     return new Response(sitemap, {
       headers: { 
