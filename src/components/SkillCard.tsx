@@ -16,6 +16,7 @@
 
 import React from 'react';
 import { Card, CardContent } from './ui/card';
+import { OptimizedImage } from './ui/optimized-image';
 import { BriefcaseIcon, BarChartIcon, LaptopIcon, DonutChartIcon, LightbulbIcon, PercentageIcon, AzureIcon } from './Icons';
 
 // Map skill names to icons for database skills
@@ -54,10 +55,10 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, index }) => {
       <CardContent className="p-8 flex flex-col items-center text-center space-y-4">
         <div className="w-20 h-20 flex items-center justify-center rounded-2xl bg-gradient-primary group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
           {logoUrl ? (
-            <img 
+            <OptimizedImage 
               src={logoUrl} 
               alt={`${skill.name} logo`} 
-              className="w-12 h-12 object-contain" 
+              className="w-12 h-12 object-contain bg-transparent" 
             />
           ) : IconComponent ? (
             React.createElement(IconComponent, {
