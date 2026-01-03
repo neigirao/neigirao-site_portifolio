@@ -17,6 +17,11 @@ const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const SitemapRedirect = lazy(() => import("./pages/SitemapRedirect"));
 
+// Lazy load - detail pages (SEO pages)
+const ExperienceDetail = lazy(() => import("./pages/ExperienceDetail"));
+const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
+const SkillDetail = lazy(() => import("./pages/SkillDetail"));
+
 // Loading fallback for lazy routes
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
@@ -51,6 +56,13 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/sitemap.xml" element={<SitemapRedirect />} />
+              
+              {/* SEO Detail Pages */}
+              <Route path="/experiencia/:slug" element={<ExperienceDetail />} />
+              <Route path="/projeto/:slug" element={<ProjectDetail />} />
+              <Route path="/skill/:slug" element={<SkillDetail />} />
+              
+              {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route
                 path="/admin/dashboard"

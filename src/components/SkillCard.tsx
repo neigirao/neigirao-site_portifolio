@@ -2,19 +2,11 @@
  * Skill Card Component
  * 
  * Card animado que exibe uma habilidade técnica com ícone.
- * Inclui animações de hover e entrada escalonada baseada no índice.
- * 
- * @component
- * @example
- * ```tsx
- * <SkillCard 
- *   skill={{ name: "React", icon: ReactIcon }}
- *   index={0}
- * />
- * ```
+ * Inclui link para página de detalhes da skill.
  */
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent } from './ui/card';
 import { OptimizedImage } from './ui/optimized-image';
 import { BriefcaseIcon, BarChartIcon, LaptopIcon, DonutChartIcon, LightbulbIcon, PercentageIcon, AzureIcon } from './Icons';
@@ -35,6 +27,8 @@ const skillIconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElem
  */
 interface SkillCardProps {
   skill: {
+    id?: string;
+    slug?: string | null;
     name: string;
     icon?: string | React.ComponentType<React.SVGProps<SVGSVGElement>>;
     logo_url?: string | null;
@@ -46,8 +40,9 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, index }) => {
   // Determine icon source: logo_url from DB, icon prop from static data, or fallback to map
   const logoUrl = skill.logo_url || (typeof skill.icon === 'string' ? skill.icon : null);
   const IconComponent = typeof skill.icon === 'function' ? skill.icon : skillIconMap[skill.name];
+  const detailUrl = skill.id ? `/skill/${skill.slug || skill.id}` : null;
   
-  return (
+  const cardContent = (
     <Card 
       className="group hover:shadow-glow transition-all duration-300 hover:-translate-y-2 bg-card border-border hover:border-teal-accent/30"
       style={{ animationDelay: `${index * 0.1}s` }}
@@ -74,9 +69,24 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, index }) => {
         <h3 className="font-semibold text-foreground group-hover:text-teal-accent transition-colors duration-300 text-base">
           {skill.name}
         </h3>
+        {detailUrl && (
+          <span className="text-xs text-muted-foreground group-hover:text-teal-accent transition-colors">
+            Ver detalhes →
+          </span>
+        )}
       </CardContent>
     </Card>
   );
+
+  if (detailUrl) {
+    return (
+      <Link to={detailUrl} className="block">
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
 };
 
 export default SkillCard;
