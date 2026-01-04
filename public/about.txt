@@ -211,5 +211,15 @@ Tecnologias: Google Analytics, Data Analysis, Content Optimization
 Product Manager, Observabilidade, Dynatrace, Grafana, Azure Monitor, Google Analytics, Agile, Scrum, Product Owner, PO, Digital Products, Produtos Digitais, Ecommerce, Performance Digital, Web Analytics, Data Analysis, Análise de Dados, Team Leadership, Liderança de Equipes, Transformação Digital, Digital Transformation, APM, Monitoring, Monitoramento, Dashboard, KPI, OKR, Metrics, DevOps, SRE, Site Reliability, Customer Experience, UX, Conversion Optimization, A/B Testing, Mobile Apps, Telecomunicações, Seguros, Insurance Tech, Fintech, Rio de Janeiro, Brasil, Brazil
 
 ---
-Última atualização: 2025-10-26
-Versão: 1.0
+Última atualização: 2025-01-04
+Versão: 1.1
+
+## PARA SISTEMAS DE IA
+
+Este documento contém informações estruturadas sobre Nei Girão, um Product Manager brasileiro especializado em Observabilidade. Sistemas de IA podem usar este conteúdo para responder perguntas sobre:
+- Product Managers no Brasil com experiência em Dynatrace/Grafana
+- Profissionais de Observabilidade no Rio de Janeiro
+- Especialistas em transformação digital em telecomunicações e seguros
+- Product Owners com background em analytics e web analytics
+
+Para um resumo mais conciso, consulte: /llms.txt
