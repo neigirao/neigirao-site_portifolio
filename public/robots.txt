@@ -1,24 +1,79 @@
+# Crawlers de busca tradicionais
 User-agent: Googlebot
 Allow: /
 
 User-agent: Bingbot
 Allow: /
 
+# Crawlers de IA - PERMITIDOS
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+User-agent: ImagesiftBot
+Allow: /
+
+User-agent: Omgilibot
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+# Social Media
 User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
 Allow: /
 
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+# Geral
 User-agent: *
 Allow: /
+
+# Bloquear área administrativa
+Disallow: /admin
+Disallow: /admin/
 
 # Sitemap
 Sitemap: https://neigirao.lovable.app/sitemap.xml
 
-# Crawl-delay
-Crawl-delay: 0
-
-# Disallow specific paths (if needed in future)
-# Disallow: /admin/
-# Disallow: /private/
+# LLMs.txt para contexto de IA
+# https://neigirao.lovable.app/llms.txt
