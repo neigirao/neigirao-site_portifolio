@@ -24,10 +24,13 @@ import SkillCard from "@/components/SkillCard";
 import EducationItem from "@/components/EducationItem";
 import ProjectCard from "@/components/ProjectCard";
 import { MailIcon, LinkedInIcon, PhoneIcon } from "@/components/Icons";
-import { Menu, X, Download, ArrowUp, MessageCircle, Lock } from "lucide-react";
+import { Menu, Download, ArrowUp, MessageCircle, Lock } from "lucide-react";
 import { useExperiences, useSkills, useEducation, useProjects } from "@/hooks/usePortfolioData";
 import { useNavigate } from "react-router-dom";
 import { HomeSEOHead, DynamicSchema } from "@/components/SEO";
+import { AvailabilityBadge } from "@/components/AvailabilityBadge";
+import { ImpactMetrics } from "@/components/ImpactMetrics";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -118,10 +121,11 @@ const Index = () => {
 
             {/* Menu de navegação - desktop */}
             <div className="hidden md:flex items-center space-x-6">
-              {menuItems.map(item => <button key={item.id} onClick={() => scrollToSection(item.id)} className={`text-sm font-medium transition-colors hover:text-secondary ${activeSection === item.id ? "text-secondary" : "text-muted-foreground"}`}>
+              {menuItems.map(item => <button key={item.id} onClick={() => scrollToSection(item.id)} className={`text-sm font-medium transition-all duration-200 hover:text-secondary ${activeSection === item.id ? "text-secondary font-semibold" : "text-muted-foreground"}`}>
                   {item.label}
                 </button>)}
-              <Button size="sm" variant="outline" onClick={() => window.open("/cv-nei-girao.pdf", "_blank")} className="ml-4">
+              <ThemeToggle />
+              <Button size="sm" variant="outline" onClick={() => window.open("/cv-nei-girao.pdf", "_blank")} className="ml-2">
                 <Download className="w-4 h-4 mr-2" />
                 CV
               </Button>
@@ -184,23 +188,27 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-6 py-20 text-center relative">
           <div className="animate-fade-in-up">
             {/* Availability Badge */}
-            
+            <AvailabilityBadge isAvailable={true} />
 
             {/* Badge/Tag */}
             <div className="inline-block mb-8 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full">
-              <span className="text-white/90 text-sm font-semibold tracking-wide">
+              <span className="text-white/90 text-sm font-semibold tracking-wide uppercase">
                 ⚡ Product Manager | Observabilidade
               </span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-8 leading-tight">Nei Girão</h1>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white mb-8 leading-tight tracking-tight">
+              Nei Girão
+            </h1>
 
-            <h2 className="text-3xl md:text-5xl font-bold text-white/90 mb-8">
+            <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white/90 mb-8 leading-snug">
               Transformando produtos digitais em <br />
               <span className="bg-gradient-primary bg-clip-text text-transparent">experiências de sucesso</span>
             </h2>
 
-            <p className="text-lg md:text-xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">Sou Product Manager e Estrategista de Dados, apaixonado por transformar observabilidade e cultura analítica em produtos digitais de alto impacto.</p>
+            <p className="text-lg md:text-xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
+              Sou Product Manager e Estrategista de Dados, apaixonado por transformar observabilidade e cultura analítica em produtos digitais de alto impacto.
+            </p>
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -236,6 +244,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ==================== IMPACT METRICS SECTION ==================== */}
+      <ImpactMetrics />
+
       {/* ==================== ABOUT SECTION ==================== */}
       <section id="about" className="py-24 bg-background relative overflow-hidden">
         {/* Background decoration */}
@@ -243,7 +254,7 @@ const Index = () => {
 
         <div className="max-w-7xl mx-auto px-6 relative">
           <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Resumo Profissional</h2>
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Resumo Profissional</h2>
             <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full" />
           </div>
 
@@ -281,9 +292,9 @@ const Index = () => {
       <section id="skills" className="py-24 bg-muted/30">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Habilidades</h2>
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Habilidades</h2>
             <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
               Especializado em observabilidade, product management e análise de dados
             </p>
           </div>
@@ -307,9 +318,9 @@ const Index = () => {
 
         <div className="max-w-7xl mx-auto px-6 relative">
           <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Formação Acadêmica</h2>
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Formação Acadêmica</h2>
             <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
               Sólida formação acadêmica em tecnologia e marketing digital
             </p>
           </div>
@@ -338,9 +349,9 @@ const Index = () => {
 
         <div className="max-w-7xl mx-auto px-6 relative">
           <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Experiência Profissional</h2>
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Experiência Profissional</h2>
             <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
               Mais de 15 anos liderando produtos digitais e equipes em grandes empresas
             </p>
           </div>
@@ -369,9 +380,9 @@ const Index = () => {
 
         <div className="max-w-7xl mx-auto px-6 relative">
           <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Principais Projetos</h2>
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Principais Projetos</h2>
             <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
               Projetos de destaque que geraram impacto significativo
             </p>
           </div>
@@ -392,9 +403,9 @@ const Index = () => {
       <section id="faq" className="py-24 bg-muted/30 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Perguntas Frequentes</h2>
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Perguntas Frequentes</h2>
             <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
               Respostas para as dúvidas mais comuns sobre minha experiência
             </p>
           </div>
@@ -469,9 +480,9 @@ const Index = () => {
 
         <div className="max-w-7xl mx-auto px-6 relative">
           <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Vamos Conectar</h2>
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-white tracking-tight">Vamos Conectar</h2>
             <div className="w-24 h-1 bg-white/80 mx-auto rounded-full mb-6" />
-            <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed font-light">
               Estou sempre interessado em ouvir sobre novas oportunidades e colaborações
             </p>
           </div>
