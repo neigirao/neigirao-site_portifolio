@@ -187,9 +187,6 @@ const Index = () => {
 
         <div className="max-w-7xl mx-auto px-6 py-20 text-center relative">
           <div className="animate-fade-in-up">
-            {/* Availability Badge */}
-            <AvailabilityBadge isAvailable={true} />
-
             {/* Badge/Tag */}
             <div className="inline-block mb-8 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full">
               <span className="text-white/90 text-sm font-semibold tracking-wide uppercase">
