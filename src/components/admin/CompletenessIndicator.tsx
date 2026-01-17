@@ -1,0 +1,91 @@
+import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+
+interface CompletenessIndicatorProps {
+  hasSeo: boolean;
+  hasImage: boolean;
+  hasSlug: boolean;
+  itemName: string;
+}
+
+export function CompletenessIndicator({ hasSeo, hasImage, hasSlug, itemName }: CompletenessIndicatorProps) {
+  const isComplete = hasSeo && hasImage && hasSlug;
+  const isPartial = (hasSeo || hasImage || hasSlug) && !isComplete;
+  
+  const missingItems: string[] = [];
+  if (!hasSeo) missingItems.push('SEO (título e descrição)');
+  if (!hasSlug) missingItems.push('Slug');
+  if (!hasImage) missingItems.push('Imagem');
+
+  if (isComplete) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Badge 
+            variant="secondary" 
+            className="bg-green-500/10 text-green-600 dark:text-green-400 gap-1 cursor-help"
+            aria-label={`${itemName}: Completo`}
+          >
+            <CheckCircle className="h-3 w-3" aria-hidden="true" />
+            <span className="sr-only">Status:</span>
+            Completo
+          </Badge>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Todos os campos preenchidos ✓</p>
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  if (isPartial) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Badge 
+            variant="secondary" 
+            className="bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 gap-1 cursor-help"
+            aria-label={`${itemName}: Incompleto`}
+          >
+            <AlertCircle className="h-3 w-3" aria-hidden="true" />
+            <span className="sr-only">Status:</span>
+            Incompleto
+          </Badge>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p className="font-medium mb-1">Campos faltando:</p>
+          <ul className="text-xs space-y-0.5">
+            {missingItems.map((item, index) => (
+              <li key={index}>• {item}</li>
+            ))}
+          </ul>
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Badge 
+          variant="secondary" 
+          className="bg-red-500/10 text-red-600 dark:text-red-400 gap-1 cursor-help"
+          aria-label={`${itemName}: Vazio`}
+        >
+          <XCircle className="h-3 w-3" aria-hidden="true" />
+          <span className="sr-only">Status:</span>
+          Vazio
+        </Badge>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p className="font-medium mb-1">Campos faltando:</p>
+        <ul className="text-xs space-y-0.5">
+          {missingItems.map((item, index) => (
+            <li key={index}>• {item}</li>
+          ))}
+        </ul>
+      </TooltipContent>
+    </Tooltip>
+  );
+}

@@ -18,6 +18,7 @@ import { RichTextEditor } from './RichTextEditor';
 import { SEOFields } from './SEOFields';
 import { SortableList } from './SortableList';
 import { PreviewModal } from './PreviewModal';
+import { CompletenessIndicator } from './CompletenessIndicator';
 
 interface Project {
   id: string;
@@ -274,7 +275,15 @@ export function ProjectsManager() {
               <CardContent className="pt-4 pb-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-lg truncate">{project.title}</h3>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-lg truncate">{project.title}</h3>
+                      <CompletenessIndicator
+                        hasSeo={!!(project.meta_title && project.meta_description)}
+                        hasImage={!!project.image_url}
+                        hasSlug={!!project.slug}
+                        itemName={project.title}
+                      />
+                    </div>
                     {project.tags.length > 0 && (
                       <div className="flex gap-2 mt-1 flex-wrap">
                         {project.tags.slice(0, 3).map((tag, i) => (
@@ -286,11 +295,21 @@ export function ProjectsManager() {
                     )}
                   </div>
                   <div className="flex gap-2 flex-shrink-0 ml-4">
-                    <Button size="icon" variant="outline" onClick={() => handleEdit(project)}>
-                      <Pencil className="h-4 w-4" />
+                    <Button 
+                      size="icon" 
+                      variant="outline" 
+                      onClick={() => handleEdit(project)}
+                      aria-label={`Editar ${project.title}`}
+                    >
+                      <Pencil className="h-4 w-4" aria-hidden="true" />
                     </Button>
-                    <Button size="icon" variant="destructive" onClick={() => handleDelete(project.id)}>
-                      <Trash2 className="h-4 w-4" />
+                    <Button 
+                      size="icon" 
+                      variant="destructive" 
+                      onClick={() => handleDelete(project.id)}
+                      aria-label={`Excluir ${project.title}`}
+                    >
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
                     </Button>
                   </div>
                 </div>

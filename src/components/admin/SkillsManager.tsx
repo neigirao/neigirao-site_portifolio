@@ -17,6 +17,7 @@ import { ImageUploader } from './ImageUploader';
 import { SEOFields } from './SEOFields';
 import { SortableList } from './SortableList';
 import { PreviewModal } from './PreviewModal';
+import { CompletenessIndicator } from './CompletenessIndicator';
 
 interface Skill {
   id: string;
@@ -248,25 +249,48 @@ export function SkillsManager() {
               <Card className="h-full">
                 <CardContent className="pt-4 pb-4">
                   <div className="flex items-center gap-3">
-                    {skill.logo_url && (
+                    {skill.logo_url ? (
                       <img 
                         src={skill.logo_url} 
-                        alt={skill.name} 
+                        alt={`Logo ${skill.name}`} 
                         className="w-8 h-8 object-contain"
                       />
+                    ) : (
+                      <div className="w-8 h-8 bg-muted rounded flex items-center justify-center" aria-hidden="true">
+                        <span className="text-xs text-muted-foreground">?</span>
+                      </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold truncate">{skill.name}</h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold truncate">{skill.name}</h3>
+                        <CompletenessIndicator
+                          hasSeo={!!(skill.meta_title && skill.meta_description)}
+                          hasImage={!!skill.logo_url}
+                          hasSlug={!!skill.slug}
+                          itemName={skill.name}
+                        />
+                      </div>
                       {skill.category && (
                         <p className="text-sm text-muted-foreground truncate">{skill.category}</p>
                       )}
                     </div>
                     <div className="flex gap-1 flex-shrink-0">
-                      <Button size="icon" variant="ghost" onClick={() => handleEdit(skill)}>
-                        <Pencil className="h-4 w-4" />
+                      <Button 
+                        size="icon" 
+                        variant="ghost" 
+                        onClick={() => handleEdit(skill)}
+                        aria-label={`Editar ${skill.name}`}
+                      >
+                        <Pencil className="h-4 w-4" aria-hidden="true" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="text-destructive" onClick={() => handleDelete(skill.id)}>
-                        <Trash2 className="h-4 w-4" />
+                      <Button 
+                        size="icon" 
+                        variant="ghost" 
+                        className="text-destructive" 
+                        onClick={() => handleDelete(skill.id)}
+                        aria-label={`Excluir ${skill.name}`}
+                      >
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
                       </Button>
                     </div>
                   </div>
