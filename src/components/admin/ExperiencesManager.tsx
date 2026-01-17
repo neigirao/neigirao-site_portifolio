@@ -18,6 +18,7 @@ import { RichTextEditor } from './RichTextEditor';
 import { SEOFields } from './SEOFields';
 import { SortableList } from './SortableList';
 import { PreviewModal } from './PreviewModal';
+import { CompletenessIndicator } from './CompletenessIndicator';
 
 interface Experience {
   id: string;
@@ -275,16 +276,34 @@ export function ExperiencesManager() {
               <CardContent className="pt-4 pb-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-lg truncate">{exp.role}</h3>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-lg truncate">{exp.role}</h3>
+                      <CompletenessIndicator
+                        hasSeo={!!(exp.meta_title && exp.meta_description)}
+                        hasImage={!!exp.logo_url}
+                        hasSlug={!!exp.slug}
+                        itemName={exp.role}
+                      />
+                    </div>
                     <p className="text-muted-foreground truncate">{exp.company}</p>
                     <p className="text-sm text-muted-foreground">{exp.period}</p>
                   </div>
                   <div className="flex gap-2 flex-shrink-0 ml-4">
-                    <Button size="icon" variant="outline" onClick={() => handleEdit(exp)}>
-                      <Pencil className="h-4 w-4" />
+                    <Button 
+                      size="icon" 
+                      variant="outline" 
+                      onClick={() => handleEdit(exp)}
+                      aria-label={`Editar ${exp.role}`}
+                    >
+                      <Pencil className="h-4 w-4" aria-hidden="true" />
                     </Button>
-                    <Button size="icon" variant="destructive" onClick={() => handleDelete(exp.id)}>
-                      <Trash2 className="h-4 w-4" />
+                    <Button 
+                      size="icon" 
+                      variant="destructive" 
+                      onClick={() => handleDelete(exp.id)}
+                      aria-label={`Excluir ${exp.role}`}
+                    >
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
                     </Button>
                   </div>
                 </div>

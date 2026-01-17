@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { SEOFields } from './SEOFields';
 import { SortableList } from './SortableList';
 import { PreviewModal } from './PreviewModal';
+import { CompletenessIndicator } from './CompletenessIndicator';
 
 interface Education {
   id: string;
@@ -264,16 +265,34 @@ export function EducationManager() {
               <CardContent className="pt-4 pb-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-lg truncate">{edu.degree}</h3>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-lg truncate">{edu.degree}</h3>
+                      <CompletenessIndicator
+                        hasSeo={!!(edu.meta_title && edu.meta_description)}
+                        hasImage={true} // Education doesn't have images
+                        hasSlug={!!edu.slug}
+                        itemName={edu.degree}
+                      />
+                    </div>
                     <p className="text-muted-foreground truncate">{edu.institution}</p>
                     <p className="text-sm text-muted-foreground">{edu.period}</p>
                   </div>
                   <div className="flex gap-2 flex-shrink-0 ml-4">
-                    <Button size="icon" variant="outline" onClick={() => handleEdit(edu)}>
-                      <Pencil className="h-4 w-4" />
+                    <Button 
+                      size="icon" 
+                      variant="outline" 
+                      onClick={() => handleEdit(edu)}
+                      aria-label={`Editar ${edu.degree}`}
+                    >
+                      <Pencil className="h-4 w-4" aria-hidden="true" />
                     </Button>
-                    <Button size="icon" variant="destructive" onClick={() => handleDelete(edu.id)}>
-                      <Trash2 className="h-4 w-4" />
+                    <Button 
+                      size="icon" 
+                      variant="destructive" 
+                      onClick={() => handleDelete(edu.id)}
+                      aria-label={`Excluir ${edu.degree}`}
+                    >
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
                     </Button>
                   </div>
                 </div>
