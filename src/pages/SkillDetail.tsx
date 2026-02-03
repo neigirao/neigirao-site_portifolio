@@ -1,12 +1,14 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useSkillDetail, generateSlug } from '@/hooks/usePortfolioDetail';
 import { useExperiences, useProjects } from '@/hooks/usePortfolioData';
+import { useProjectsForSkill, useSeeAlso } from '@/hooks/useRelatedContent';
 import { SEOHead } from '@/components/SEO/SEOHead';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { ArrowLeft, ChevronRight, Briefcase, FolderOpen } from 'lucide-react';
+import SeeAlso from '@/components/SeeAlso';
 
 // Skill descriptions for SEO
 const skillDescriptions: Record<string, string> = {
@@ -67,11 +69,26 @@ export default function SkillDetail() {
     exp.description.toLowerCase().includes(skill.name.toLowerCase())
   ).slice(0, 3);
 
-  // Find related projects
+  // Find related projects using the hook
+  const relatedProjectsFromHook = useProjectsForSkill(skill?.name || '');
+
+  // Also use existing filter for projects
   const relatedProjects = projects.filter(proj => 
     proj.tags?.some(tag => tag.toLowerCase().includes(skill.name.toLowerCase())) ||
     proj.description.toLowerCase().includes(skill.name.toLowerCase())
   ).slice(0, 3);
+
+  // Combine for See Also section
+  const seeAlsoItems = useSeeAlso([
+    ...relatedExperiences.map(exp => ({
+      id: exp.id,
+      slug: exp.slug,
+      title: exp.role,
+      subtitle: `${exp.company} • ${exp.period}`,
+      type: 'experience' as const
+    })),
+    ...relatedProjectsFromHook
+  ], 5);
 
   return (
     <>
@@ -213,6 +230,9 @@ export default function SkillDetail() {
               </div>
             </section>
           )}
+
+          {/* See Also Section */}
+          <SeeAlso items={seeAlsoItems} title="Veja Também" />
 
           {/* CTA */}
           <div className="mt-12 text-center">

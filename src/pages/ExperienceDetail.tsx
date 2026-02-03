@@ -1,10 +1,12 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useExperienceDetail, useRelatedExperiences, generateSlug } from '@/hooks/usePortfolioDetail';
+import { useSkillsForExperience, useSeeAlso } from '@/hooks/useRelatedContent';
 import { SEOHead } from '@/components/SEO/SEOHead';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Building2, Calendar, Briefcase, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Building2, Calendar, Briefcase, ChevronRight, Lightbulb } from 'lucide-react';
+import SeeAlso from '@/components/SeeAlso';
 
 export default function ExperienceDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -14,6 +16,10 @@ export default function ExperienceDetail() {
     experience?.company || '',
     experience?.id || ''
   );
+  
+  // Get related skills based on experience description
+  const relatedSkills = useSkillsForExperience(experience?.description || '');
+  const seeAlsoItems = useSeeAlso(relatedSkills, 4);
 
   if (isLoading) {
     return (
@@ -144,6 +150,28 @@ export default function ExperienceDetail() {
             </CardContent>
           </Card>
 
+          {/* Related Skills - Internal Linking */}
+          {relatedSkills.length > 0 && (
+            <section className="mt-12">
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                <Lightbulb className="w-6 h-6 text-teal-accent" />
+                Habilidades Relacionadas
+              </h2>
+              <div className="flex flex-wrap gap-3">
+                {relatedSkills.map((skill) => (
+                  <Link
+                    key={skill.id}
+                    to={`/skill/${skill.slug || skill.id}`}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-full text-sm font-medium hover:bg-teal-accent/10 hover:text-teal-accent transition-colors"
+                  >
+                    <Lightbulb className="w-4 h-4" />
+                    {skill.title}
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Related Experiences */}
           {relatedExperiences && relatedExperiences.length > 0 && (
             <section className="mt-12">
@@ -169,6 +197,9 @@ export default function ExperienceDetail() {
               </div>
             </section>
           )}
+
+          {/* See Also Section */}
+          <SeeAlso items={seeAlsoItems} title="Veja Também" />
 
           {/* CTA */}
           <div className="mt-12 text-center">

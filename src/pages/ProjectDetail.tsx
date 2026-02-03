@@ -1,11 +1,13 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useProjectDetail, useRelatedProjects, generateSlug } from '@/hooks/usePortfolioDetail';
+import { useSkillsForProject, useExperiencesForProject, useSeeAlso } from '@/hooks/useRelatedContent';
 import { SEOHead } from '@/components/SEO/SEOHead';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OptimizedImage } from '@/components/ui/optimized-image';
-import { ArrowLeft, ExternalLink, Tag, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Tag, ChevronRight, Lightbulb } from 'lucide-react';
+import SeeAlso from '@/components/SeeAlso';
 
 export default function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -15,6 +17,11 @@ export default function ProjectDetail() {
     project?.tags || null,
     project?.id || ''
   );
+
+  // Get related skills and experiences
+  const relatedSkills = useSkillsForProject(project?.tags || null, project?.description || '');
+  const relatedExperiences = useExperiencesForProject(project?.tags || null, project?.description || '');
+  const seeAlsoItems = useSeeAlso([...relatedSkills, ...relatedExperiences], 5);
 
   if (isLoading) {
     return (
@@ -150,6 +157,28 @@ export default function ProjectDetail() {
             </CardContent>
           </Card>
 
+          {/* Related Skills - Internal Linking */}
+          {relatedSkills.length > 0 && (
+            <section className="mb-12">
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <Lightbulb className="w-5 h-5 text-teal-accent" />
+                Habilidades Relacionadas
+              </h2>
+              <div className="flex flex-wrap gap-3">
+                {relatedSkills.map((skill) => (
+                  <Link
+                    key={skill.id}
+                    to={`/skill/${skill.slug || skill.id}`}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-full text-sm font-medium hover:bg-teal-accent/10 hover:text-teal-accent transition-colors"
+                  >
+                    <Lightbulb className="w-4 h-4" />
+                    {skill.title}
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Related Projects */}
           {relatedProjects && relatedProjects.length > 0 && (
             <section className="mt-12">
@@ -174,6 +203,9 @@ export default function ProjectDetail() {
               </div>
             </section>
           )}
+
+          {/* See Also Section */}
+          <SeeAlso items={seeAlsoItems} title="Veja Também" />
 
           {/* CTA */}
           <div className="mt-12 text-center">
