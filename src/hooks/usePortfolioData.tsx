@@ -9,6 +9,7 @@ export interface DbExperience {
   period: string;
   description: string;
   logo_url: string | null;
+  slug: string | null;
   order_index: number;
 }
 
@@ -17,6 +18,7 @@ export interface DbSkill {
   name: string;
   logo_url: string | null;
   category: string | null;
+  slug: string | null;
   order_index: number;
 }
 
@@ -26,6 +28,7 @@ export interface DbEducation {
   degree: string;
   period: string;
   description: string | null;
+  slug: string | null;
   order_index: number;
 }
 
@@ -36,6 +39,7 @@ export interface DbProject {
   image_url: string | null;
   link: string | null;
   tags: string[] | null;
+  slug: string | null;
   order_index: number;
 }
 
