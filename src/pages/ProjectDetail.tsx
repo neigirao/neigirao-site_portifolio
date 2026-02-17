@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useProjectDetail, useRelatedProjects, generateSlug } from '@/hooks/usePortfolioDetail';
 import { useSkillsForProject, useExperiencesForProject, useSeeAlso } from '@/hooks/useRelatedContent';
 import { SEOHead } from '@/components/SEO/SEOHead';
+import { BASE_URL } from '@/config/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -62,7 +63,7 @@ export default function ProjectDetail() {
       <SEOHead
         title={project.meta_title || project.title}
         description={project.meta_description || project.description.slice(0, 160)}
-        canonicalUrl={`https://neigirao.lovable.app/projeto/${canonicalSlug}`}
+        canonicalUrl={`${BASE_URL}/projeto/${canonicalSlug}`}
         ogType="article"
         ogImage={project.image_url || undefined}
         keywords={[

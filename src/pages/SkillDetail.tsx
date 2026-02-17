@@ -3,6 +3,7 @@ import { useSkillDetail, generateSlug } from '@/hooks/usePortfolioDetail';
 import { useExperiences, useProjects } from '@/hooks/usePortfolioData';
 import { useProjectsForSkill, useSeeAlso } from '@/hooks/useRelatedContent';
 import { SEOHead } from '@/components/SEO/SEOHead';
+import { BASE_URL } from '@/config/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -95,7 +96,7 @@ export default function SkillDetail() {
       <SEOHead
         title={skill.meta_title || `${skill.name} - Habilidades`}
         description={description}
-        canonicalUrl={`https://neigirao.lovable.app/skill/${canonicalSlug}`}
+        canonicalUrl={`${BASE_URL}/skill/${canonicalSlug}`}
         ogType="article"
         keywords={[
           skill.name,

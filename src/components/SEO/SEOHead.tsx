@@ -9,6 +9,7 @@
  */
 
 import { Helmet } from "react-helmet-async";
+import { BASE_URL } from "@/config/constants";
 
 interface SEOHeadProps {
   title?: string;
@@ -49,7 +50,7 @@ const defaultMeta = {
 export function SEOHead({
   title = defaultMeta.title,
   description = defaultMeta.description,
-  canonicalUrl = "https://neigirao.lovable.app/",
+  canonicalUrl = `${BASE_URL}/`,
   ogImage = defaultMeta.ogImage,
   ogType = "website",
   keywords = defaultMeta.keywords,

@@ -1,0 +1,10 @@
+export { NavigationBar } from "./NavigationBar";
+export { HeroSection } from "./HeroSection";
+export { AboutSection } from "./AboutSection";
+export { SkillsSection } from "./SkillsSection";
+export { EducationSection } from "./EducationSection";
+export { ExperienceSection } from "./ExperienceSection";
+export { ProjectsSection } from "./ProjectsSection";
+export { FAQSection } from "./FAQSection";
+export { ContactSection } from "./ContactSection";
+export { FooterSection } from "./FooterSection";
