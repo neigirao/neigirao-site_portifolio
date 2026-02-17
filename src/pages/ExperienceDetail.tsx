@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useExperienceDetail, useRelatedExperiences, generateSlug } from '@/hooks/usePortfolioDetail';
 import { useSkillsForExperience, useSeeAlso } from '@/hooks/useRelatedContent';
 import { SEOHead } from '@/components/SEO/SEOHead';
+import { BASE_URL } from '@/config/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -64,7 +65,7 @@ export default function ExperienceDetail() {
       <SEOHead
         title={experience.meta_title || `${experience.role} - ${experience.company}`}
         description={experience.meta_description || experience.description.slice(0, 160)}
-        canonicalUrl={`https://neigirao.lovable.app/experiencia/${canonicalSlug}`}
+        canonicalUrl={`${BASE_URL}/experiencia/${canonicalSlug}`}
         ogType="article"
         keywords={[
           experience.role,

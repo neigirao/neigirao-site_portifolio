@@ -9,12 +9,13 @@
  */
 
 import { useExperiences, useSkills, useEducation } from "@/hooks/usePortfolioData";
+import { BASE_URL } from "@/config/constants";
 
 interface SchemaProps {
   baseUrl?: string;
 }
 
-export function DynamicSchema({ baseUrl = "https://neigirao.lovable.app" }: SchemaProps) {
+export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
   const { experiences } = useExperiences();
   const { skills } = useSkills();
   const { education } = useEducation();
