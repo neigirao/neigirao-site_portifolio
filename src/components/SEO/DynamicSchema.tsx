@@ -6,9 +6,11 @@
  * - FAQPage schema
  * - WebSite schema
  * - BreadcrumbList schema
+ * - ItemList schema para experiências e projetos
+ * - Course schema para educação
  */
 
-import { useExperiences, useSkills, useEducation } from "@/hooks/usePortfolioData";
+import { useExperiences, useSkills, useEducation, useProjects } from "@/hooks/usePortfolioData";
 import { BASE_URL } from "@/config/constants";
 
 interface SchemaProps {
@@ -19,6 +21,7 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
   const { experiences } = useExperiences();
   const { skills } = useSkills();
   const { education } = useEducation();
+  const { projects } = useProjects();
 
   // Build Person schema with dynamic data
   const personSchema = {
@@ -129,6 +132,51 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
     ]
   };
 
+  // Build ItemList schema for Experiences
+  const experienceListSchema = experiences.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Experiências Profissionais de Nei Girão",
+    "description": "Lista de experiências profissionais de Nei Girão como Product Manager",
+    "numberOfItems": experiences.length,
+    "itemListElement": experiences.map((exp, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "name": `${exp.role} - ${exp.company}`,
+      "url": exp.slug ? `${baseUrl}/experiencia/${exp.slug}` : baseUrl
+    }))
+  } : null;
+
+  // Build ItemList schema for Projects
+  const projectListSchema = projects.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Projetos de Nei Girão",
+    "description": "Principais projetos desenvolvidos por Nei Girão como Product Manager",
+    "numberOfItems": projects.length,
+    "itemListElement": projects.map((proj, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "name": proj.title,
+      "url": proj.slug ? `${baseUrl}/projeto/${proj.slug}` : baseUrl
+    }))
+  } : null;
+
+  // Build Course schema for Education entries
+  const courseSchemas = education.map(edu => ({
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": edu.degree,
+    "provider": {
+      "@type": "EducationalOrganization",
+      "name": edu.institution
+    },
+    "description": edu.description?.replace(/<[^>]*>/g, '') || `${edu.degree} cursado em ${edu.institution}`,
+    "temporalCoverage": edu.period,
+    "educationalLevel": "Higher Education",
+    "inLanguage": "pt-BR"
+  }));
+
   return (
     <>
       <script
@@ -147,6 +195,26 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
+      {experienceListSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(experienceListSchema) }}
+        />
+      )}
+      {projectListSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(projectListSchema) }}
+        />
+      )}
+      {courseSchemas.map((schema, i) => (
+        <script
+          key={`course-${i}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
     </>
   );
 }
+

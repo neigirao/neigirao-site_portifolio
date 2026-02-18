@@ -17,6 +17,10 @@ const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const SitemapRedirect = lazy(() => import("./pages/SitemapRedirect"));
 
+// Lazy load - SEO standalone pages
+const Sobre = lazy(() => import("./pages/Sobre"));
+const Contato = lazy(() => import("./pages/Contato"));
+
 // Lazy load - detail pages (SEO pages)
 const ExperienceDetail = lazy(() => import("./pages/ExperienceDetail"));
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
@@ -57,6 +61,10 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/sitemap.xml" element={<SitemapRedirect />} />
               
+              {/* SEO Standalone Pages */}
+              <Route path="/sobre" element={<Sobre />} />
+              <Route path="/contato" element={<Contato />} />
+
               {/* SEO Detail Pages */}
               <Route path="/experiencia/:slug" element={<ExperienceDetail />} />
               <Route path="/projeto/:slug" element={<ProjectDetail />} />
