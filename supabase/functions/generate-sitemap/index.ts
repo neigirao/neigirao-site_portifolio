@@ -119,12 +119,28 @@ serve(async (req) => {
     <priority>1.0</priority>
   </url>
   
+  <!-- Sobre - Dedicated About Page -->
+  <url>
+    <loc>${BASE_URL}/sobre</loc>
+    <lastmod>${mostRecentUpdate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Contato - Dedicated Contact Page -->
+  <url>
+    <loc>${BASE_URL}/contato</loc>
+    <lastmod>${mostRecentUpdate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
   <!-- Sobre / About Section -->
   <url>
     <loc>${BASE_URL}/#about</loc>
     <lastmod>${mostRecentUpdate}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.7</priority>
   </url>
   
   <!-- Skills Section -->
@@ -132,7 +148,7 @@ serve(async (req) => {
     <loc>${BASE_URL}/#skills</loc>
     <lastmod>${skills[0]?.updated_at?.split('T')[0] || mostRecentUpdate}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   
   <!-- Formação / Education Section -->
@@ -140,7 +156,7 @@ serve(async (req) => {
     <loc>${BASE_URL}/#education</loc>
     <lastmod>${educationRes.data?.[0]?.updated_at?.split('T')[0] || mostRecentUpdate}</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.6</priority>
   </url>
   
   <!-- Experiência / Experience Section -->
@@ -148,7 +164,7 @@ serve(async (req) => {
     <loc>${BASE_URL}/#experience</loc>
     <lastmod>${experiences[0]?.updated_at?.split('T')[0] || mostRecentUpdate}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   
   <!-- Projetos / Projects Section -->
@@ -156,7 +172,7 @@ serve(async (req) => {
     <loc>${BASE_URL}/#projects</loc>
     <lastmod>${projects[0]?.updated_at?.split('T')[0] || mostRecentUpdate}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   
   <!-- FAQ Section -->
@@ -164,15 +180,7 @@ serve(async (req) => {
     <loc>${BASE_URL}/#faq</loc>
     <lastmod>${mostRecentUpdate}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <!-- Contato / Contact Section -->
-  <url>
-    <loc>${BASE_URL}/#contact</loc>
-    <lastmod>${mostRecentUpdate}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.6</priority>
   </url>
   
   <!-- CV PDF -->
