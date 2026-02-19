@@ -6,6 +6,7 @@ import { ProjectsManager } from '@/components/admin/ProjectsManager';
 import { SkillsManager } from '@/components/admin/SkillsManager';
 import { EducationManager } from '@/components/admin/EducationManager';
 import { DashboardStats } from '@/components/admin/DashboardStats';
+import { BulkSlugGenerator } from '@/components/admin/BulkSlugGenerator';
 import { useAdminDashboardData } from '@/hooks/useAdminData';
 import { LogOut, RefreshCw, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -31,6 +32,7 @@ export default function AdminDashboard() {
             <p className="text-sm text-muted-foreground">Olá, {user?.email}</p>
           </div>
           <div className="flex items-center gap-2">
+            <BulkSlugGenerator onComplete={refetchAll} />
             <Button 
               onClick={refetchAll} 
               variant="ghost" 
