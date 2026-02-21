@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const SECTION_IDS = ["home", "about", "skills", "education", "experience", "projects", "faq", "contact"];
+const SECTION_IDS = ["home", "about", "skills", "education", "experience", "projects", "methodology", "contact"];
 
 export function useActiveSection() {
   const [activeSection, setActiveSection] = useState("home");
@@ -40,7 +40,7 @@ export function useActiveSection() {
     { id: "education", label: "Formação" },
     { id: "experience", label: "Experiência" },
     { id: "projects", label: "Projetos" },
-    { id: "faq", label: "FAQ" },
+    { id: "methodology", label: "Como Trabalho" },
     { id: "contact", label: "Contato" },
   ];
 

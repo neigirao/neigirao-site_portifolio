@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Menu, Download, Lock } from "lucide-react";
+import { Menu, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface NavigationBarProps {
@@ -68,10 +68,6 @@ export function NavigationBar({
                 <Download className="w-4 h-4 mr-2" />
                 CV
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => navigate("/admin/login")}>
-                <Lock className="w-4 h-4 mr-2" />
-                Admin
-              </Button>
             </div>
 
             {/* Mobile menu */}
@@ -104,17 +100,6 @@ export function NavigationBar({
                   <Button onClick={() => window.open("/cv-nei-girao.pdf", "_blank")} className="mt-4">
                     <Download className="w-4 h-4 mr-2" />
                     Download CV
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      navigate("/admin/login");
-                    }}
-                    className="mt-2"
-                  >
-                    <Lock className="w-4 h-4 mr-2" />
-                    Área Admin
                   </Button>
                 </div>
               </SheetContent>

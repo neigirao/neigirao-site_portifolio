@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, AUTHOR_WHATSAPP } from "@/config/constants";
 import { Linkedin, Mail, MessageCircle } from "lucide-react";
+import { AvailabilityBadge } from "@/components/AvailabilityBadge";
 
 export function FooterSection() {
   return (
@@ -10,9 +11,10 @@ export function FooterSection() {
           {/* Brand */}
           <div>
             <h3 className="font-bold text-foreground mb-3">Nei Girão</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed mb-3">
               Product Manager especializado em Observabilidade e Produtos Digitais. Rio de Janeiro, Brasil.
             </p>
+            <AvailabilityBadge className="!mb-0" />
           </div>
 
           {/* Links */}
@@ -68,7 +70,7 @@ export function FooterSection() {
           <div className="flex gap-4">
             <Link to="/sobre" className="hover:text-foreground transition-colors">Sobre</Link>
             <Link to="/contato" className="hover:text-foreground transition-colors">Contato</Link>
-            <a href="/sitemap.xml" className="hover:text-foreground transition-colors">Sitemap</a>
+            
           </div>
         </div>
       </div>

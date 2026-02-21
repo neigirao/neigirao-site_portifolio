@@ -1,9 +1,17 @@
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, User } from "lucide-react";
+import { AvailabilityBadge } from "@/components/AvailabilityBadge";
 
 interface HeroSectionProps {
   scrollToSection: (id: string) => void;
 }
+
+const COMPANY_LOGOS = [
+  { name: "Icatu Seguros", abbr: "Icatu" },
+  { name: "Oi", abbr: "Oi" },
+  { name: "TIM Brasil", abbr: "TIM" },
+  { name: "Globo.com", abbr: "Globo" },
+];
 
 export function HeroSection({ scrollToSection }: HeroSectionProps) {
   return (
@@ -13,36 +21,59 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
 
       <div className="max-w-7xl mx-auto px-6 py-20 text-center relative">
         <div className="animate-fade-in-up">
-          <div className="inline-block mb-8 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full">
+          {/* Professional Photo */}
+          <div className="mb-8 flex justify-center">
+            <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-primary p-1">
+              <div className="w-full h-full rounded-full bg-card/20 backdrop-blur-sm flex items-center justify-center">
+                <User className="w-16 h-16 md:w-20 md:h-20 text-white/60" />
+              </div>
+            </div>
+          </div>
+
+          {/* Badge - 3 roles */}
+          <div className="inline-block mb-6 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full">
             <span className="text-white/90 text-sm font-semibold tracking-wide uppercase">
-              ⚡ Product Manager | Observabilidade
+              Product Management · Transformação Digital · Dados
             </span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white mb-8 leading-tight tracking-tight">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-4 leading-tight tracking-tight">
             Nei Girão
           </h1>
 
-          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white/90 mb-8 leading-snug">
-            Transformando produtos digitais em <br />
-            <span className="bg-gradient-primary bg-clip-text text-transparent">experiências de sucesso</span>
+          <AvailabilityBadge />
+
+          <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-8 leading-snug">
+            Liderança estratégica em produtos digitais,
+            <br />
+            <span className="bg-gradient-primary bg-clip-text text-transparent">dados e transformação</span>
           </h2>
 
           <p className="text-lg md:text-xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
-            Sou Product Manager e Estrategista de Dados, apaixonado por transformar observabilidade e cultura analítica em produtos digitais de alto impacto.
+            Product Manager e Estrategista de Dados com 15+ anos transformando observabilidade e cultura analítica em produtos digitais de alto impacto.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Button size="lg" onClick={() => scrollToSection("contact")} className="bg-white text-primary hover:bg-white/90 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold">
+            <Button
+              size="lg"
+              onClick={() => scrollToSection("contact")}
+              className="bg-teal-accent text-white hover:bg-teal-accent/90 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold"
+            >
               Entre em Contato
             </Button>
-            <Button size="lg" variant="outline" onClick={() => window.open("/cv-nei-girao.pdf", "_blank")} className="bg-white/10 text-white border-white/30 hover:bg-white/20 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold backdrop-blur-sm">
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => window.open("/cv-nei-girao.pdf", "_blank")}
+              className="bg-white/10 text-white border-white/30 hover:bg-white/20 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold backdrop-blur-sm"
+            >
               <Download className="w-5 h-5 mr-2" />
               Download CV
             </Button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20 max-w-4xl mx-auto">
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-4xl mx-auto">
             {[
               { value: "15+", label: "Anos de Experiência" },
               { value: "35+", label: "Membros Gerenciados" },
@@ -54,6 +85,22 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
                 <div className="text-white/80 text-sm">{stat.label}</div>
               </div>
             ))}
+          </div>
+
+          {/* Company Logos Bar */}
+          <div className="mt-12 max-w-3xl mx-auto">
+            <p className="text-white/50 text-xs uppercase tracking-widest mb-4">Empresas onde atuei</p>
+            <div className="flex items-center justify-center gap-8 flex-wrap">
+              {COMPANY_LOGOS.map((company) => (
+                <span
+                  key={company.name}
+                  className="text-white/40 hover:text-white/70 transition-colors duration-300 text-lg font-bold tracking-wide"
+                  title={company.name}
+                >
+                  {company.abbr}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>
