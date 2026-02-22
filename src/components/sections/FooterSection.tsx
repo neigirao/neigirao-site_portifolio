@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, AUTHOR_WHATSAPP } from "@/config/constants";
 import { Linkedin, Mail, MessageCircle } from "lucide-react";
-import { AvailabilityBadge } from "@/components/AvailabilityBadge";
 
 export function FooterSection() {
   return (
@@ -14,7 +13,6 @@ export function FooterSection() {
             <p className="text-sm text-muted-foreground leading-relaxed mb-3">
               Product Manager especializado em Observabilidade e Produtos Digitais. Rio de Janeiro, Brasil.
             </p>
-            <AvailabilityBadge className="!mb-0" />
           </div>
 
           {/* Links */}

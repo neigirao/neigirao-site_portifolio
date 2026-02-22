@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Download, User } from "lucide-react";
-import { AvailabilityBadge } from "@/components/AvailabilityBadge";
 
 interface HeroSectionProps {
   scrollToSection: (id: string) => void;
@@ -41,7 +40,6 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
             Nei Girão
           </h1>
 
-          <AvailabilityBadge />
 
           <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-8 leading-snug">
             Liderança estratégica em produtos digitais,

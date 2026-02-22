@@ -7,7 +7,6 @@ import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { HomeSEOHead, DynamicSchema } from "@/components/SEO";
 import { ImpactMetrics } from "@/components/ImpactMetrics";
-import { AvailabilityBadge } from "@/components/AvailabilityBadge";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { MessageCircle, ArrowUp } from "lucide-react";
 import { AUTHOR_WHATSAPP } from "@/config/constants";
