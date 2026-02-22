@@ -143,6 +143,59 @@ export function useProjects() {
   };
 }
 
+// Types for new tables
+export interface DbCompany {
+  id: string;
+  name: string;
+  abbr: string;
+  logo_url: string | null;
+  order_index: number;
+}
+
+export interface DbImpactMetric {
+  id: string;
+  value: string;
+  label: string;
+  description: string;
+  icon: string;
+  color: string;
+  order_index: number;
+}
+
+// Hook for companies
+export function useCompanies() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['companies'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('companies')
+        .select('*')
+        .order('order_index', { ascending: true });
+      if (error) throw error;
+      return data as DbCompany[];
+    },
+    ...queryOptions,
+  });
+  return { companies: data || [], isLoading, error: error?.message || null };
+}
+
+// Hook for impact metrics
+export function useImpactMetrics() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['impact-metrics'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('impact_metrics')
+        .select('*')
+        .order('order_index', { ascending: true });
+      if (error) throw error;
+      return data as DbImpactMetric[];
+    },
+    ...queryOptions,
+  });
+  return { metrics: data || [], isLoading, error: error?.message || null };
+}
+
 // Prefetch function for critical data
 export async function prefetchPortfolioData(queryClient: import('@tanstack/react-query').QueryClient) {
   await Promise.all([
