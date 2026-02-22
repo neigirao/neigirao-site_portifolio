@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { MailIcon, LinkedInIcon, PhoneIcon } from "@/components/Icons";
 import { AUTHOR_EMAIL, AUTHOR_LINKEDIN } from "@/config/constants";
-import { AvailabilityBadge } from "@/components/AvailabilityBadge";
 
 export function ContactSection() {
   return (
@@ -13,12 +12,9 @@ export function ContactSection() {
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-white tracking-tight">Vamos Conectar</h2>
           <div className="w-24 h-1 bg-white/80 mx-auto rounded-full mb-6" />
-          <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed font-light mb-6">
-            Disponível para conversas sobre novas oportunidades
+          <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed font-light">
+            Pronto para conversas sobre novos desafios
           </p>
-          <div className="flex justify-center">
-            <AvailabilityBadge />
-          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center max-w-3xl mx-auto">
