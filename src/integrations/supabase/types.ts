@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      companies: {
+        Row: {
+          abbr: string
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          order_index: number
+        }
+        Insert: {
+          abbr: string
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          order_index?: number
+        }
+        Update: {
+          abbr?: string
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          order_index?: number
+        }
+        Relationships: []
+      }
       education: {
         Row: {
           created_at: string
@@ -98,6 +125,42 @@ export type Database = {
           role?: string
           slug?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      impact_metrics: {
+        Row: {
+          color: string
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          label: string
+          order_index: number
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          description: string
+          icon?: string
+          id?: string
+          label: string
+          order_index?: number
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          label?: string
+          order_index?: number
+          updated_at?: string
+          value?: string
         }
         Relationships: []
       }

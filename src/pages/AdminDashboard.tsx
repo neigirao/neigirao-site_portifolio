@@ -5,6 +5,8 @@ import { ExperiencesManager } from '@/components/admin/ExperiencesManager';
 import { ProjectsManager } from '@/components/admin/ProjectsManager';
 import { SkillsManager } from '@/components/admin/SkillsManager';
 import { EducationManager } from '@/components/admin/EducationManager';
+import { MetricsManager } from '@/components/admin/MetricsManager';
+import { CompaniesManager } from '@/components/admin/CompaniesManager';
 import { DashboardStats } from '@/components/admin/DashboardStats';
 import { BulkSlugGenerator } from '@/components/admin/BulkSlugGenerator';
 import { useAdminDashboardData } from '@/hooks/useAdminData';
@@ -70,35 +72,37 @@ export default function AdminDashboard() {
         </section>
 
         <Tabs defaultValue="experiences" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8" aria-label="Gerenciar conteúdo">
-            <TabsTrigger value="experiences" aria-controls="experiences-panel">
-              Experiências
-            </TabsTrigger>
-            <TabsTrigger value="projects" aria-controls="projects-panel">
-              Projetos
-            </TabsTrigger>
-            <TabsTrigger value="skills" aria-controls="skills-panel">
-              Skills
-            </TabsTrigger>
-            <TabsTrigger value="education" aria-controls="education-panel">
-              Educação
-            </TabsTrigger>
+          <TabsList className="grid w-full grid-cols-6 mb-8" aria-label="Gerenciar conteúdo">
+            <TabsTrigger value="experiences">Experiências</TabsTrigger>
+            <TabsTrigger value="projects">Projetos</TabsTrigger>
+            <TabsTrigger value="skills">Skills</TabsTrigger>
+            <TabsTrigger value="education">Educação</TabsTrigger>
+            <TabsTrigger value="metrics">Métricas</TabsTrigger>
+            <TabsTrigger value="companies">Empresas</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="experiences" id="experiences-panel" role="tabpanel">
+          <TabsContent value="experiences">
             <ExperiencesManager />
           </TabsContent>
           
-          <TabsContent value="projects" id="projects-panel" role="tabpanel">
+          <TabsContent value="projects">
             <ProjectsManager />
           </TabsContent>
           
-          <TabsContent value="skills" id="skills-panel" role="tabpanel">
+          <TabsContent value="skills">
             <SkillsManager />
           </TabsContent>
           
-          <TabsContent value="education" id="education-panel" role="tabpanel">
+          <TabsContent value="education">
             <EducationManager />
+          </TabsContent>
+
+          <TabsContent value="metrics">
+            <MetricsManager />
+          </TabsContent>
+
+          <TabsContent value="companies">
+            <CompaniesManager />
           </TabsContent>
         </Tabs>
       </main>

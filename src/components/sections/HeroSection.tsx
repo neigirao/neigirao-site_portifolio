@@ -1,18 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Download, User } from "lucide-react";
+import { useCompanies } from "@/hooks/usePortfolioData";
 
 interface HeroSectionProps {
   scrollToSection: (id: string) => void;
 }
 
-const COMPANY_LOGOS = [
-  { name: "Icatu Seguros", abbr: "Icatu" },
-  { name: "Oi", abbr: "Oi" },
-  { name: "TIM Brasil", abbr: "TIM" },
-  { name: "Globo.com", abbr: "Globo" },
-];
-
 export function HeroSection({ scrollToSection }: HeroSectionProps) {
+  const { companies } = useCompanies();
+
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-hero pt-20 relative overflow-hidden">
       <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse" />
@@ -39,7 +35,6 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-4 leading-tight tracking-tight">
             Nei Girão
           </h1>
-
 
           <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-8 leading-snug">
             Liderança estratégica em produtos digitais,
@@ -89,13 +84,17 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
           <div className="mt-12 max-w-3xl mx-auto">
             <p className="text-white/50 text-xs uppercase tracking-widest mb-4">Empresas onde atuei</p>
             <div className="flex items-center justify-center gap-8 flex-wrap">
-              {COMPANY_LOGOS.map((company) => (
+              {companies.map((company) => (
                 <span
-                  key={company.name}
-                  className="text-white/40 hover:text-white/70 transition-colors duration-300 text-lg font-bold tracking-wide"
+                  key={company.id}
+                  className="flex items-center gap-2 text-white/40 hover:text-white/70 transition-colors duration-300"
                   title={company.name}
                 >
-                  {company.abbr}
+                  {company.logo_url ? (
+                    <img src={company.logo_url} alt={company.name} className="h-8 w-auto object-contain brightness-0 invert opacity-50 hover:opacity-80 transition-opacity" />
+                  ) : (
+                    <span className="text-lg font-bold tracking-wide">{company.abbr}</span>
+                  )}
                 </span>
               ))}
             </div>

@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { ArrowLeft, ExternalLink, Tag, ChevronRight, Lightbulb } from 'lucide-react';
 import SeeAlso from '@/components/SeeAlso';
+import { SafeHTML } from '@/components/admin/SafeHTML';
 
 export default function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -140,9 +141,10 @@ export default function ProjectDetail() {
           <Card className="shadow-elegant border-2 border-border/50 mb-8">
             <CardContent className="p-8 md:p-12">
               <h2 className="text-xl font-semibold mb-4">Sobre o Projeto</h2>
-              <p className="text-muted-foreground leading-relaxed text-lg">
-                {project.description}
-              </p>
+              <SafeHTML
+                html={project.description}
+                className="text-muted-foreground leading-relaxed text-lg prose prose-lg max-w-none"
+              />
 
               {project.link && (
                 <div className="mt-8 pt-6 border-t border-border">
