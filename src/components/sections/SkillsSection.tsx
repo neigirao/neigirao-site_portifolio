@@ -12,7 +12,7 @@ export function SkillsSection({ skills, isLoading }: SkillsSectionProps) {
   const { ref, isVisible } = useScrollAnimation();
 
   return (
-    <section id="skills" className="py-24 bg-muted/30">
+    <section id="skills" className="py-16 bg-muted/30">
       <div className="max-w-7xl mx-auto px-6" ref={ref}>
         <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Habilidades</h2>

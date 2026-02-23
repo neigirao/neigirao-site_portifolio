@@ -60,12 +60,11 @@ const Index = () => {
         <ErrorBoundary>
           <HeroSection scrollToSection={scrollToSection} />
           <ImpactMetrics />
-          <AboutSection />
-          <SkillsSection skills={skills} isLoading={loadingSkills} />
-          <EducationSection education={education} isLoading={loadingEducation} />
           <ExperienceSection experiences={experiences} isLoading={loadingExperiences} />
           <ProjectsSection projects={projects} isLoading={loadingProjects} />
+          <SkillsSection skills={skills} isLoading={loadingSkills} />
           <FAQSection />
+          <AboutSection education={education} isLoading={loadingEducation} />
           <ContactSection />
           <FooterSection />
         </ErrorBoundary>

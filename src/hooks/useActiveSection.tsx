@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const SECTION_IDS = ["home", "about", "skills", "education", "experience", "projects", "methodology", "contact"];
+const SECTION_IDS = ["home", "experience", "projects", "skills", "about", "contact"];
 
 export function useActiveSection() {
   const [activeSection, setActiveSection] = useState("home");
@@ -35,12 +35,10 @@ export function useActiveSection() {
 
   const menuItems = [
     { id: "home", label: "Início" },
-    { id: "about", label: "Resumo" },
-    { id: "skills", label: "Skills" },
-    { id: "education", label: "Formação" },
     { id: "experience", label: "Experiência" },
     { id: "projects", label: "Projetos" },
-    { id: "methodology", label: "Como Trabalho" },
+    { id: "skills", label: "Skills" },
+    { id: "about", label: "Sobre" },
     { id: "contact", label: "Contato" },
   ];
 
