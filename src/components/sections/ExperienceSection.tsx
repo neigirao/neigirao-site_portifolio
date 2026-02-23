@@ -13,7 +13,7 @@ export function ExperienceSection({ experiences, isLoading }: ExperienceSectionP
   const { ref, isVisible } = useScrollAnimation();
 
   return (
-    <section id="experience" className="py-24 bg-muted/30 relative overflow-hidden">
+    <section id="experience" className="py-16 bg-muted/30 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-primary opacity-5 blur-3xl rounded-full pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-accent/10 opacity-5 blur-3xl rounded-full pointer-events-none" />
 

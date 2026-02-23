@@ -1,10 +1,9 @@
 /**
  * ImpactMetrics - Seção de Resultados Quantificáveis
- * Busca dados da tabela impact_metrics via hook.
+ * Fundo escuro/gradiente para destaque visual.
  */
 
 import { TrendingUp, Users, Star, Target, Award, Zap, BarChart, CheckCircle, Globe, Rocket, LucideIcon } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import { useImpactMetrics } from "@/hooks/usePortfolioData";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -17,10 +16,10 @@ export const ImpactMetrics = () => {
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-gradient-to-b from-muted/50 to-background">
+      <section className="py-16 bg-gradient-hero">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1,2,3,4].map(i => <Skeleton key={i} className="h-40 rounded-xl" />)}
+            {[1,2,3,4].map(i => <Skeleton key={i} className="h-40 rounded-xl bg-white/10" />)}
           </div>
         </div>
       </section>
@@ -30,17 +29,20 @@ export const ImpactMetrics = () => {
   if (!metrics.length) return null;
 
   return (
-    <section className="py-16 bg-gradient-to-b from-muted/50 to-background">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-12 animate-fade-in">
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full bg-accent/10 border border-accent/20">
-            <Award className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium text-accent">Resultados Comprovados</span>
+    <section className="py-16 bg-gradient-hero relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-72 h-72 bg-teal-accent/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
+      
+      <div className="max-w-7xl mx-auto px-6 relative">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full bg-white/10 border border-white/20">
+            <Award className="w-4 h-4 text-teal-accent" />
+            <span className="text-sm font-medium text-white/90">Resultados Comprovados</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-3 text-foreground">
+          <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
             Impacto Mensurável
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-white/70 max-w-2xl mx-auto">
             Resultados concretos que demonstram capacidade de entrega e liderança
           </p>
         </div>
@@ -49,29 +51,25 @@ export const ImpactMetrics = () => {
           {metrics.map((metric, index) => {
             const IconComponent = ICON_MAP[metric.icon] || Star;
             return (
-              <Card
+              <div
                 key={metric.id}
-                className="group relative overflow-hidden border-2 border-border/50 hover:border-accent/50 
-                  transition-all duration-300 hover:shadow-elegant hover:-translate-y-1"
+                className="group relative p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 
+                  hover:bg-white/15 hover:border-white/30 transition-all duration-300 hover:-translate-y-1"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <CardContent className="p-6">
-                  <div className={`${metric.color} mb-4 transition-transform duration-300 group-hover:scale-110`}>
-                    <IconComponent className="w-6 h-6" />
-                  </div>
-                  <div className="text-3xl md:text-4xl font-bold text-foreground mb-1">
-                    {metric.value}
-                  </div>
-                  <div className="text-lg font-semibold text-foreground mb-2">
-                    {metric.label}
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {metric.description}
-                  </p>
-                  <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-gradient-primary opacity-5 
-                    rounded-full blur-2xl group-hover:opacity-10 transition-opacity duration-300" />
-                </CardContent>
-              </Card>
+                <div className="text-teal-accent mb-4 transition-transform duration-300 group-hover:scale-110">
+                  <IconComponent className="w-7 h-7" />
+                </div>
+                <div className="text-4xl md:text-5xl font-extrabold text-white mb-2">
+                  {metric.value}
+                </div>
+                <div className="text-lg font-semibold text-white/90 mb-2">
+                  {metric.label}
+                </div>
+                <p className="text-sm text-white/60 leading-relaxed">
+                  {metric.description}
+                </p>
+              </div>
             );
           })}
         </div>
