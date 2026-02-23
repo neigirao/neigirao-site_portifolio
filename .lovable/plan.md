@@ -1,112 +1,176 @@
 
-## Plano: CMS Completo para Logos, Metricas e Projetos
 
-### Contexto Atual
-
-- **Skills**: 6 de 10 skills nao tem logo (Product Management, Observabilidade, Agile/Scrum, Data Analysis, Digital Products, Strategy). As 4 que tem usam SVGs locais (`/src/assets/`), que nao funcionam em producao.
-- **Empresas no Hero**: Sao texto hardcoded ("Icatu", "Oi", "TIM", "Globo") - sem logos reais.
-- **Experiencias**: Nenhuma tem `logo_url` preenchido no banco.
-- **Metricas de Impacto**: Hardcoded em `ImpactMetrics.tsx` - nao editaveis pelo CMS.
-- **Projetos**: Ja podem ser criados/editados pelo CMS, mas a pagina de detalhe (`ProjectDetail.tsx`) renderiza `description` como texto puro em vez de HTML rico.
+# Avaliacao do Portfolio: 3 Perspectivas Profissionais
 
 ---
 
-### 1. Criar tabela `impact_metrics` no banco
+## 1. Designer Senior - Avaliacao Visual
 
-Nova tabela para armazenar as metricas de impacto editaveis pelo CMS:
+### Pontos Positivos
+- Paleta de cores coesa (navy, teal, branco) transmite profissionalismo
+- Gradientes bem aplicados no Hero e na secao de Contato
+- Tipografia hierarquica clara com pesos bem definidos
+- Animacoes de scroll sutis e elegantes
+- Skill cards com icones em fundo gradiente sao visualmente fortes
 
-- `id` (uuid, PK)
-- `value` (text) - ex: "+40%", "35+", "1.5 -> 4.5"
-- `label` (text) - ex: "Reducao Custos"
-- `description` (text) - ex: "Icatu - Otimizacao de infraestrutura"
-- `icon` (text) - nome do icone Lucide (TrendingUp, Users, Star, Target)
-- `color` (text) - classe CSS de cor (text-yellow-500, text-emerald-500)
-- `order_index` (integer, default 0)
-- `created_at`, `updated_at` (timestamps)
+### Problemas Criticos
 
-RLS: SELECT publico, ALL para admins.
+**A. Placeholder generico no Hero**
+O icone de usuario generico destroi a credibilidade imediata. E a primeira coisa que o visitante ve. Para um profissional senior, isso transmite "inacabado".
 
-Migrar os 4 valores hardcoded atuais como dados iniciais.
+**B. Monotonia visual entre secoes**
+Todas as secoes seguem o mesmo padrao: titulo centralizado + linha gradiente + subtitulo + card/grid. Nao ha variacao de layout. Resumo, Formacao e Experiencia sao praticamente identicos visualmente (card branco grande centralizado). Isso cria fadiga visual.
 
-### 2. Criar tabela `companies` no banco
+**C. Contraste no modo claro do Hero**
+O Hero mantem fundo escuro (gradient-hero) mesmo no modo claro, criando uma desconexao abrupta com o restante da pagina que fica clara. A transicao e chocante.
 
-Nova tabela para as empresas que aparecem no Hero:
+**D. Secao "Impacto Mensuravel" sem destaque**
+As metricas de impacto sao o conteudo mais poderoso para convencer recrutadores, mas estao em cards simples sem diferenciacao visual. Deveriam ter mais destaque.
 
-- `id` (uuid, PK)
-- `name` (text) - nome completo
-- `abbr` (text) - abreviacao
-- `logo_url` (text, nullable) - URL da logo
-- `order_index` (integer, default 0)
-- `created_at` (timestamp)
+**E. Empresas sem logos**
+"Icatu / Oi / TIM / Globo" como texto simples na barra de social proof do Hero nao transmite autoridade. Logos reais sao essenciais.
 
-RLS: SELECT publico, ALL para admins.
-
-Migrar os 4 valores atuais (Icatu, Oi, TIM, Globo) como dados iniciais.
-
-### 3. Componente CMS: MetricsManager
-
-Novo arquivo `src/components/admin/MetricsManager.tsx`:
-
-- Formulario com campos: value, label, description, icon (select com opcoes de icones Lucide), color (select com cores pre-definidas)
-- Lista com drag-and-drop (SortableList)
-- CRUD completo na tabela `impact_metrics`
-
-### 4. Componente CMS: CompaniesManager
-
-Novo arquivo `src/components/admin/CompaniesManager.tsx`:
-
-- Formulario com campos: name, abbr, logo_url (ImageUploader)
-- Lista com drag-and-drop
-- CRUD completo na tabela `companies`
-
-### 5. Atualizar AdminDashboard
-
-- Adicionar 2 novas tabs: "Metricas" e "Empresas"
-- Grid de tabs passa de 4 para 6 colunas
-
-### 6. Atualizar ImpactMetrics.tsx
-
-- Buscar dados da tabela `impact_metrics` em vez de hardcoded
-- Mapear o campo `icon` (string) para componentes Lucide
-- Manter layout e animacoes atuais
-
-### 7. Atualizar HeroSection.tsx
-
-- Buscar empresas da tabela `companies`
-- Renderizar logos reais quando `logo_url` existir, fallback para texto `abbr`
-- Receber dados como props do Index.tsx
-
-### 8. Corrigir logo_url das Skills
-
-- As 4 skills com logo apontam para `/src/assets/` (caminho local que nao funciona em build)
-- Atualizar no banco para URLs publicas corretas (upload via CMS ou CDN logos)
-- O CMS de Skills ja suporta ImageUploader para logo - basta o usuario fazer upload
-
-### 9. Atualizar ProjectDetail.tsx para HTML rico
-
-- A descricao dos projetos ja e editada com RichTextEditor no CMS
-- Mas `ProjectDetail.tsx` renderiza como texto puro (`<p>{project.description}</p>`)
-- Substituir por `SafeHTML` para renderizar HTML do editor rico
-- Usar DOMPurify (ja instalado) para sanitizar
-
-### 10. Atualizar Index.tsx
-
-- Passar dados de `companies` e `impact_metrics` para os componentes
-- Criar hooks `useCompanies()` e `useImpactMetrics()` em `usePortfolioData.tsx`
+**F. Excesso de padding vertical**
+`py-24` em todas as secoes cria espacos em branco excessivos, alongando a pagina desnecessariamente. O scroll se torna cansativo.
 
 ---
 
-### Resumo de Arquivos
+## 2. UX Designer - Avaliacao de Experiencia
 
-| Arquivo | Acao |
-|---------|------|
-| Migracao SQL | Criar tabelas `impact_metrics` e `companies`, inserir dados iniciais |
-| `src/components/admin/MetricsManager.tsx` | Novo - CMS para metricas |
-| `src/components/admin/CompaniesManager.tsx` | Novo - CMS para empresas |
-| `src/pages/AdminDashboard.tsx` | Adicionar tabs Metricas e Empresas |
-| `src/hooks/usePortfolioData.tsx` | Adicionar hooks `useCompanies` e `useImpactMetrics` |
-| `src/hooks/useAdminData.tsx` | Adicionar `useAdminMetrics` e `useAdminCompanies` |
-| `src/components/ImpactMetrics.tsx` | Buscar dados do banco em vez de hardcoded |
-| `src/components/sections/HeroSection.tsx` | Buscar empresas do banco, renderizar logos |
-| `src/pages/Index.tsx` | Conectar novos hooks aos componentes |
-| `src/pages/ProjectDetail.tsx` | Renderizar descricao como HTML rico com SafeHTML |
+### Pontos Positivos
+- Navegacao fixa com progresso de scroll e boa
+- Menu items claros e indicador de secao ativa
+- WhatsApp floating CTA bem posicionado
+- Back-to-top button funcional
+- Cards de skill sao clicaveis com feedback visual
+
+### Problemas Criticos
+
+**A. Hierarquia de informacao invertida**
+A ordem atual: Hero > Metricas > Resumo > Skills > Formacao > Experiencia > Projetos > Metodologia > Contato.
+
+Problemas:
+- "Resumo Profissional" e um bloco de texto longo logo apos o Hero. Poucos leitores vao ler. Deveria ser mais conciso ou integrado ao Hero.
+- "Formacao Academica" aparece antes de "Experiencia Profissional". Para um profissional com 15+ anos, a experiencia e mais relevante que a formacao.
+- "Projetos" aparece depois de "Experiencia". Deveria estar mais proximo do topo, pois mostra resultados tangives.
+
+**B. Sobrecarga de itens no menu**
+8 itens de navegacao (Inicio, Resumo, Skills, Formacao, Experiencia, Projetos, Como Trabalho, Contato) e muito. Idealmente 5-6. "Resumo" poderia ser parte do "Sobre" e "Formacao" parte de "Experiencia".
+
+**C. Badge de roles no Hero pouco legivel**
+"PRODUCT MANAGEMENT . TRANSFORMACAO DIGITAL . DADOS" em uppercase, font-size pequena, dentro de um pill semi-transparente e dificil de ler rapidamente.
+
+**D. Duplicacao de conteudo**
+O texto "Resumo Profissional" repete informacoes que ja estao no Hero (nome, anos de experiencia, empresas). As empresas aparecem 3 vezes: Hero stats, Hero company bar, e no texto do Resumo.
+
+**E. CTA principal mal posicionado no mobile**
+No mobile, o botao "Entre em Contato" e o WhatsApp floating ficam sobrepostos ou muito proximos. O floating CTA de WhatsApp compete com o botao do Hero.
+
+**F. Cards de experiencia sem logo da empresa**
+Cada item de experiencia mostra apenas texto para a empresa. Uma logo pequena ao lado do nome da empresa aumentaria o scanning visual.
+
+---
+
+## 3. Headhunter / Recrutador - Avaliacao de Conteudo
+
+### Pontos Positivos
+- Metricas quantificaveis presentes (15+ anos, 35+ membros, 6+ produtos)
+- Timeline de experiencia com resultados concretos
+- Ferramentas listadas (Dynatrace, Grafana, etc.)
+- CV para download facilmente acessivel
+- Links diretos para contato (email, LinkedIn, telefone)
+
+### Problemas Criticos
+
+**A. Proposta de valor generica**
+"Product Manager e Estrategista de Dados com 15+ anos transformando observabilidade e cultura analitica em produtos digitais de alto impacto" tenta cobrir muita coisa. Um headhunter quer entender em 3 segundos: o que essa pessoa faz de diferente?
+
+Sugestao: Focar em UM diferencial claro. Exemplo: "O unico PM que une Observabilidade + Produto Digital para reduzir custos de infra em 40%"
+
+**B. Falta de resultados com numeros nos projetos**
+Os cards de projetos mostram descricoes mas nao destacam metricas. Um recrutador quer ver: "Reducao de 40% em custos", "Aumento de 15% em conversao" nos cards, nao enterrado no texto.
+
+**C. Inconsistencia de anos**
+O Hero diz "15+ anos de experiencia" mas o Resumo diz "mais de 7 anos". Qual e o correto? Isso levanta duvidas de credibilidade.
+
+**D. Certificacoes ausentes**
+Para um profissional de Product Management e Observabilidade, faltam certificacoes visiveis (CSM, CSPO, Dynatrace Certified, etc.). Headhunters buscam por certificacoes como filtro.
+
+**E. Nao ha depoimentos / recomendacoes**
+Social proof de colegas, gestores ou clientes e extremamente valioso. Mesmo 2-3 quotes de LinkedIn fariam diferenca significativa.
+
+**F. Idioma inconsistente**
+Titulos de skills em ingles (Product Management, Agile/Scrum, Data Analysis, Digital Products, Strategy) misturados com conteudo em portugues. Para o mercado brasileiro, padronizar. Para o internacional, ter versao em ingles.
+
+---
+
+## Plano de Melhorias Proposto
+
+### Prioridade Alta (Impacto imediato na conversao)
+
+1. **Corrigir inconsistencia de anos** - Alinhar "15+ anos" do Hero com "7 anos" do Resumo. Verificar e padronizar.
+
+2. **Reorganizar hierarquia de secoes** - Nova ordem sugerida:
+```text
+Hero
+  > Metricas de Impacto (manter)
+  > Experiencia Profissional (subir)
+  > Projetos (subir)
+  > Skills
+  > Como Trabalho
+  > Formacao
+  > Contato
+```
+Remover "Resumo Profissional" como secao separada e integrar o conteudo relevante ao Hero ou a uma subsecao do About.
+
+3. **Reduzir itens de navegacao** - De 8 para 6:
+```text
+Inicio | Experiencia | Projetos | Skills | Sobre | Contato
+```
+Mover "Formacao" para dentro de "Sobre". "Como Trabalho" para dentro de "Sobre" ou remover.
+
+4. **Adicionar metricas nos ProjectCards** - Exibir 1-2 numeros de resultado diretamente no card (ex: "-40% custos", "+15% conversao").
+
+5. **Destacar secao de Metricas** - Usar fundo escuro/gradiente para contrastar com as secoes adjacentes. Aumentar tamanho dos numeros. Adicionar animacao de contagem.
+
+### Prioridade Media (Polimento visual)
+
+6. **Variar layouts entre secoes** - Alternar entre:
+   - Layout de 2 colunas (texto + visual) para Resumo/About
+   - Grid para Skills e Projetos
+   - Timeline para Experiencia
+   - Cards horizontais para Formacao
+
+7. **Reduzir padding vertical** - De `py-24` para `py-16` na maioria das secoes. Manter `py-24` apenas no Hero e Contato.
+
+8. **Melhorar badge do Hero** - Trocar o pill por tags separadas com icones, ou usar font-size maior com case normal.
+
+9. **Adicionar secao de Certificacoes** - Badges visuais com logos das certificacoes entre Skills e Formacao.
+
+10. **Adicionar secao de Depoimentos** - 2-3 quotes de colegas/gestores do LinkedIn com foto e cargo.
+
+### Prioridade Baixa (Nice to have)
+
+11. **Versao bilíngue** - Toggle PT/EN para ampliar alcance internacional.
+
+12. **Animacao de contagem** - Numeros do Hero e das Metricas com efeito count-up ao aparecer na tela.
+
+13. **Melhorar transicao Hero modo claro** - Adaptar o Hero para funcionar visualmente em ambos os temas, ou manter Hero sempre escuro com transicao suave.
+
+---
+
+### Resumo Tecnico de Arquivos Afetados
+
+| Mudanca | Arquivos |
+|---------|----------|
+| Reorganizar secoes | `Index.tsx`, `useActiveSection.tsx` |
+| Reduzir nav items | `useActiveSection.tsx`, `NavigationBar.tsx` |
+| Integrar Resumo ao Hero | `HeroSection.tsx`, remover `AboutSection.tsx` |
+| Metricas nos ProjectCards | `ProjectCard.tsx` |
+| Destacar ImpactMetrics | `ImpactMetrics.tsx`, `index.css` |
+| Reduzir padding | Todas as sections (`*Section.tsx`) |
+| Secao Certificacoes | Novo componente + tabela no banco |
+| Secao Depoimentos | Novo componente + tabela no banco |
+| Corrigir texto anos | `AboutSection.tsx` |
+| Variar layouts | `AboutSection.tsx`, `EducationSection.tsx` |
+
