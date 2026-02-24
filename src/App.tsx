@@ -16,6 +16,8 @@ import NotFound from "./pages/NotFound";
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const SitemapRedirect = lazy(() => import("./pages/SitemapRedirect"));
+const LlmsTxtRedirect = lazy(() => import("./pages/LlmsTxtRedirect"));
+const AboutTxtRedirect = lazy(() => import("./pages/AboutTxtRedirect"));
 
 // Lazy load - SEO standalone pages
 const Sobre = lazy(() => import("./pages/Sobre"));
@@ -60,6 +62,8 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/sitemap.xml" element={<SitemapRedirect />} />
+              <Route path="/llms.txt" element={<LlmsTxtRedirect />} />
+              <Route path="/about.txt" element={<AboutTxtRedirect />} />
               
               {/* SEO Standalone Pages */}
               <Route path="/sobre" element={<Sobre />} />

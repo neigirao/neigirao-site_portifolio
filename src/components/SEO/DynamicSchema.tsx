@@ -70,17 +70,14 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
     }
   };
 
-  // Build BreadcrumbList schema
+  // Build BreadcrumbList schema (only real indexable URLs)
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": `${baseUrl}/` },
-      { "@type": "ListItem", "position": 2, "name": "Resumo", "item": `${baseUrl}/#about` },
-      { "@type": "ListItem", "position": 3, "name": "Skills", "item": `${baseUrl}/#skills` },
-      { "@type": "ListItem", "position": 4, "name": "Experiência", "item": `${baseUrl}/#experience` },
-      { "@type": "ListItem", "position": 5, "name": "Projetos", "item": `${baseUrl}/#projects` },
-      { "@type": "ListItem", "position": 6, "name": "Contato", "item": `${baseUrl}/#contact` }
+      { "@type": "ListItem", "position": 2, "name": "Sobre", "item": `${baseUrl}/sobre` },
+      { "@type": "ListItem", "position": 3, "name": "Contato", "item": `${baseUrl}/contato` }
     ]
   };
 

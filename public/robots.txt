@@ -77,3 +77,6 @@ Sitemap: https://neigirao.lovable.app/sitemap.xml
 
 # LLMs.txt para contexto de IA
 # https://neigirao.lovable.app/llms.txt
+
+# About.txt para currículo completo
+# https://neigirao.lovable.app/about.txt

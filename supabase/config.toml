@@ -5,3 +5,9 @@ verify_jwt = false
 
 [functions.generate-llms]
 verify_jwt = false
+
+[functions.generate-about]
+verify_jwt = false
+
+[functions.generate-prerender]
+verify_jwt = false

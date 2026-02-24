@@ -88,6 +88,10 @@ export function SEOHead({
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
 
+      {/* Hreflang */}
+      <link rel="alternate" hrefLang="pt-BR" href={canonicalUrl} />
+      <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
+
       {/* Additional SEO tags */}
       <meta name="theme-color" content="#1e3a5f" />
       <meta name="format-detection" content="telephone=no" />
