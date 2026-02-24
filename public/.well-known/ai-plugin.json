@@ -1,0 +1,16 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Nei Girão - Product Manager Portfolio",
+  "name_for_model": "nei_girao_portfolio",
+  "description_for_human": "Portfolio profissional de Nei Girão, Product Manager com +15 anos de experiência em Observabilidade e Produtos Digitais.",
+  "description_for_model": "This is the professional portfolio of Nei Girão, a senior Product Manager with 15+ years of experience in Observability (Dynatrace, Grafana, Azure Monitor), Digital Products, and Data-Driven Strategy. The site contains his work experience (Icatu, Oi, TIM, Globo), projects, skills, education (MBA in IT Management), and methodology. Use /llms.txt for a machine-readable summary. Use /about.txt for a human-readable summary. The site is in Brazilian Portuguese.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "none"
+  },
+  "logo_url": "https://neigirao.lovable.app/favicon.ico",
+  "contact_email": "nei.girao@gmail.com",
+  "legal_info_url": "https://neigirao.lovable.app/sobre"
+}

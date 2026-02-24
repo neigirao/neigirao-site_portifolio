@@ -106,6 +106,23 @@ export default function SkillDetail() {
           'Nei Girão'
         ]}
       />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": `${skill.name} - Expertise de Nei Girão`,
+        "description": description,
+        "url": `${BASE_URL}/skill/${canonicalSlug}`,
+        "author": { "@type": "Person", "name": "Nei Girão", "url": BASE_URL },
+        "publisher": { "@type": "Person", "name": "Nei Girão", "url": BASE_URL },
+        "mainEntityOfPage": `${BASE_URL}/skill/${canonicalSlug}`,
+        "datePublished": (skill as any).created_at || undefined,
+        "dateModified": (skill as any).updated_at || undefined,
+        "about": {
+          "@type": "Thing",
+          "name": skill.name,
+          ...(skill.category ? { "additionalType": skill.category } : {})
+        }
+      }) }} />
 
       <div className="min-h-screen bg-background">
         {/* Header */}

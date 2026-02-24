@@ -75,6 +75,19 @@ export default function ProjectDetail() {
           'Nei Girão'
         ]}
       />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        "name": project.title,
+        "description": project.meta_description || project.description.slice(0, 160),
+        "url": `${BASE_URL}/projeto/${canonicalSlug}`,
+        "author": { "@type": "Person", "name": "Nei Girão", "url": BASE_URL },
+        "datePublished": (project as any).created_at || undefined,
+        "dateModified": (project as any).updated_at || undefined,
+        ...(project.image_url ? { "image": project.image_url } : {}),
+        ...(project.link ? { "mainEntityOfPage": project.link } : {}),
+        ...(project.tags ? { "keywords": project.tags.join(", ") } : {})
+      }) }} />
 
       <div className="min-h-screen bg-background">
         {/* Header */}
