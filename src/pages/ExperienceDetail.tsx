@@ -75,6 +75,29 @@ export default function ExperienceDetail() {
           'Nei Girão'
         ]}
       />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": `${experience.role} na ${experience.company}`,
+        "description": experience.meta_description || experience.description.slice(0, 160),
+        "url": `${BASE_URL}/experiencia/${canonicalSlug}`,
+        "author": { "@type": "Person", "name": "Nei Girão", "url": BASE_URL },
+        "publisher": { "@type": "Person", "name": "Nei Girão", "url": BASE_URL },
+        "mainEntityOfPage": `${BASE_URL}/experiencia/${canonicalSlug}`,
+        "datePublished": (experience as any).created_at || undefined,
+        "dateModified": (experience as any).updated_at || undefined,
+        "about": {
+          "@type": "OrganizationRole",
+          "roleName": experience.role,
+          "startDate": experience.period.split(' - ')[0],
+          "namedPosition": experience.role
+        },
+        "mentions": {
+          "@type": "Organization",
+          "name": experience.company,
+          ...(experience.logo_url ? { "logo": experience.logo_url } : {})
+        }
+      }) }} />
 
       <div className="min-h-screen bg-background">
         {/* Header */}
