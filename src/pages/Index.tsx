@@ -18,6 +18,8 @@ import {
   EducationSection,
   ExperienceSection,
   ProjectsSection,
+  CertificationsSection,
+  TestimonialsSection,
   FAQSection,
   ContactSection,
   FooterSection,
@@ -63,6 +65,8 @@ const Index = () => {
           <ExperienceSection experiences={experiences} isLoading={loadingExperiences} />
           <ProjectsSection projects={projects} isLoading={loadingProjects} />
           <SkillsSection skills={skills} isLoading={loadingSkills} />
+          <CertificationsSection />
+          <TestimonialsSection />
           <FAQSection />
           <AboutSection education={education} isLoading={loadingEducation} />
           <ContactSection />

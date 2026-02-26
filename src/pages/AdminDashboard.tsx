@@ -7,6 +7,8 @@ import { SkillsManager } from '@/components/admin/SkillsManager';
 import { EducationManager } from '@/components/admin/EducationManager';
 import { MetricsManager } from '@/components/admin/MetricsManager';
 import { CompaniesManager } from '@/components/admin/CompaniesManager';
+import { CertificationsManager } from '@/components/admin/CertificationsManager';
+import { TestimonialsManager } from '@/components/admin/TestimonialsManager';
 import { DashboardStats } from '@/components/admin/DashboardStats';
 import { BulkSlugGenerator } from '@/components/admin/BulkSlugGenerator';
 import { useAdminDashboardData } from '@/hooks/useAdminData';
@@ -72,13 +74,15 @@ export default function AdminDashboard() {
         </section>
 
         <Tabs defaultValue="experiences" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-8" aria-label="Gerenciar conteúdo">
+          <TabsList className="grid w-full grid-cols-8 mb-8" aria-label="Gerenciar conteúdo">
             <TabsTrigger value="experiences">Experiências</TabsTrigger>
             <TabsTrigger value="projects">Projetos</TabsTrigger>
             <TabsTrigger value="skills">Skills</TabsTrigger>
             <TabsTrigger value="education">Educação</TabsTrigger>
             <TabsTrigger value="metrics">Métricas</TabsTrigger>
             <TabsTrigger value="companies">Empresas</TabsTrigger>
+            <TabsTrigger value="certifications">Certificações</TabsTrigger>
+            <TabsTrigger value="testimonials">Depoimentos</TabsTrigger>
           </TabsList>
           
           <TabsContent value="experiences">
@@ -103,6 +107,14 @@ export default function AdminDashboard() {
 
           <TabsContent value="companies">
             <CompaniesManager />
+          </TabsContent>
+
+          <TabsContent value="certifications">
+            <CertificationsManager />
+          </TabsContent>
+
+          <TabsContent value="testimonials">
+            <TestimonialsManager />
           </TabsContent>
         </Tabs>
       </main>

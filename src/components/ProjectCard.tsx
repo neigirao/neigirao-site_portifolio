@@ -19,6 +19,7 @@ interface ProjectCardProps {
     description: string;
     link?: string | null;
     tags?: string[] | null;
+    highlight_metric?: string | null;
   };
 }
 
@@ -50,6 +51,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                 {tag}
               </span>
             ))}
+          </div>
+        )}
+        {project.highlight_metric && (
+          <div className="mb-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-accent/10 border border-teal-accent/20">
+            <span className="text-sm font-bold text-teal-accent">{project.highlight_metric}</span>
           </div>
         )}
         <p className="text-muted-foreground leading-relaxed mb-6 flex-grow text-base line-clamp-3">

@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      certifications: {
+        Row: {
+          created_at: string
+          credential_url: string | null
+          id: string
+          issuer: string
+          logo_url: string | null
+          name: string
+          order_index: number
+          updated_at: string
+          year: string | null
+        }
+        Insert: {
+          created_at?: string
+          credential_url?: string | null
+          id?: string
+          issuer: string
+          logo_url?: string | null
+          name: string
+          order_index?: number
+          updated_at?: string
+          year?: string | null
+        }
+        Update: {
+          created_at?: string
+          credential_url?: string | null
+          id?: string
+          issuer?: string
+          logo_url?: string | null
+          name?: string
+          order_index?: number
+          updated_at?: string
+          year?: string | null
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           abbr: string
@@ -195,6 +231,7 @@ export type Database = {
         Row: {
           created_at: string
           description: string
+          highlight_metric: string | null
           id: string
           image_url: string | null
           link: string | null
@@ -209,6 +246,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description: string
+          highlight_metric?: string | null
           id?: string
           image_url?: string | null
           link?: string | null
@@ -223,6 +261,7 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string
+          highlight_metric?: string | null
           id?: string
           image_url?: string | null
           link?: string | null
@@ -271,6 +310,48 @@ export type Database = {
           name?: string
           order_index?: number
           slug?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          author_company: string | null
+          author_name: string
+          author_photo_url: string | null
+          author_role: string
+          created_at: string
+          id: string
+          is_visible: boolean
+          linkedin_url: string | null
+          order_index: number
+          quote: string
+          updated_at: string
+        }
+        Insert: {
+          author_company?: string | null
+          author_name: string
+          author_photo_url?: string | null
+          author_role: string
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          linkedin_url?: string | null
+          order_index?: number
+          quote: string
+          updated_at?: string
+        }
+        Update: {
+          author_company?: string | null
+          author_name?: string
+          author_photo_url?: string | null
+          author_role?: string
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          linkedin_url?: string | null
+          order_index?: number
+          quote?: string
           updated_at?: string
         }
         Relationships: []
