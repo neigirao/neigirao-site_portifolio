@@ -1,15 +1,44 @@
 /**
  * ImpactMetrics - Seção de Resultados Quantificáveis
- * Fundo escuro/gradiente para destaque visual.
+ * Fundo escuro/gradiente para destaque visual com animação count-up.
  */
 
 import { TrendingUp, Users, Star, Target, Award, Zap, BarChart, CheckCircle, Globe, Rocket, LucideIcon } from "lucide-react";
 import { useImpactMetrics } from "@/hooks/usePortfolioData";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCountUp, parseMetricValue } from "@/hooks/useCountUp";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Star, TrendingUp, Users, Target, Award, Zap, BarChart, CheckCircle, Globe, Rocket,
 };
+
+function MetricCard({ metric, index }: { metric: { id: string; value: string; label: string; description: string; icon: string; color: string }; index: number }) {
+  const IconComponent = ICON_MAP[metric.icon] || Star;
+  const parsed = parseMetricValue(metric.value);
+  const { count, ref } = useCountUp(parsed?.number || 0, 2000);
+
+  return (
+    <div
+      ref={ref}
+      className="group relative p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 
+        hover:bg-white/15 hover:border-white/30 transition-all duration-300 hover:-translate-y-1"
+      style={{ animationDelay: `${index * 100}ms` }}
+    >
+      <div className="text-teal-accent mb-4 transition-transform duration-300 group-hover:scale-110">
+        <IconComponent className="w-7 h-7" />
+      </div>
+      <div className="text-4xl md:text-5xl font-extrabold text-white mb-2">
+        {parsed ? `${count}${parsed.suffix}` : metric.value}
+      </div>
+      <div className="text-lg font-semibold text-white/90 mb-2">
+        {metric.label}
+      </div>
+      <p className="text-sm text-white/60 leading-relaxed">
+        {metric.description}
+      </p>
+    </div>
+  );
+}
 
 export const ImpactMetrics = () => {
   const { metrics, isLoading } = useImpactMetrics();
@@ -48,30 +77,9 @@ export const ImpactMetrics = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {metrics.map((metric, index) => {
-            const IconComponent = ICON_MAP[metric.icon] || Star;
-            return (
-              <div
-                key={metric.id}
-                className="group relative p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 
-                  hover:bg-white/15 hover:border-white/30 transition-all duration-300 hover:-translate-y-1"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="text-teal-accent mb-4 transition-transform duration-300 group-hover:scale-110">
-                  <IconComponent className="w-7 h-7" />
-                </div>
-                <div className="text-4xl md:text-5xl font-extrabold text-white mb-2">
-                  {metric.value}
-                </div>
-                <div className="text-lg font-semibold text-white/90 mb-2">
-                  {metric.label}
-                </div>
-                <p className="text-sm text-white/60 leading-relaxed">
-                  {metric.description}
-                </p>
-              </div>
-            );
-          })}
+          {metrics.map((metric, index) => (
+            <MetricCard key={metric.id} metric={metric} index={index} />
+          ))}
         </div>
       </div>
     </section>

@@ -41,6 +41,29 @@ export interface DbProject {
   tags: string[] | null;
   slug: string | null;
   order_index: number;
+  highlight_metric: string | null;
+}
+
+export interface DbCertification {
+  id: string;
+  name: string;
+  issuer: string;
+  year: string | null;
+  logo_url: string | null;
+  credential_url: string | null;
+  order_index: number;
+}
+
+export interface DbTestimonial {
+  id: string;
+  author_name: string;
+  author_role: string;
+  author_company: string | null;
+  author_photo_url: string | null;
+  linkedin_url: string | null;
+  quote: string;
+  order_index: number;
+  is_visible: boolean;
 }
 
 // Shared query options for stale-while-revalidate pattern
@@ -194,6 +217,40 @@ export function useImpactMetrics() {
     ...queryOptions,
   });
   return { metrics: data || [], isLoading, error: error?.message || null };
+}
+
+// Hook for certifications
+export function useCertifications() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['certifications'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('certifications')
+        .select('*')
+        .order('order_index', { ascending: true });
+      if (error) throw error;
+      return data as DbCertification[];
+    },
+    ...queryOptions,
+  });
+  return { certifications: data || [], isLoading, error: error?.message || null };
+}
+
+// Hook for testimonials
+export function useTestimonials() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['testimonials'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('testimonials')
+        .select('*')
+        .order('order_index', { ascending: true });
+      if (error) throw error;
+      return data as DbTestimonial[];
+    },
+    ...queryOptions,
+  });
+  return { testimonials: data || [], isLoading, error: error?.message || null };
 }
 
 // Prefetch function for critical data

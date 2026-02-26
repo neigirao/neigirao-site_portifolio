@@ -1,7 +1,37 @@
 import { Button } from "@/components/ui/button";
 import { Download, User } from "lucide-react";
 import { useCompanies } from "@/hooks/usePortfolioData";
+import { useCountUp, parseMetricValue } from "@/hooks/useCountUp";
 
+const heroStats = [
+  { value: "15+", label: "Anos de Experiência" },
+  { value: "35+", label: "Membros Gerenciados" },
+  { value: "6+", label: "Produtos Lançados" },
+  { value: "4", label: "Grandes Empresas" },
+];
+
+function CountUpStat({ value, label }: { value: string; label: string }) {
+  const parsed = parseMetricValue(value);
+  const { count, ref } = useCountUp(parsed?.number || 0, 2000);
+  return (
+    <div ref={ref} className="p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+      <div className="text-3xl md:text-4xl font-bold text-white mb-2">
+        {parsed ? `${count}${parsed.suffix}` : value}
+      </div>
+      <div className="text-white/80 text-sm">{label}</div>
+    </div>
+  );
+}
+
+function HeroStats() {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-4xl mx-auto">
+      {heroStats.map((stat) => (
+        <CountUpStat key={stat.label} {...stat} />
+      ))}
+    </div>
+  );
+}
 interface HeroSectionProps {
   scrollToSection: (id: string) => void;
 }
@@ -25,11 +55,21 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
             </div>
           </div>
 
-          {/* Badge - 3 roles */}
-          <div className="inline-block mb-6 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full">
-            <span className="text-white/90 text-sm font-semibold tracking-wide uppercase">
-              Product Management · Transformação Digital · Dados
-            </span>
+          {/* Badge - 3 roles as separate tags */}
+          <div className="flex flex-wrap gap-3 justify-center mb-6">
+            {[
+              { label: "Product Management", icon: "🎯" },
+              { label: "Transformação Digital", icon: "🚀" },
+              { label: "Dados & Observabilidade", icon: "📊" },
+            ].map((tag) => (
+              <span
+                key={tag.label}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-sm font-medium"
+              >
+                <span>{tag.icon}</span>
+                {tag.label}
+              </span>
+            ))}
           </div>
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-4 leading-tight tracking-tight">
@@ -65,20 +105,8 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
             </Button>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-4xl mx-auto">
-            {[
-              { value: "15+", label: "Anos de Experiência" },
-              { value: "35+", label: "Membros Gerenciados" },
-              { value: "6+", label: "Produtos Lançados" },
-              { value: "4", label: "Grandes Empresas" },
-            ].map((stat) => (
-              <div key={stat.label} className="p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">{stat.value}</div>
-                <div className="text-white/80 text-sm">{stat.label}</div>
-              </div>
-            ))}
-          </div>
+          {/* Stats with count-up */}
+          <HeroStats />
 
           {/* Company Logos Bar */}
           <div className="mt-12 max-w-3xl mx-auto">
