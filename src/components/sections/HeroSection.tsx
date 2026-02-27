@@ -55,14 +55,6 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
             </div>
           </div>
 
-          {/* Availability Badge */}
-          <div className="mb-6 flex justify-center">
-            <span className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 backdrop-blur-sm border border-emerald-500/30 rounded-full text-emerald-300 text-sm font-medium">
-              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              Disponível para novas oportunidades
-            </span>
-          </div>
-
           {/* Badge - 3 roles as separate tags */}
           <div className="flex flex-wrap gap-3 justify-center mb-6">
             {[
