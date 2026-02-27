@@ -1,17 +1,20 @@
 /**
- * /contato - Dedicated Contact Page for SEO
- * 
- * Página dedicada de contato, ranqueia melhor que #contact anchor.
+ * /contato - Dedicated Contact Page with real form for SEO
  */
 
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { SEOHead } from "@/components/SEO";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { ArrowLeft, Mail, Linkedin, Phone, MessageCircle, MapPin, Clock, ExternalLink } from "lucide-react";
-import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, AUTHOR_WHATSAPP, AUTHOR_PHONE, BASE_URL } from "@/config/constants";
+import { ArrowLeft, Mail, Linkedin, MessageCircle, MapPin, Clock, ExternalLink, Send } from "lucide-react";
+import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, AUTHOR_WHATSAPP, BASE_URL } from "@/config/constants";
 import { Helmet } from "react-helmet-async";
+import { toast } from "sonner";
 
 const contactSchema = {
   "@context": "https://schema.org",
@@ -23,7 +26,6 @@ const contactSchema = {
     "@type": "Person",
     "name": "Nei Girão",
     "email": AUTHOR_EMAIL,
-    "telephone": AUTHOR_PHONE,
     "sameAs": [AUTHOR_LINKEDIN],
     "address": {
       "@type": "PostalAddress",
@@ -61,7 +63,7 @@ function ContactCard({ icon, title, description, action, href, external, highlig
             rel={external ? "noopener noreferrer" : undefined}
             className="w-full"
           >
-            <Button className={`w-full ${highlight ? "" : "variant-outline"}`} variant={highlight ? "default" : "outline"}>
+            <Button className="w-full" variant={highlight ? "default" : "outline"}>
               {action}
               {external && <ExternalLink className="w-3 h-3 ml-2" />}
             </Button>
@@ -73,6 +75,24 @@ function ContactCard({ icon, title, description, action, href, external, highlig
 }
 
 export default function Contato() {
+  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+  const [sending, setSending] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error("Preencha todos os campos obrigatórios");
+      return;
+    }
+    setSending(true);
+    // Build mailto link with form data as fallback
+    const subject = encodeURIComponent(formData.subject || `Contato de ${formData.name}`);
+    const body = encodeURIComponent(`Nome: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`);
+    window.location.href = `mailto:${AUTHOR_EMAIL}?subject=${subject}&body=${body}`;
+    setSending(false);
+    toast.success("Redirecionando para seu cliente de email...");
+  };
+
   return (
     <>
       <SEOHead
@@ -98,10 +118,10 @@ export default function Contato() {
               </Button>
             </Link>
             <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
-              Vamos Conectar
+              Vamos Conversar?
             </h1>
             <p className="text-xl text-white/80 max-w-2xl leading-relaxed">
-              Estou sempre aberto a novas oportunidades, parcerias e conversas sobre produtos digitais e observabilidade.
+              Aberto a desafios em Product Management, dados e observabilidade.
             </p>
             <div className="flex flex-wrap gap-4 mt-8 text-white/70 text-sm">
               <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
@@ -112,21 +132,80 @@ export default function Contato() {
                 <Clock className="w-4 h-4" />
                 BRT (UTC-3)
               </span>
-            <span className="flex items-center gap-2 bg-teal-accent/20 text-teal-accent px-4 py-2 rounded-full">
-                <span className="w-2 h-2 bg-teal-accent rounded-full animate-pulse" />
+              <span className="flex items-center gap-2 bg-teal-accent/20 text-teal-accent px-4 py-2 rounded-full">
+                <span className="w-2 h-2 bg-teal-accent rounded-full" />
                 Disponível para oportunidades
               </span>
             </div>
           </div>
         </div>
 
-        {/* Contact Cards */}
         <div className="max-w-4xl mx-auto px-6 py-16">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-16">
+          {/* Contact Form */}
+          <Card className="border-2 border-primary/20 shadow-elegant mb-16">
+            <CardContent className="p-8 md:p-10">
+              <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-3">
+                <Send className="w-6 h-6 text-primary" />
+                Envie uma mensagem
+              </h2>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Nome *</Label>
+                    <Input
+                      id="name"
+                      placeholder="Seu nome"
+                      value={formData.name}
+                      onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={formData.email}
+                      onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="subject">Assunto</Label>
+                  <Input
+                    id="subject"
+                    placeholder="Ex: Oportunidade de PM, Consultoria, Parceria..."
+                    value={formData.subject}
+                    onChange={e => setFormData(prev => ({ ...prev, subject: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="message">Mensagem *</Label>
+                  <Textarea
+                    id="message"
+                    placeholder="Conte sobre o projeto, oportunidade ou como posso ajudar..."
+                    rows={5}
+                    value={formData.message}
+                    onChange={e => setFormData(prev => ({ ...prev, message: e.target.value }))}
+                    required
+                  />
+                </div>
+                <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={sending}>
+                  <Send className="w-4 h-4 mr-2" />
+                  {sending ? "Enviando..." : "Enviar Mensagem"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Contact Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">
             <ContactCard
               icon={<Mail className="w-7 h-7" />}
               title="Email"
-              description="Para propostas formais, oportunidades de trabalho e colaborações profissionais."
+              description="Para propostas formais e oportunidades."
               action="Enviar Email"
               href={`mailto:${AUTHOR_EMAIL}`}
               highlight
@@ -134,7 +213,7 @@ export default function Contato() {
             <ContactCard
               icon={<MessageCircle className="w-7 h-7" />}
               title="WhatsApp"
-              description="Para conversas rápidas, dúvidas e networking informal."
+              description="Para conversas rápidas e networking."
               action="Abrir WhatsApp"
               href={AUTHOR_WHATSAPP}
               external
@@ -142,17 +221,10 @@ export default function Contato() {
             <ContactCard
               icon={<Linkedin className="w-7 h-7" />}
               title="LinkedIn"
-              description="Conecte-se profissionalmente e acompanhe minhas publicações sobre produtos e observabilidade."
+              description="Conecte-se profissionalmente."
               action="Ver Perfil"
               href={AUTHOR_LINKEDIN}
               external
-            />
-            <ContactCard
-              icon={<Phone className="w-7 h-7" />}
-              title="Telefone"
-              description="Disponível para ligações em horário comercial (BRT), para conversas mais detalhadas."
-              action="Ligar Agora"
-              href="tel:+5521989921711"
             />
           </div>
 

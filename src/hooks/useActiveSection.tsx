@@ -30,7 +30,12 @@ export function useActiveSection() {
 
   const scrollToSection = useCallback((sectionId: string) => {
     setIsMenuOpen(false);
-    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+    const el = document.getElementById(sectionId);
+    if (el) {
+      const navHeight = 80;
+      const top = el.getBoundingClientRect().top + window.scrollY - navHeight;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
   }, []);
 
   const menuItems = [

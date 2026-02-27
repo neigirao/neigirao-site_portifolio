@@ -179,7 +179,7 @@ export default function Sobre() {
                             {exp.period}
                           </Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground line-clamp-2" dangerouslySetInnerHTML={{ __html: exp.description?.slice(0, 200) || '' }} />
+                        <p className="text-sm text-muted-foreground line-clamp-2">{exp.description?.replace(/<[^>]*>/g, '').slice(0, 200) || ''}</p>
                       </CardContent>
                     </Card>
                   </Link>

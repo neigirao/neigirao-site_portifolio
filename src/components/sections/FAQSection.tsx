@@ -1,8 +1,5 @@
 /**
- * FAQSection - Seção de Perguntas Frequentes
- * 
- * Renderiza FAQ real visível na página, alinhado com o schema FAQPage do JSON-LD.
- * Usa accordion para UX limpa e semântica correta para SEO.
+ * FAQSection - Perguntas Frequentes reformuladas para recrutadores/clientes reais
  */
 
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -23,42 +20,40 @@ export function FAQSection() {
 
   const faqItems = [
     {
-      id: "skills",
-      question: "Quais são as principais habilidades de Nei Girão?",
-      answer: skills.length > 0
-        ? `Nei Girão é especializado em ${skills.slice(0, 6).map(s => s.name).join(", ")}, e gestão de produtos digitais.`
-        : "Nei Girão é especializado em Product Management, Observabilidade, Agile/Scrum, Data Analysis e gestão de produtos digitais.",
+      id: "availability",
+      question: "Você está disponível para novas oportunidades?",
+      answer: "Sim, estou aberto a conversas sobre posições de Product Manager, Head de Produto ou consultoria em observabilidade e produtos digitais. Atuo preferencialmente remoto ou híbrido a partir do Rio de Janeiro.",
     },
     {
-      id: "experience",
-      question: "Quantos anos de experiência Nei Girão possui?",
+      id: "impact",
+      question: "Qual foi o maior resultado que você entregou como PM?",
       answer: experiences.length > 0
-        ? `Nei Girão possui mais de 15 anos de experiência em gestão de produtos digitais e observabilidade, tendo trabalhado em empresas como ${experiences.slice(0, 4).map(e => e.company).join(", ")}.`
-        : "Nei Girão possui mais de 15 anos de experiência em gestão de produtos digitais e observabilidade.",
+        ? `Um dos resultados mais expressivos foi a evolução da nota do app Meu TIM de 1.5 para 4.5 na App Store, liderando um time multidisciplinar com foco em qualidade e experiência do usuário. Na ${experiences[0]?.company || "empresa atual"}, sigo gerando impacto com cultura data-driven e observabilidade.`
+        : "Evolução da nota do app Meu TIM de 1.5 para 4.5 na App Store, liderando time multidisciplinar com foco em qualidade e experiência do usuário.",
     },
     {
-      id: "companies",
-      question: "Em quais empresas Nei Girão trabalhou?",
-      answer: experiences.length > 0
-        ? `Nei Girão trabalhou em grandes empresas como ${experiences.map(e => `${e.company} (${e.period})`).join(", ")}, liderando equipes e produtos digitais.`
-        : "Nei Girão trabalhou em grandes empresas do mercado brasileiro, liderando equipes e produtos digitais.",
+      id: "team-size",
+      question: "Qual o tamanho de equipe que você já liderou?",
+      answer: "Já gerenciei equipes de até 35+ membros, incluindo squads ágeis multidisciplinares com desenvolvedores, designers, QAs e analistas de dados. Tenho experiência com gestão direta e matricial em empresas como Icatu, TIM e Oi.",
     },
     {
       id: "tools",
-      question: "Quais ferramentas de observabilidade Nei Girão domina?",
-      answer: "Nei Girão possui expertise em Dynatrace, Grafana, Azure Monitor e Google Analytics, utilizando essas ferramentas para implementar estratégias robustas de observabilidade e monitoramento.",
+      question: "Quais ferramentas e metodologias você domina?",
+      answer: skills.length > 0
+        ? `Trabalho com ${skills.slice(0, 5).map(s => s.name).join(", ")}, entre outras. Em observabilidade, sou especialista em Dynatrace, Grafana e Azure Monitor. Metodologias: Scrum, Kanban, SAFe, OKRs e Discovery contínuo.`
+        : "Dynatrace, Grafana, Azure Monitor, Google Analytics, Scrum, Kanban, SAFe, OKRs e Discovery contínuo.",
     },
     {
       id: "education",
-      question: "Qual é a formação acadêmica de Nei Girão?",
+      question: "Qual é sua formação?",
       answer: education.length > 0
-        ? `Nei Girão possui ${education.map(e => `${e.degree} pela ${e.institution} (${e.period})`).join(", ")}.`
-        : "Nei Girão possui formação acadêmica sólida em áreas de tecnologia e gestão.",
+        ? `Possuo ${education.map(e => `${e.degree} pela ${e.institution}`).join(", ")}. Complemento com certificações em Scrum, Product Ownership e ferramentas de observabilidade.`
+        : "Formação sólida em tecnologia e gestão, complementada por certificações em Scrum, Product Ownership e ferramentas de observabilidade.",
     },
   ];
 
   return (
-    <section id="faq" className="py-16 relative overflow-hidden">
+    <section id="faq" className="py-16 relative overflow-hidden scroll-mt-20">
       <div className="max-w-3xl mx-auto px-6" ref={ref}>
         <div className={`text-center mb-12 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
           <h2 className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground tracking-tight">
@@ -66,7 +61,7 @@ export function FAQSection() {
           </h2>
           <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-4" />
           <p className="text-muted-foreground font-light">
-            As dúvidas mais comuns sobre minha trajetória e competências
+            O que recrutadores e clientes costumam perguntar
           </p>
         </div>
 
