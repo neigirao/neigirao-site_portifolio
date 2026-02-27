@@ -48,7 +48,7 @@ const Index = () => {
         />
 
         {/* Floating WhatsApp CTA */}
-        <a href={AUTHOR_WHATSAPP} target="_blank" rel="noopener noreferrer" className="fixed bottom-8 right-8 z-40 bg-teal-accent text-white p-4 rounded-full shadow-glow hover:scale-110 transition-all duration-300 animate-pulse" aria-label="Contato via WhatsApp">
+        <a href={AUTHOR_WHATSAPP} target="_blank" rel="noopener noreferrer" className="fixed bottom-8 right-8 z-40 bg-teal-accent text-white p-4 rounded-full shadow-glow hover:scale-110 transition-all duration-300" aria-label="Contato via WhatsApp">
           <MessageCircle className="w-6 h-6" />
         </a>
 
@@ -59,19 +59,17 @@ const Index = () => {
           </button>
         )}
 
-        <ErrorBoundary>
-          <HeroSection scrollToSection={scrollToSection} />
-          <ImpactMetrics />
-          <ExperienceSection experiences={experiences} isLoading={loadingExperiences} />
-          <ProjectsSection projects={projects} isLoading={loadingProjects} />
-          <SkillsSection skills={skills} isLoading={loadingSkills} />
-          <CertificationsSection />
-          <TestimonialsSection />
-          <FAQSection />
-          <AboutSection education={education} isLoading={loadingEducation} />
-          <ContactSection />
-          <FooterSection />
-        </ErrorBoundary>
+        <ErrorBoundary><HeroSection scrollToSection={scrollToSection} /></ErrorBoundary>
+        <ErrorBoundary><ImpactMetrics /></ErrorBoundary>
+        <ErrorBoundary><ExperienceSection experiences={experiences} isLoading={loadingExperiences} /></ErrorBoundary>
+        <ErrorBoundary><ProjectsSection projects={projects} isLoading={loadingProjects} /></ErrorBoundary>
+        <ErrorBoundary><SkillsSection skills={skills} isLoading={loadingSkills} /></ErrorBoundary>
+        <ErrorBoundary><CertificationsSection /></ErrorBoundary>
+        <ErrorBoundary><TestimonialsSection /></ErrorBoundary>
+        <ErrorBoundary><FAQSection /></ErrorBoundary>
+        <ErrorBoundary><AboutSection education={education} isLoading={loadingEducation} /></ErrorBoundary>
+        <ErrorBoundary><ContactSection /></ErrorBoundary>
+        <FooterSection />
       </div>
     </>
   );

@@ -42,7 +42,7 @@ export function AboutSection({ education, isLoading }: AboutSectionProps) {
   const { ref, isVisible } = useScrollAnimation();
 
   return (
-    <section id="about" className="py-16 bg-background relative overflow-hidden">
+    <section id="about" className="py-16 bg-background relative overflow-hidden scroll-mt-20">
       <div className="absolute inset-0 bg-gradient-subtle opacity-50 pointer-events-none" />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <div className={`text-center mb-12 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>

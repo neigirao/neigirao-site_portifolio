@@ -25,7 +25,7 @@ interface SEOHeadProps {
 const defaultMeta = {
   title: "Nei Girão - Product Manager | Observabilidade | Produtos Digitais",
   description: "Product Manager com +15 anos em Observabilidade e Produtos Digitais. Expert em Dynatrace, Grafana e Azure Monitor. Icatu, Oi, TIM, Globo.",
-  ogImage: "https://lovable.dev/opengraph-image-p98pqg.png",
+  ogImage: "https://neigirao.lovable.app/og-image.png",
   author: "Nei Girão",
   keywords: [
     "product manager",

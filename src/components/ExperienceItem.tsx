@@ -54,7 +54,7 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({ experience }) => {
       <ul className="space-y-3 mt-4">
         {(Array.isArray(experience.description) 
           ? experience.description 
-          : experience.description.split('. ').filter(Boolean)
+          : experience.description.replace(/<[^>]*>/g, '').split(/(?:\. |\n)/).filter(s => s.trim().length > 10)
         ).slice(0, 3).map((point, index) => (
           <li key={index} className="flex items-start text-muted-foreground leading-relaxed">
             <span className="text-teal-accent mr-3 mt-1 flex-shrink-0">▪</span>
