@@ -7,6 +7,7 @@ import { TrendingUp, Users, Star, Target, Award, Zap, BarChart, CheckCircle, Glo
 import { useImpactMetrics } from "@/hooks/usePortfolioData";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCountUp, parseMetricValue } from "@/hooks/useCountUp";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Star, TrendingUp, Users, Target, Award, Zap, BarChart, CheckCircle, Globe, Rocket,
@@ -42,6 +43,10 @@ function MetricCard({ metric, index }: { metric: { id: string; value: string; la
 
 export const ImpactMetrics = () => {
   const { metrics, isLoading } = useImpactMetrics();
+  const { settings } = useSiteSettings();
+  const badgeText = settings.impact_badge_text || 'Resultados Comprovados';
+  const title = settings.impact_title || 'Impacto Mensurável';
+  const subtitle = settings.impact_subtitle || 'Resultados concretos que demonstram capacidade de entrega e liderança';
 
   if (isLoading) {
     return (
@@ -66,13 +71,13 @@ export const ImpactMetrics = () => {
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full bg-white/10 border border-white/20">
             <Award className="w-4 h-4 text-teal-accent" />
-            <span className="text-sm font-medium text-white/90">Resultados Comprovados</span>
+            <span className="text-sm font-medium text-white/90">{badgeText}</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
-            Impacto Mensurável
+            {title}
           </h2>
           <p className="text-white/70 max-w-2xl mx-auto">
-            Resultados concretos que demonstram capacidade de entrega e liderança
+            {subtitle}
           </p>
         </div>
 

@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SEOHead } from "@/components/SEO";
 import { useExperiences, useSkills, useEducation } from "@/hooks/usePortfolioData";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { ArrowLeft, Download, Linkedin, Mail, MapPin, Calendar, Award } from "lucide-react";
 import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, BASE_URL } from "@/config/constants";
@@ -32,6 +33,8 @@ export default function Sobre() {
   const { experiences } = useExperiences();
   const { skills } = useSkills();
   const { education } = useEducation();
+  const { settings } = useSiteSettings();
+  const cvUrl = settings.cv_file_url || '/cv-nei-girao.pdf';
 
   const skillsByCategory = skills.reduce<Record<string, typeof skills>>((acc, skill) => {
     const cat = skill.category || "Geral";
@@ -96,7 +99,7 @@ export default function Sobre() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button
                   className="bg-white text-primary hover:bg-white/90"
-                  onClick={() => window.open("/cv-nei-girao.pdf", "_blank")}
+                  onClick={() => window.open(cvUrl, "_blank")}
                 >
                   <Download className="w-4 h-4 mr-2" />
                   Download CV
