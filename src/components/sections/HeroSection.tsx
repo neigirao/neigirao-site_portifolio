@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Download, User } from "lucide-react";
 import { useCompanies } from "@/hooks/usePortfolioData";
 import { useCountUp, parseMetricValue } from "@/hooks/useCountUp";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const heroStats = [
   { value: "15+", label: "Anos de Experiência" },
@@ -38,6 +39,9 @@ interface HeroSectionProps {
 
 export function HeroSection({ scrollToSection }: HeroSectionProps) {
   const { companies } = useCompanies();
+  const { settings } = useSiteSettings();
+  const heroPhotoUrl = settings.hero_photo_url;
+  const cvUrl = settings.cv_file_url || '/cv-nei-girao.pdf';
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-hero pt-20 relative overflow-hidden">
@@ -49,9 +53,13 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
           {/* Professional Photo */}
           <div className="mb-8 flex justify-center">
             <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-primary p-1">
-              <div className="w-full h-full rounded-full bg-card/20 backdrop-blur-sm flex items-center justify-center">
-                <User className="w-16 h-16 md:w-20 md:h-20 text-white/60" />
-              </div>
+              {heroPhotoUrl ? (
+                <img src={heroPhotoUrl} alt="Nei Girão" className="w-full h-full rounded-full object-cover" />
+              ) : (
+                <div className="w-full h-full rounded-full bg-card/20 backdrop-blur-sm flex items-center justify-center">
+                  <User className="w-16 h-16 md:w-20 md:h-20 text-white/60" />
+                </div>
+              )}
             </div>
           </div>
 
@@ -97,7 +105,7 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
             <Button
               size="lg"
               variant="outline"
-              onClick={() => window.open("/cv-nei-girao.pdf", "_blank")}
+              onClick={() => window.open(cvUrl, "_blank")}
               className="bg-white/10 text-white border-white/30 hover:bg-white/20 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold backdrop-blur-sm"
             >
               <Download className="w-5 h-5 mr-2" />
@@ -119,7 +127,16 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
                   title={company.name}
                 >
                   {company.logo_url ? (
-                    <img src={company.logo_url} alt={company.name} className="h-8 w-auto object-contain brightness-0 invert opacity-50 hover:opacity-80 transition-opacity" />
+                    <img
+                      src={company.logo_url}
+                      alt={company.name}
+                      className="h-8 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity grayscale brightness-200"
+                      loading="lazy"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                        (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
                   ) : (
                     <span className="text-lg font-bold tracking-wide">{company.abbr}</span>
                   )}

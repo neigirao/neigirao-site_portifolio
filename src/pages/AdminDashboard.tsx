@@ -11,6 +11,7 @@ import { CertificationsManager } from '@/components/admin/CertificationsManager'
 import { TestimonialsManager } from '@/components/admin/TestimonialsManager';
 import { DashboardStats } from '@/components/admin/DashboardStats';
 import { BulkSlugGenerator } from '@/components/admin/BulkSlugGenerator';
+import { SiteSettingsManager } from '@/components/admin/SiteSettingsManager';
 import { useAdminDashboardData } from '@/hooks/useAdminData';
 import { LogOut, RefreshCw, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -74,7 +75,7 @@ export default function AdminDashboard() {
         </section>
 
         <Tabs defaultValue="experiences" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 mb-8" aria-label="Gerenciar conteúdo">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 mb-8" aria-label="Gerenciar conteúdo">
             <TabsTrigger value="experiences">Experiências</TabsTrigger>
             <TabsTrigger value="projects">Projetos</TabsTrigger>
             <TabsTrigger value="skills">Skills</TabsTrigger>
@@ -83,6 +84,7 @@ export default function AdminDashboard() {
             <TabsTrigger value="companies">Empresas</TabsTrigger>
             <TabsTrigger value="certifications">Certificações</TabsTrigger>
             <TabsTrigger value="testimonials">Depoimentos</TabsTrigger>
+            <TabsTrigger value="settings">Configurações</TabsTrigger>
           </TabsList>
           
           <TabsContent value="experiences">
@@ -115,6 +117,10 @@ export default function AdminDashboard() {
 
           <TabsContent value="testimonials">
             <TestimonialsManager />
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <SiteSettingsManager />
           </TabsContent>
         </Tabs>
       </main>

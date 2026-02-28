@@ -9,6 +9,7 @@ import { BarChart3, Users, Activity, Search, GraduationCap } from "lucide-react"
 import EducationItem from "@/components/EducationItem";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { DbEducation } from "@/hooks/usePortfolioData";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 interface AboutSectionProps {
   education: DbEducation[];
@@ -40,6 +41,10 @@ const METHODOLOGY_ITEMS = [
 
 export function AboutSection({ education, isLoading }: AboutSectionProps) {
   const { ref, isVisible } = useScrollAnimation();
+  const { settings } = useSiteSettings();
+  const aboutSubtitle = settings.about_subtitle || 'Trajetória, metodologia e formação';
+  const aboutSummary = settings.about_summary;
+  const aboutTools = settings.about_tools || 'Dynatrace, Grafana, Azure Monitor, Google Analytics';
 
   return (
     <section id="about" className="py-16 bg-background relative overflow-hidden scroll-mt-20">
@@ -49,7 +54,7 @@ export function AboutSection({ education, isLoading }: AboutSectionProps) {
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Sobre</h2>
           <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
-            Trajetória, metodologia e formação
+            {aboutSubtitle}
           </p>
         </div>
 
@@ -60,19 +65,25 @@ export function AboutSection({ education, isLoading }: AboutSectionProps) {
             <CardContent className="p-8 md:p-10">
               <h3 className="text-2xl font-bold text-foreground mb-4">Resumo Profissional</h3>
               <div className="space-y-4">
-                <p className="text-muted-foreground leading-relaxed">
-                  Profissional especializado em gestão estratégica de produtos digitais e Observabilidade, com mais de 15 anos liderando equipes ágeis em empresas como{" "}
-                  <span className="text-teal-accent font-semibold">Icatu Seguros</span>,{" "}
-                  <span className="text-teal-accent font-semibold">Oi</span>,{" "}
-                  <span className="text-teal-accent font-semibold">TIM Brasil</span> e{" "}
-                  <span className="text-teal-accent font-semibold">Rede Globo</span>.
-                </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  Experiência em todo o ciclo de vida dos produtos digitais, cultivando cultura analítica e data-driven.
-                </p>
+                {aboutSummary ? (
+                  <div className="text-muted-foreground leading-relaxed" dangerouslySetInnerHTML={{ __html: aboutSummary }} />
+                ) : (
+                  <>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Profissional especializado em gestão estratégica de produtos digitais e Observabilidade, com mais de 15 anos liderando equipes ágeis em empresas como{" "}
+                      <span className="text-teal-accent font-semibold">Icatu Seguros</span>,{" "}
+                      <span className="text-teal-accent font-semibold">Oi</span>,{" "}
+                      <span className="text-teal-accent font-semibold">TIM Brasil</span> e{" "}
+                      <span className="text-teal-accent font-semibold">Rede Globo</span>.
+                    </p>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Experiência em todo o ciclo de vida dos produtos digitais, cultivando cultura analítica e data-driven.
+                    </p>
+                  </>
+                )}
                 <div className="pt-4 border-t border-border/50">
                   <p className="text-sm text-muted-foreground">
-                    <span className="text-foreground font-semibold">Ferramentas:</span> Dynatrace, Grafana, Azure Monitor, Google Analytics
+                    <span className="text-foreground font-semibold">Ferramentas:</span> {aboutTools}
                   </p>
                 </div>
               </div>
