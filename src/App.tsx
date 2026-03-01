@@ -22,6 +22,8 @@ const AboutTxtRedirect = lazy(() => import("./pages/AboutTxtRedirect"));
 // Lazy load - SEO standalone pages
 const Sobre = lazy(() => import("./pages/Sobre"));
 const Contato = lazy(() => import("./pages/Contato"));
+const ArticlesListing = lazy(() => import("./pages/ArticlesListing"));
+const ArticleDetail = lazy(() => import("./pages/ArticleDetail"));
 
 // Lazy load - detail pages (SEO pages)
 const ExperienceDetail = lazy(() => import("./pages/ExperienceDetail"));
@@ -68,6 +70,10 @@ const App = () => (
               {/* SEO Standalone Pages */}
               <Route path="/sobre" element={<Sobre />} />
               <Route path="/contato" element={<Contato />} />
+
+              {/* Articles / Blog */}
+              <Route path="/artigos" element={<ArticlesListing />} />
+              <Route path="/artigo/:slug" element={<ArticleDetail />} />
 
               {/* SEO Detail Pages */}
               <Route path="/experiencia/:slug" element={<ExperienceDetail />} />
