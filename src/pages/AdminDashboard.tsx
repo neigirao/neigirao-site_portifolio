@@ -12,6 +12,7 @@ import { TestimonialsManager } from '@/components/admin/TestimonialsManager';
 import { DashboardStats } from '@/components/admin/DashboardStats';
 import { BulkSlugGenerator } from '@/components/admin/BulkSlugGenerator';
 import { SiteSettingsManager } from '@/components/admin/SiteSettingsManager';
+import { ArticlesManager } from '@/components/admin/ArticlesManager';
 import { useAdminDashboardData } from '@/hooks/useAdminData';
 import { LogOut, RefreshCw, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -75,9 +76,10 @@ export default function AdminDashboard() {
         </section>
 
         <Tabs defaultValue="experiences" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 mb-8" aria-label="Gerenciar conteúdo">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 mb-8" aria-label="Gerenciar conteúdo">
             <TabsTrigger value="experiences">Experiências</TabsTrigger>
             <TabsTrigger value="projects">Projetos</TabsTrigger>
+            <TabsTrigger value="articles">Artigos</TabsTrigger>
             <TabsTrigger value="skills">Skills</TabsTrigger>
             <TabsTrigger value="education">Educação</TabsTrigger>
             <TabsTrigger value="metrics">Métricas</TabsTrigger>
@@ -93,6 +95,10 @@ export default function AdminDashboard() {
           
           <TabsContent value="projects">
             <ProjectsManager />
+          </TabsContent>
+
+          <TabsContent value="articles">
+            <ArticlesManager />
           </TabsContent>
           
           <TabsContent value="skills">
