@@ -1,100 +1,75 @@
 
 
-# Plano de Implementação — 6 Ações
+# Levantamento de Pendencias e Melhorias
+
+## Pendencias Confirmadas (do roadmap anterior)
+
+### P0 - Criticas
+
+1. **Sanitizar `dangerouslySetInnerHTML` no AboutSection.tsx (linha 69)**
+   - Usa `dangerouslySetInnerHTML={{ __html: aboutSummary }}` sem sanitização com DOMPurify
+   - O `SafeHTML` component já existe e é usado em outros lugares (ProjectDetail, ArticleDetail)
+   - Corrigir: substituir por `<SafeHTML html={aboutSummary} />`
+
+2. **Unificar CV URL via `useSiteSettings` em 3 locais que ainda estão hardcoded:**
+   - `NavigationBar.tsx` linhas 65 e 100: `window.open("/cv-nei-girao.pdf")`
+   - `ExperienceDetail.tsx` linha 237: `window.open('/cv-nei-girao.pdf')`
+   - `FooterSection.tsx` linha 26: `href="/cv-nei-girao.pdf"`
+   - Todos devem usar `useSiteSettings()` e ler `cv_file_url`
+
+3. **Adicionar `highlight_metric` ao ProjectsManager**
+   - O campo não existe na tabela `projects` nem no CMS
+   - Permite ao usuário destacar uma metrica-chave por projeto (ex: "40% redução MTTR")
+
+### P1 - Alto Impacto
+
+4. **Template de Case Study para Projetos**
+   - Adicionar campos na tabela `projects`: `context`, `challenge`, `solution`, `results`, `learnings`
+   - Reformular `ProjectDetail.tsx` para exibir seções estruturadas (Contexto / Desafio / Solução / Resultados)
+   - Adicionar campos correspondentes no `ProjectsManager`
+
+5. **Página /sobre ainda com textos hardcoded (Sobre.tsx linhas 126-138)**
+   - O `about_summary` da `site_settings` está vazio no banco
+   - A página `/sobre` NÃO usa o `about_summary` do banco (usa texto hardcoded)
+   - Deve ler do `site_settings` como o `AboutSection.tsx` já faz
+
+6. **Seção de artigos recentes na Home**
+   - Não existe link para `/artigos` na navegação principal nem na Home
+   - Adicionar seção "Artigos Recentes" na Index com os últimos 3 artigos publicados
+   - Adicionar "Artigos" no menu de navegação
+
+### P2 - Polish
+
+7. **heroStats hardcoded (HeroSection.tsx linhas 7-12)**
+   - Os 4 cards de stats ("15+ Anos", "35+ Membros"...) não são editáveis via CMS
+   - Devem ser configuráveis via `site_settings` ou tabela dedicada
+
+8. **Methodology cards hardcoded (AboutSection.tsx linhas 19-40)**
+   - Os 4 cards de metodologia são estáticos no código
+   - Devem ser editáveis via CMS (JSON na `site_settings` ou tabela)
+
+9. **SiteSettingsManager usa Textarea para about_summary em vez de RichTextEditor**
+   - Linha 218: usa `<Textarea>` simples mas o front renderiza como HTML
+   - Deve usar `<RichTextEditor>` para consistência
+
+10. **llms.txt e about.txt estáticos em `public/`**
+    - Edge functions existem para gerá-los dinamicamente, mas os arquivos estáticos em `public/` podem sobrescrevê-los
+    - Verificar se as rotas apontam para as edge functions
 
 ---
 
-## 1. Rodar Lighthouse / PageSpeed Insights
+## Resumo por Prioridade
 
-**Situação**: Não é possível rodar Lighthouse diretamente no ambiente Lovable. O que posso fazer:
-- Usar o browser tool para navegar no site publicado e capturar screenshots
-- Analisar manualmente o código para problemas de performance (imagens sem lazy loading, bundles grandes, etc.)
-- Recomendar que você rode manualmente em https://pagespeed.web.dev com a URL publicada `https://neigirao.lovable.app`
-
-**Alternativa implementável**: Posso criar uma seção no admin que exibe um link direto para o PageSpeed Insights com a URL do site pré-preenchida + um checklist de boas práticas já implementadas.
-
----
-
-## 2. Upload de foto do Hero no Admin
-
-**Situação atual**: O Hero exibe `<User>` icon placeholder (linha 53 do HeroSection). Não existe tabela `site_settings`.
-
-**Implementação**:
-- Criar tabela `site_settings` (key/value) com migration:
-  ```sql
-  CREATE TABLE site_settings (
-    key TEXT PRIMARY KEY,
-    value TEXT NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT now()
-  );
-  -- RLS: anyone can read, admins can write
-  ```
-- Criar componente `SiteSettingsManager` no admin com campo de upload para `hero_photo_url` e `cv_file_url`
-- Criar hook `useSiteSettings()` que busca os settings
-- Atualizar `HeroSection.tsx` para usar a foto do banco (fallback para `<User>` icon)
-- Adicionar tab "Configurações" no AdminDashboard
-
----
-
-## 3. Corrigir logos de empresas no Hero
-
-**Situação atual**: As empresas TÊM `logo_url` populada no banco. O problema está no CSS:
-```
-className="h-8 w-auto object-contain brightness-0 invert opacity-50"
-```
-Os filtros `brightness-0 invert` transformam a imagem em branco (ok para fundo escuro), mas `opacity-50` torna muito transparente. Além disso, imagens JPG com fundo branco ficam invisíveis com `invert`.
-
-**Implementação**:
-- Remover `brightness-0 invert` e usar `filter: grayscale(1) brightness(2)` ou simplesmente exibir os logos com opacidade razoável
-- Adicionar `loading="lazy"` e `onError` fallback para texto
-
----
-
-## 4. Upload de CV no Admin
-
-**Situação atual**: O botão "Download CV" aponta para `/cv-nei-girao.pdf` hardcoded (arquivo estático em `public/`).
-
-**Implementação**:
-- Adicionar campo `cv_file_url` na tabela `site_settings`
-- No `SiteSettingsManager`, adicionar upload de PDF (aceitar `application/pdf`) para o bucket `portfolio-images` (pasta `cv/`)
-- Atualizar `HeroSection.tsx` e `Sobre.tsx` para ler a URL do CV do banco (fallback para `/cv-nei-girao.pdf`)
-
----
-
-## 5. Editar textos do "Impacto Mensurável" no CMS
-
-**Situação atual**: Os textos do header da seção ("Impacto Mensurável", "Resultados concretos que demonstram...") estão HARDCODED no `ImpactMetrics.tsx`. Os cards individuais já são editáveis via `MetricsManager`.
-
-**Implementação**:
-- Adicionar campos na `site_settings`: `impact_title`, `impact_subtitle`, `impact_badge_text`
-- Atualizar `ImpactMetrics.tsx` para ler esses textos do banco (fallback para valores atuais)
-- Adicionar esses campos no `SiteSettingsManager`
-
----
-
-## 6. Editar seção "Sobre" no CMS
-
-**Situação atual**: Todo o texto da `AboutSection.tsx` é HARDCODED — resumo profissional, metodologia, nomes de empresas. A página `/sobre` (Sobre.tsx) também tem textos hardcoded.
-
-**Implementação**:
-- Adicionar campos na `site_settings`: `about_summary` (rich text), `about_subtitle`, `about_tools`
-- Os 4 cards de metodologia podem virar uma tabela separada ou campos JSON na `site_settings`
-- Atualizar `AboutSection.tsx` para ler do banco
-- Adicionar campos editáveis no `SiteSettingsManager` com RichTextEditor para o resumo
-
----
-
-## Resumo técnico de implementação
-
-| Ação | Tipo | Arquivos afetados |
-|------|------|-------------------|
-| Tabela `site_settings` | Migration | Nova tabela + RLS |
-| Foto do Hero | Admin + Frontend | `SiteSettingsManager.tsx` (novo), `HeroSection.tsx`, `AdminDashboard.tsx` |
-| Logos empresas | Frontend | `HeroSection.tsx` (CSS fix) |
-| Upload CV | Admin + Frontend | `SiteSettingsManager.tsx`, `HeroSection.tsx`, `Sobre.tsx` |
-| Textos Impacto | Admin + Frontend | `SiteSettingsManager.tsx`, `ImpactMetrics.tsx` |
-| Textos Sobre | Admin + Frontend | `SiteSettingsManager.tsx`, `AboutSection.tsx` |
-| Hook | Frontend | `useSiteSettings.tsx` (novo), `usePortfolioData.tsx` |
-
-Nova tab "Configurações" no admin centralizará: foto do Hero, CV, textos do Impacto e textos do Sobre.
+| # | Item | Tipo | Esforço |
+|---|------|------|---------|
+| 1 | Sanitizar HTML no AboutSection | Bug/Security | 5 min |
+| 2 | Unificar CV URL (3 arquivos) | Bug | 15 min |
+| 3 | Campo highlight_metric em Projects | Feature | 30 min |
+| 4 | Template Case Study (projects) | Feature | 1-2h |
+| 5 | Sobre.tsx usar site_settings | Bug | 15 min |
+| 6 | Artigos na Home + nav | Feature | 30 min |
+| 7 | heroStats editáveis | Feature | 30 min |
+| 8 | Methodology cards editáveis | Feature | 30 min |
+| 9 | RichTextEditor no about_summary | UX fix | 10 min |
+| 10 | Verificar llms.txt/about.txt routing | Config | 15 min |
 
