@@ -8,10 +8,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Building2, Calendar, Briefcase, ChevronRight, Lightbulb } from 'lucide-react';
 import SeeAlso from '@/components/SeeAlso';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export default function ExperienceDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { settings } = useSiteSettings();
+  const cvUrl = settings.cv_file_url || '/cv-nei-girao.pdf';
   const { data: experience, isLoading, error } = useExperienceDetail(slug || '');
   const { data: relatedExperiences } = useRelatedExperiences(
     experience?.company || '',
@@ -234,7 +237,7 @@ export default function ExperienceDetail() {
               <Button onClick={() => navigate('/#contact')}>
                 Entre em Contato
               </Button>
-              <Button variant="outline" onClick={() => window.open('/cv-nei-girao.pdf', '_blank')}>
+              <Button variant="outline" onClick={() => window.open(cvUrl, '_blank')}>
                 Download CV
               </Button>
             </div>

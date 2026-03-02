@@ -3,6 +3,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Menu, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 interface NavigationBarProps {
   activeSection: string;
@@ -22,6 +23,8 @@ export function NavigationBar({
   scrollProgress,
 }: NavigationBarProps) {
   const navigate = useNavigate();
+  const { settings } = useSiteSettings();
+  const cvUrl = settings.cv_file_url || '/cv-nei-girao.pdf';
 
   return (
     <>
@@ -62,7 +65,7 @@ export function NavigationBar({
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => window.open("/cv-nei-girao.pdf", "_blank")}
+                onClick={() => window.open(cvUrl, "_blank")}
                 className="ml-2"
               >
                 <Download className="w-4 h-4 mr-2" />
@@ -97,7 +100,7 @@ export function NavigationBar({
                       {item.label}
                     </button>
                   ))}
-                  <Button onClick={() => window.open("/cv-nei-girao.pdf", "_blank")} className="mt-4">
+                  <Button onClick={() => window.open(cvUrl, "_blank")} className="mt-4">
                     <Download className="w-4 h-4 mr-2" />
                     Download CV
                   </Button>

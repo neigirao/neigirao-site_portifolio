@@ -15,6 +15,7 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { ArrowLeft, Download, Linkedin, Mail, MapPin, Calendar, Award } from "lucide-react";
 import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, BASE_URL } from "@/config/constants";
 import { Helmet } from "react-helmet-async";
+import { SafeHTML } from "@/components/admin/SafeHTML";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   const { ref, isVisible } = useScrollAnimation();
@@ -123,19 +124,25 @@ export default function Sobre() {
           <Section title="Resumo Profissional">
             <Card className="border-2 border-border/50 shadow-elegant">
               <CardContent className="p-8 space-y-4">
-                <p className="text-lg text-foreground leading-relaxed font-medium">
-                  Sou um profissional especializado em gestão estratégica de produtos digitais e Observabilidade, com mais de 15 anos de experiência na liderança de equipes ágeis e multidisciplinares.
-                </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  Minha trajetória inclui atuação em empresas de grande porte como{" "}
-                  <strong className="text-foreground">Icatu Seguros</strong>,{" "}
-                  <strong className="text-foreground">Oi</strong>,{" "}
-                  <strong className="text-foreground">TIM Brasil</strong> e{" "}
-                  <strong className="text-foreground">Rede Globo</strong>, nas quais liderei iniciativas de alta relevância envolvendo produtos digitais, performance, qualidade e inovação.
-                </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  Possuo sólida experiência em todo o ciclo de vida dos produtos digitais, desde a concepção e lançamento até estratégias de atendimento pós-venda. Meu diferencial está em liderar equipes ágeis com cultura analítica e data-driven, usando ferramentas como <strong className="text-foreground">Dynatrace</strong>, <strong className="text-foreground">Grafana</strong> e <strong className="text-foreground">Azure Monitor</strong>.
-                </p>
+                {settings.about_summary ? (
+                  <SafeHTML html={settings.about_summary} className="text-muted-foreground leading-relaxed" />
+                ) : (
+                  <>
+                    <p className="text-lg text-foreground leading-relaxed font-medium">
+                      Sou um profissional especializado em gestão estratégica de produtos digitais e Observabilidade, com mais de 15 anos de experiência na liderança de equipes ágeis e multidisciplinares.
+                    </p>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Minha trajetória inclui atuação em empresas de grande porte como{" "}
+                      <strong className="text-foreground">Icatu Seguros</strong>,{" "}
+                      <strong className="text-foreground">Oi</strong>,{" "}
+                      <strong className="text-foreground">TIM Brasil</strong> e{" "}
+                      <strong className="text-foreground">Rede Globo</strong>, nas quais liderei iniciativas de alta relevância envolvendo produtos digitais, performance, qualidade e inovação.
+                    </p>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Possuo sólida experiência em todo o ciclo de vida dos produtos digitais, desde a concepção e lançamento até estratégias de atendimento pós-venda. Meu diferencial está em liderar equipes ágeis com cultura analítica e data-driven, usando ferramentas como <strong className="text-foreground">Dynatrace</strong>, <strong className="text-foreground">Grafana</strong> e <strong className="text-foreground">Azure Monitor</strong>.
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
           </Section>

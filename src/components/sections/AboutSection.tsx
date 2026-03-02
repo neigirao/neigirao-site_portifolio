@@ -10,6 +10,7 @@ import EducationItem from "@/components/EducationItem";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { DbEducation } from "@/hooks/usePortfolioData";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { SafeHTML } from "@/components/admin/SafeHTML";
 
 interface AboutSectionProps {
   education: DbEducation[];
@@ -65,8 +66,8 @@ export function AboutSection({ education, isLoading }: AboutSectionProps) {
             <CardContent className="p-8 md:p-10">
               <h3 className="text-2xl font-bold text-foreground mb-4">Resumo Profissional</h3>
               <div className="space-y-4">
-                {aboutSummary ? (
-                  <div className="text-muted-foreground leading-relaxed" dangerouslySetInnerHTML={{ __html: aboutSummary }} />
+              {aboutSummary ? (
+                  <SafeHTML html={aboutSummary} className="text-muted-foreground leading-relaxed" />
                 ) : (
                   <>
                     <p className="text-muted-foreground leading-relaxed">
