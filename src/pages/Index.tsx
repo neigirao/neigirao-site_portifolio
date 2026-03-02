@@ -23,6 +23,7 @@ import {
   FAQSection,
   ContactSection,
   FooterSection,
+  RecentArticlesSection,
 } from "@/components/sections";
 
 const Index = () => {
@@ -66,6 +67,7 @@ const Index = () => {
         <ErrorBoundary><SkillsSection skills={skills} isLoading={loadingSkills} /></ErrorBoundary>
         <ErrorBoundary><CertificationsSection /></ErrorBoundary>
         <ErrorBoundary><TestimonialsSection /></ErrorBoundary>
+        <ErrorBoundary><RecentArticlesSection /></ErrorBoundary>
         <ErrorBoundary><FAQSection /></ErrorBoundary>
         <ErrorBoundary><AboutSection education={education} isLoading={loadingEducation} /></ErrorBoundary>
         <ErrorBoundary><ContactSection /></ErrorBoundary>

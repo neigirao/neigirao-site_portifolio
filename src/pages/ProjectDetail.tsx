@@ -7,9 +7,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OptimizedImage } from '@/components/ui/optimized-image';
-import { ArrowLeft, ExternalLink, Tag, ChevronRight, Lightbulb } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Tag, ChevronRight, Lightbulb, Target, AlertTriangle, Wrench, BarChart3, BookOpen } from 'lucide-react';
 import SeeAlso from '@/components/SeeAlso';
 import { SafeHTML } from '@/components/admin/SafeHTML';
+
+const CASE_STUDY_SECTIONS = [
+  { key: 'context', label: 'Contexto', icon: Target },
+  { key: 'challenge', label: 'Desafio', icon: AlertTriangle },
+  { key: 'solution', label: 'Solução', icon: Wrench },
+  { key: 'results', label: 'Resultados', icon: BarChart3 },
+  { key: 'learnings', label: 'Aprendizados', icon: BookOpen },
+] as const;
 
 export default function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -20,10 +28,11 @@ export default function ProjectDetail() {
     project?.id || ''
   );
 
-  // Get related skills and experiences
   const relatedSkills = useSkillsForProject(project?.tags || null, project?.description || '');
   const relatedExperiences = useExperiencesForProject(project?.tags || null, project?.description || '');
   const seeAlsoItems = useSeeAlso([...relatedSkills, ...relatedExperiences], 5);
+
+  const hasCaseStudy = project && CASE_STUDY_SECTIONS.some(s => (project as any)[s.key]);
 
   if (isLoading) {
     return (
@@ -44,9 +53,7 @@ export default function ProjectDetail() {
         <Card className="max-w-md mx-auto">
           <CardContent className="p-8 text-center">
             <h1 className="text-2xl font-bold mb-4">Projeto não encontrado</h1>
-            <p className="text-muted-foreground mb-6">
-              O projeto que você procura não existe ou foi removido.
-            </p>
+            <p className="text-muted-foreground mb-6">O projeto que você procura não existe ou foi removido.</p>
             <Button onClick={() => navigate('/')}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar ao Portfolio
@@ -67,13 +74,7 @@ export default function ProjectDetail() {
         canonicalUrl={`${BASE_URL}/projeto/${canonicalSlug}`}
         ogType="article"
         ogImage={project.image_url || undefined}
-        keywords={[
-          project.title,
-          ...(project.tags || []),
-          'projeto',
-          'case',
-          'Nei Girão'
-        ]}
+        keywords={[project.title, ...(project.tags || []), 'projeto', 'case', 'Nei Girão']}
       />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",
@@ -90,43 +91,36 @@ export default function ProjectDetail() {
       }) }} />
 
       <div className="min-h-screen bg-background">
-        {/* Header */}
         <header className="bg-gradient-hero pt-20 pb-16">
           <div className="max-w-4xl mx-auto px-6">
-            {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-white/70 mb-8">
-              <Link to="/" className="hover:text-white transition-colors">
-                Início
-              </Link>
+              <Link to="/" className="hover:text-white transition-colors">Início</Link>
               <ChevronRight className="w-4 h-4" />
-              <Link to="/#projects" className="hover:text-white transition-colors">
-                Projetos
-              </Link>
+              <Link to="/#projects" className="hover:text-white transition-colors">Projetos</Link>
               <ChevronRight className="w-4 h-4" />
               <span className="text-white">{project.title}</span>
             </nav>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/#projects')}
-              className="mb-8 bg-white/10 text-white border-white/30 hover:bg-white/20"
-            >
+            <Button variant="outline" size="sm" onClick={() => navigate('/#projects')} className="mb-8 bg-white/10 text-white border-white/30 hover:bg-white/20">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar
             </Button>
 
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              {project.title}
-            </h1>
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">{project.title}</h1>
+
+            {(project as any).highlight_metric && (
+              <div className="mb-4">
+                <span className="inline-flex items-center gap-2 px-4 py-2 bg-teal-accent/20 backdrop-blur-sm rounded-full text-teal-accent font-semibold text-sm border border-teal-accent/30">
+                  <BarChart3 className="w-4 h-4" />
+                  {(project as any).highlight_metric}
+                </span>
+              </div>
+            )}
 
             {project.tags && project.tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {project.tags.map((tag, i) => (
-                  <span
-                    key={i}
-                    className="inline-flex items-center gap-1 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-sm text-white/90"
-                  >
+                  <span key={i} className="inline-flex items-center gap-1 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-sm text-white/90">
                     <Tag className="w-3 h-3" />
                     {tag}
                   </span>
@@ -136,17 +130,10 @@ export default function ProjectDetail() {
           </div>
         </header>
 
-        {/* Content */}
         <main className="max-w-4xl mx-auto px-6 py-12">
-          {/* Project Image */}
           {project.image_url && (
             <Card className="mb-8 overflow-hidden shadow-elegant">
-              <OptimizedImage
-                src={project.image_url}
-                alt={project.title}
-                className="w-full h-64 md:h-96"
-                priority
-              />
+              <OptimizedImage src={project.image_url} alt={project.title} className="w-full h-64 md:h-96" priority />
             </Card>
           )}
 
@@ -154,17 +141,10 @@ export default function ProjectDetail() {
           <Card className="shadow-elegant border-2 border-border/50 mb-8">
             <CardContent className="p-8 md:p-12">
               <h2 className="text-xl font-semibold mb-4">Sobre o Projeto</h2>
-              <SafeHTML
-                html={project.description}
-                className="text-muted-foreground leading-relaxed text-lg prose prose-lg max-w-none"
-              />
-
+              <SafeHTML html={project.description} className="text-muted-foreground leading-relaxed text-lg prose prose-lg max-w-none" />
               {project.link && (
                 <div className="mt-8 pt-6 border-t border-border">
-                  <Button
-                    onClick={() => window.open(project.link!, '_blank')}
-                    className="gap-2"
-                  >
+                  <Button onClick={() => window.open(project.link!, '_blank')} className="gap-2">
                     <ExternalLink className="w-4 h-4" />
                     Ver Projeto
                   </Button>
@@ -173,7 +153,28 @@ export default function ProjectDetail() {
             </CardContent>
           </Card>
 
-          {/* Related Skills - Internal Linking */}
+          {/* Case Study Sections */}
+          {hasCaseStudy && (
+            <div className="space-y-6 mb-12">
+              {CASE_STUDY_SECTIONS.map(({ key, label, icon: Icon }) => {
+                const content = (project as any)[key];
+                if (!content) return null;
+                return (
+                  <Card key={key} className="shadow-elegant border-2 border-border/50">
+                    <CardContent className="p-8">
+                      <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                        <Icon className="w-5 h-5 text-teal-accent" />
+                        {label}
+                      </h2>
+                      <SafeHTML html={content} className="text-muted-foreground leading-relaxed prose max-w-none" />
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Related Skills */}
           {relatedSkills.length > 0 && (
             <section className="mb-12">
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -182,11 +183,7 @@ export default function ProjectDetail() {
               </h2>
               <div className="flex flex-wrap gap-3">
                 {relatedSkills.map((skill) => (
-                  <Link
-                    key={skill.id}
-                    to={`/skill/${skill.slug || skill.id}`}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-full text-sm font-medium hover:bg-teal-accent/10 hover:text-teal-accent transition-colors"
-                  >
+                  <Link key={skill.id} to={`/skill/${skill.slug || skill.id}`} className="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-full text-sm font-medium hover:bg-teal-accent/10 hover:text-teal-accent transition-colors">
                     <Lightbulb className="w-4 h-4" />
                     {skill.title}
                   </Link>
@@ -201,17 +198,11 @@ export default function ProjectDetail() {
               <h2 className="text-2xl font-bold mb-6">Projetos Relacionados</h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {relatedProjects.map((proj) => (
-                  <Link
-                    key={proj.id}
-                    to={`/projeto/${proj.slug || proj.id}`}
-                    className="block"
-                  >
+                  <Link key={proj.id} to={`/projeto/${proj.slug || proj.id}`} className="block">
                     <Card className="h-full hover:shadow-glow transition-all hover:border-teal-accent/30">
                       <CardContent className="p-6">
                         <h3 className="font-semibold text-foreground mb-2">{proj.title}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {proj.description}
-                        </p>
+                        <p className="text-sm text-muted-foreground line-clamp-2">{proj.description}</p>
                       </CardContent>
                     </Card>
                   </Link>
@@ -220,17 +211,11 @@ export default function ProjectDetail() {
             </section>
           )}
 
-          {/* See Also Section */}
           <SeeAlso items={seeAlsoItems} title="Veja Também" />
 
-          {/* CTA */}
           <div className="mt-12 text-center">
-            <p className="text-muted-foreground mb-4">
-              Quer saber mais sobre este ou outros projetos?
-            </p>
-            <Button onClick={() => navigate('/#contact')}>
-              Entre em Contato
-            </Button>
+            <p className="text-muted-foreground mb-4">Quer saber mais sobre este ou outros projetos?</p>
+            <Button onClick={() => navigate('/#contact')}>Entre em Contato</Button>
           </div>
         </main>
       </div>

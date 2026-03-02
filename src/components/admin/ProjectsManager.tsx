@@ -30,6 +30,12 @@ interface Project {
   meta_title: string | null;
   meta_description: string | null;
   slug: string | null;
+  highlight_metric: string | null;
+  context: string | null;
+  challenge: string | null;
+  solution: string | null;
+  results: string | null;
+  learnings: string | null;
 }
 
 const emptyForm = {
@@ -41,6 +47,12 @@ const emptyForm = {
   meta_title: '',
   meta_description: '',
   slug: '',
+  highlight_metric: '',
+  context: '',
+  challenge: '',
+  solution: '',
+  results: '',
+  learnings: '',
 };
 
 export function ProjectsManager() {
@@ -74,6 +86,12 @@ export function ProjectsManager() {
       tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
       meta_title: formData.meta_title || null, meta_description: formData.meta_description || null,
       slug: formData.slug || null,
+      highlight_metric: formData.highlight_metric || null,
+      context: formData.context || null,
+      challenge: formData.challenge || null,
+      solution: formData.solution || null,
+      results: formData.results || null,
+      learnings: formData.learnings || null,
       order_index: editingId ? projects.find(p => p.id === editingId)?.order_index || 0 : nextOrderIndex,
     };
 
@@ -98,6 +116,12 @@ export function ProjectsManager() {
       tags: project.tags.join(', '),
       meta_title: project.meta_title || '', meta_description: project.meta_description || '',
       slug: project.slug || '',
+      highlight_metric: project.highlight_metric || '',
+      context: project.context || '',
+      challenge: project.challenge || '',
+      solution: project.solution || '',
+      results: project.results || '',
+      learnings: project.learnings || '',
     });
   };
 
@@ -107,6 +131,9 @@ export function ProjectsManager() {
       title: `${project.title} (cópia)`, description: project.description,
       image_url: project.image_url, link: project.link,
       tags: project.tags, meta_title: null, meta_description: null, slug: null,
+      highlight_metric: project.highlight_metric,
+      context: project.context, challenge: project.challenge,
+      solution: project.solution, results: project.results, learnings: project.learnings,
       order_index: nextOrderIndex,
     }]);
     if (error) { toast.error('Erro ao duplicar'); return; }
@@ -159,6 +186,24 @@ export function ProjectsManager() {
                 <Input id="tags" value={formData.tags} onChange={(e) => setFormData({ ...formData, tags: e.target.value })} placeholder="React, TypeScript, Node.js" />
               </div>
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="highlight_metric">Métrica de Destaque</Label>
+              <Input id="highlight_metric" value={formData.highlight_metric} onChange={(e) => setFormData({ ...formData, highlight_metric: e.target.value })} placeholder="Ex: 40% redução MTTR" />
+              <p className="text-xs text-muted-foreground">Métrica-chave exibida em destaque no card e na página do projeto</p>
+            </div>
+
+            {/* Case Study Fields */}
+            <div className="border-t border-border pt-4 mt-4">
+              <h3 className="text-sm font-semibold text-foreground mb-3">📋 Case Study (opcional)</h3>
+              <div className="space-y-4">
+                <RichTextEditor value={formData.context} onChange={(value) => setFormData({ ...formData, context: value })} label="Contexto" />
+                <RichTextEditor value={formData.challenge} onChange={(value) => setFormData({ ...formData, challenge: value })} label="Desafio" />
+                <RichTextEditor value={formData.solution} onChange={(value) => setFormData({ ...formData, solution: value })} label="Solução" />
+                <RichTextEditor value={formData.results} onChange={(value) => setFormData({ ...formData, results: value })} label="Resultados" />
+                <RichTextEditor value={formData.learnings} onChange={(value) => setFormData({ ...formData, learnings: value })} label="Aprendizados" />
+              </div>
+            </div>
+
             <SEOFields
               metaTitle={formData.meta_title} metaDescription={formData.meta_description} slug={formData.slug}
               onMetaTitleChange={(v) => setFormData({ ...formData, meta_title: v })}
@@ -184,6 +229,9 @@ export function ProjectsManager() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-lg truncate">{project.title}</h3>
+                    {project.highlight_metric && (
+                      <span className="text-xs bg-teal-accent/10 text-teal-accent px-2 py-0.5 rounded-full font-medium">{project.highlight_metric}</span>
+                    )}
                     <CompletenessIndicator hasSeo={!!(project.meta_title && project.meta_description)} hasImage={!!project.image_url} hasSlug={!!project.slug} itemName={project.title} />
                   </div>
                   {project.tags.length > 0 && (

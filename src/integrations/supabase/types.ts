@@ -283,46 +283,61 @@ export type Database = {
       }
       projects: {
         Row: {
+          challenge: string | null
+          context: string | null
           created_at: string
           description: string
           highlight_metric: string | null
           id: string
           image_url: string | null
+          learnings: string | null
           link: string | null
           meta_description: string | null
           meta_title: string | null
           order_index: number
+          results: string | null
           slug: string | null
+          solution: string | null
           tags: string[] | null
           title: string
           updated_at: string
         }
         Insert: {
+          challenge?: string | null
+          context?: string | null
           created_at?: string
           description: string
           highlight_metric?: string | null
           id?: string
           image_url?: string | null
+          learnings?: string | null
           link?: string | null
           meta_description?: string | null
           meta_title?: string | null
           order_index?: number
+          results?: string | null
           slug?: string | null
+          solution?: string | null
           tags?: string[] | null
           title: string
           updated_at?: string
         }
         Update: {
+          challenge?: string | null
+          context?: string | null
           created_at?: string
           description?: string
           highlight_metric?: string | null
           id?: string
           image_url?: string | null
+          learnings?: string | null
           link?: string | null
           meta_description?: string | null
           meta_title?: string | null
           order_index?: number
+          results?: string | null
           slug?: string | null
+          solution?: string | null
           tags?: string[] | null
           title?: string
           updated_at?: string

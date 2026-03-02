@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import { useSiteSettings, useUpdateSiteSetting } from '@/hooks/useSiteSettings';
 import { ImageUploader } from '@/components/admin/ImageUploader';
+import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -213,14 +214,11 @@ export function SiteSettingsManager() {
             />
           </div>
           <div>
-            <Label>Resumo profissional (texto principal)</Label>
-            <Textarea
+            <RichTextEditor
               value={local.about_summary || ''}
-              onChange={(e) => set('about_summary', e.target.value)}
-              placeholder="Texto do resumo profissional..."
-              rows={6}
+              onChange={(value) => set('about_summary', value)}
+              label="Resumo profissional (texto principal)"
             />
-            <p className="text-xs text-muted-foreground mt-1">Suporta HTML básico: &lt;strong&gt;, &lt;span&gt;, &lt;br&gt;</p>
           </div>
           <div>
             <Label>Ferramentas (separadas por vírgula)</Label>

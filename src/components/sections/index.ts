@@ -10,3 +10,4 @@ export { TestimonialsSection } from "./TestimonialsSection";
 export { FAQSection } from "./FAQSection";
 export { ContactSection } from "./ContactSection";
 export { FooterSection } from "./FooterSection";
+export { RecentArticlesSection } from "./RecentArticlesSection";

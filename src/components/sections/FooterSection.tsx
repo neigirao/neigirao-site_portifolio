@@ -1,8 +1,12 @@
 import { Link } from "react-router-dom";
 import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, AUTHOR_WHATSAPP } from "@/config/constants";
 import { Linkedin, Mail, MessageCircle } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export function FooterSection() {
+  const { settings } = useSiteSettings();
+  const cvUrl = settings.cv_file_url || '/cv-nei-girao.pdf';
+
   return (
     <footer className="py-12 bg-card border-t border-border">
       <div className="max-w-7xl mx-auto px-6">
@@ -23,7 +27,7 @@ export function FooterSection() {
               <li><Link to="/sobre" className="hover:text-foreground transition-colors">Sobre mim</Link></li>
               <li><Link to="/contato" className="hover:text-foreground transition-colors">Contato</Link></li>
               <li>
-                <a href="/cv-nei-girao.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+                <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
                   Download CV
                 </a>
               </li>
