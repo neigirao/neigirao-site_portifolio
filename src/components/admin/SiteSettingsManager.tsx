@@ -231,6 +231,107 @@ export function SiteSettingsManager() {
         </CardContent>
       </Card>
 
+      {/* Hero Stats Editor */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <BarChart3 className="h-5 w-5" /> Hero Stats (cards numéricos)
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {(() => {
+            let stats: { value: string; label: string }[] = [];
+            try { stats = JSON.parse(local.hero_stats || '[]'); } catch { stats = []; }
+            if (!Array.isArray(stats) || stats.length === 0) {
+              stats = [
+                { value: "15+", label: "Anos de Experiência" },
+                { value: "35+", label: "Membros Gerenciados" },
+                { value: "6+", label: "Produtos Lançados" },
+                { value: "4", label: "Grandes Empresas" },
+              ];
+            }
+            const updateStats = (newStats: typeof stats) => set('hero_stats', JSON.stringify(newStats));
+            return (
+              <>
+                {stats.map((stat, i) => (
+                  <div key={i} className="flex gap-2 items-end">
+                    <div className="flex-1">
+                      <Label>Valor {i + 1}</Label>
+                      <Input value={stat.value} onChange={(e) => { const s = [...stats]; s[i] = { ...s[i], value: e.target.value }; updateStats(s); }} />
+                    </div>
+                    <div className="flex-[2]">
+                      <Label>Label</Label>
+                      <Input value={stat.label} onChange={(e) => { const s = [...stats]; s[i] = { ...s[i], label: e.target.value }; updateStats(s); }} />
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => { const s = stats.filter((_, j) => j !== i); updateStats(s); }}>✕</Button>
+                  </div>
+                ))}
+                <Button variant="outline" size="sm" onClick={() => updateStats([...stats, { value: "", label: "" }])}>
+                  + Adicionar stat
+                </Button>
+              </>
+            );
+          })()}
+        </CardContent>
+      </Card>
+
+      {/* Methodology Cards Editor */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <BarChart3 className="h-5 w-5" /> Methodology Cards (Sobre)
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {(() => {
+            const ICONS = ["BarChart3", "Users", "Activity", "Search", "GraduationCap"];
+            let items: { icon: string; title: string; description: string }[] = [];
+            try { items = JSON.parse(local.methodology_items || '[]'); } catch { items = []; }
+            if (!Array.isArray(items) || items.length === 0) {
+              items = [
+                { icon: "BarChart3", title: "Data-Driven", description: "Decisões fundamentadas em dados, métricas e experimentação contínua." },
+                { icon: "Users", title: "Agile Leadership", description: "Liderança de squads multidisciplinares com Scrum e Kanban." },
+                { icon: "Activity", title: "Observabilidade", description: "Cultura de monitoramento proativo com Dynatrace, Grafana e Azure Monitor." },
+                { icon: "Search", title: "Discovery Contínuo", description: "Validação constante com usuários e stakeholders." },
+              ];
+            }
+            const updateItems = (newItems: typeof items) => set('methodology_items', JSON.stringify(newItems));
+            return (
+              <>
+                {items.map((item, i) => (
+                  <div key={i} className="p-3 border rounded-lg space-y-2">
+                    <div className="flex gap-2 items-end">
+                      <div>
+                        <Label>Ícone</Label>
+                        <select
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                          value={item.icon}
+                          onChange={(e) => { const s = [...items]; s[i] = { ...s[i], icon: e.target.value }; updateItems(s); }}
+                        >
+                          {ICONS.map(ic => <option key={ic} value={ic}>{ic}</option>)}
+                        </select>
+                      </div>
+                      <div className="flex-1">
+                        <Label>Título</Label>
+                        <Input value={item.title} onChange={(e) => { const s = [...items]; s[i] = { ...s[i], title: e.target.value }; updateItems(s); }} />
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={() => updateItems(items.filter((_, j) => j !== i))}>✕</Button>
+                    </div>
+                    <div>
+                      <Label>Descrição</Label>
+                      <Input value={item.description} onChange={(e) => { const s = [...items]; s[i] = { ...s[i], description: e.target.value }; updateItems(s); }} />
+                    </div>
+                  </div>
+                ))}
+                <Button variant="outline" size="sm" onClick={() => updateItems([...items, { icon: "BarChart3", title: "", description: "" }])}>
+                  + Adicionar card
+                </Button>
+              </>
+            );
+          })()}
+        </CardContent>
+      </Card>
+
       {/* PageSpeed link */}
       <Card>
         <CardHeader>
