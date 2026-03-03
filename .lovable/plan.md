@@ -1,47 +1,30 @@
 
 
-# Pendências Restantes
+# Plano: Ocultar seções vazias + Remover busca/filtro do roadmap
 
-Do roadmap de 10 itens, **7 foram concluídos** e **3 ainda estão pendentes**:
+## 1. Ocultar seções vazias quando sem dados
 
-## Concluídos
-| # | Item | Status |
-|---|------|--------|
-| 1 | Sanitizar HTML no AboutSection (SafeHTML) | Feito |
-| 2 | Unificar CV URL via useSiteSettings | Feito |
-| 3 | Campo highlight_metric em Projects | Feito |
-| 4 | Template Case Study (projects) | Feito |
-| 5 | Sobre.tsx usar site_settings | Feito |
-| 6 | Artigos na Home + nav | Feito |
-| 9 | RichTextEditor no about_summary | Feito |
-| 10 | llms.txt e about.txt (arquivos estáticos removidos, rotas apontam para edge functions) | Feito |
+As seções `CertificationsSection`, `TestimonialsSection` e `RecentArticlesSection` já retornam `null` quando vazias. As seguintes seções **não** fazem isso e precisam ser atualizadas:
 
----
+- **ExperienceSection** - Adicionar `if (!isLoading && experiences.length === 0) return null;`
+- **ProjectsSection** - Adicionar `if (!isLoading && projects.length === 0) return null;`
+- **SkillsSection** - Adicionar `if (!isLoading && skills.length === 0) return null;`
+- **EducationSection** - Adicionar `if (!isLoading && education.length === 0) return null;`
+- **FAQSection** - Adicionar verificação similar (quando FAQ for dinâmico, se lista vazia, ocultar)
 
-## Pendentes (3 itens)
+Padrão: antes do `return` principal, adicionar a guarda `if (!isLoading && items.length === 0) return null;`
 
-### 7. heroStats hardcoded no HeroSection.tsx
-Os 4 cards de stats ("15+ Anos", "35+ Membros", "6+ Produtos", "4 Grandes Empresas") estão fixos no código (linhas 7-12). Devem ser editáveis via CMS.
+## 2. Atualizar plan.md
 
-**Plano:** Armazenar como JSON na `site_settings` (chave `hero_stats`). Criar UI de edição no `SiteSettingsManager` com campos dinâmicos (valor + label). No `HeroSection`, ler do hook e usar fallback para os valores atuais.
+- Remover o item "Busca/filtro no CMS" do roadmap de melhorias
+- Adicionar item "Ocultar seções vazias" como pendente
+- Marcar heroStats e methodology cards como concluídos (já foram implementados)
 
-### 8. Methodology cards hardcoded no AboutSection.tsx
-Os 4 cards de metodologia (Data-Driven, Agile Leadership, Observabilidade, Discovery) estão fixos no código (linhas 20-41). Devem ser editáveis via CMS.
-
-**Plano:** Armazenar como JSON na `site_settings` (chave `methodology_items`). Criar UI de edição no `SiteSettingsManager` com campos título + descrição + seletor de ícone. No `AboutSection`, ler do hook com fallback para os valores atuais.
-
-### Adicional: Atualizar plan.md
-Atualizar o arquivo `.lovable/plan.md` para refletir o estado atual (marcar concluídos, manter pendentes).
-
----
-
-## Resumo de Implementação
-
-| Item | Esforço |
-|------|---------|
-| heroStats editáveis via CMS | ~30 min |
-| Methodology cards editáveis via CMS | ~30 min |
-| Atualizar plan.md | 5 min |
-
-Ambos seguem o mesmo padrão: JSON em `site_settings` + UI de edição no admin + leitura com fallback no front.
+## Arquivos alterados
+- `src/components/sections/ExperienceSection.tsx`
+- `src/components/sections/ProjectsSection.tsx`
+- `src/components/sections/SkillsSection.tsx`
+- `src/components/sections/EducationSection.tsx`
+- `src/components/sections/FAQSection.tsx`
+- `.lovable/plan.md`
 
