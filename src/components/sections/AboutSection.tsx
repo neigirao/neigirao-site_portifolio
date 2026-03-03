@@ -17,27 +17,13 @@ interface AboutSectionProps {
   isLoading: boolean;
 }
 
-const METHODOLOGY_ITEMS = [
-  {
-    icon: BarChart3,
-    title: "Data-Driven",
-    description: "Decisões fundamentadas em dados, métricas e experimentação contínua.",
-  },
-  {
-    icon: Users,
-    title: "Agile Leadership",
-    description: "Liderança de squads multidisciplinares com Scrum e Kanban.",
-  },
-  {
-    icon: Activity,
-    title: "Observabilidade",
-    description: "Cultura de monitoramento proativo com Dynatrace, Grafana e Azure Monitor.",
-  },
-  {
-    icon: Search,
-    title: "Discovery Contínuo",
-    description: "Validação constante com usuários e stakeholders.",
-  },
+const ICON_MAP: Record<string, any> = { BarChart3, Users, Activity, Search, GraduationCap };
+
+const DEFAULT_METHODOLOGY_ITEMS = [
+  { icon: "BarChart3", title: "Data-Driven", description: "Decisões fundamentadas em dados, métricas e experimentação contínua." },
+  { icon: "Users", title: "Agile Leadership", description: "Liderança de squads multidisciplinares com Scrum e Kanban." },
+  { icon: "Activity", title: "Observabilidade", description: "Cultura de monitoramento proativo com Dynatrace, Grafana e Azure Monitor." },
+  { icon: "Search", title: "Discovery Contínuo", description: "Validação constante com usuários e stakeholders." },
 ];
 
 export function AboutSection({ education, isLoading }: AboutSectionProps) {
@@ -46,6 +32,13 @@ export function AboutSection({ education, isLoading }: AboutSectionProps) {
   const aboutSubtitle = settings.about_subtitle || 'Trajetória, metodologia e formação';
   const aboutSummary = settings.about_summary;
   const aboutTools = settings.about_tools || 'Dynatrace, Grafana, Azure Monitor, Google Analytics';
+
+  const methodologyItems = (() => {
+    try {
+      const parsed = settings.methodology_items ? JSON.parse(settings.methodology_items) : null;
+      return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_METHODOLOGY_ITEMS;
+    } catch { return DEFAULT_METHODOLOGY_ITEMS; }
+  })();
 
   return (
     <section id="about" className="py-16 bg-background relative overflow-hidden scroll-mt-20">
@@ -93,17 +86,20 @@ export function AboutSection({ education, isLoading }: AboutSectionProps) {
 
           {/* Right: Methodology grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {METHODOLOGY_ITEMS.map((item) => (
-              <Card key={item.title} className="shadow-elegant border-2 border-border/50 bg-card/95 hover:border-secondary/30 transition-all duration-300">
-                <CardContent className="p-6">
-                  <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center mb-3">
-                    <item.icon className="w-5 h-5 text-secondary" />
-                  </div>
-                  <h4 className="text-base font-bold text-foreground mb-1">{item.title}</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
-                </CardContent>
-              </Card>
-            ))}
+            {methodologyItems.map((item: { icon: string; title: string; description: string }) => {
+              const IconComp = ICON_MAP[item.icon] || BarChart3;
+              return (
+                <Card key={item.title} className="shadow-elegant border-2 border-border/50 bg-card/95 hover:border-secondary/30 transition-all duration-300">
+                  <CardContent className="p-6">
+                    <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center mb-3">
+                      <IconComp className="w-5 h-5 text-secondary" />
+                    </div>
+                    <h4 className="text-base font-bold text-foreground mb-1">{item.title}</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
 

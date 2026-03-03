@@ -4,7 +4,7 @@ import { useCompanies } from "@/hooks/usePortfolioData";
 import { useCountUp, parseMetricValue } from "@/hooks/useCountUp";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
-const heroStats = [
+const DEFAULT_HERO_STATS = [
   { value: "15+", label: "Anos de Experiência" },
   { value: "35+", label: "Membros Gerenciados" },
   { value: "6+", label: "Produtos Lançados" },
@@ -24,10 +24,10 @@ function CountUpStat({ value, label }: { value: string; label: string }) {
   );
 }
 
-function HeroStats() {
+function HeroStats({ stats }: { stats: { value: string; label: string }[] }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-4xl mx-auto">
-      {heroStats.map((stat) => (
+      {stats.map((stat) => (
         <CountUpStat key={stat.label} {...stat} />
       ))}
     </div>
@@ -42,6 +42,13 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
   const { settings } = useSiteSettings();
   const heroPhotoUrl = settings.hero_photo_url;
   const cvUrl = settings.cv_file_url || '/cv-nei-girao.pdf';
+
+  const heroStats: { value: string; label: string }[] = (() => {
+    try {
+      const parsed = settings.hero_stats ? JSON.parse(settings.hero_stats) : null;
+      return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_HERO_STATS;
+    } catch { return DEFAULT_HERO_STATS; }
+  })();
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-hero pt-20 relative overflow-hidden">
@@ -114,7 +121,7 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
           </div>
 
           {/* Stats with count-up */}
-          <HeroStats />
+          <HeroStats stats={heroStats} />
 
           {/* Company Logos Bar */}
           <div className="mt-12 max-w-3xl mx-auto">
