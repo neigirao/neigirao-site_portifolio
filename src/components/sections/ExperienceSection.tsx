@@ -12,6 +12,8 @@ interface ExperienceSectionProps {
 export function ExperienceSection({ experiences, isLoading }: ExperienceSectionProps) {
   const { ref, isVisible } = useScrollAnimation();
 
+  if (!isLoading && experiences.length === 0) return null;
+
   return (
     <section id="experience" className="py-16 bg-muted/30 relative overflow-hidden scroll-mt-20">
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-primary opacity-5 blur-3xl rounded-full pointer-events-none" />

@@ -12,6 +12,8 @@ interface EducationSectionProps {
 export function EducationSection({ education, isLoading }: EducationSectionProps) {
   const { ref, isVisible } = useScrollAnimation();
 
+  if (!isLoading && education.length === 0) return null;
+
   return (
     <section id="education" className="py-24 bg-background relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-subtle opacity-30 pointer-events-none" />

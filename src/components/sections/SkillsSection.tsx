@@ -11,6 +11,8 @@ interface SkillsSectionProps {
 export function SkillsSection({ skills, isLoading }: SkillsSectionProps) {
   const { ref, isVisible } = useScrollAnimation();
 
+  if (!isLoading && skills.length === 0) return null;
+
   return (
     <section id="skills" className="py-16 bg-muted/30 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-6" ref={ref}>
