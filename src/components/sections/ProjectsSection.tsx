@@ -11,6 +11,8 @@ interface ProjectsSectionProps {
 export function ProjectsSection({ projects, isLoading }: ProjectsSectionProps) {
   const { ref, isVisible } = useScrollAnimation();
 
+  if (!isLoading && projects.length === 0) return null;
+
   return (
     <section id="projects" className="py-16 bg-background relative overflow-hidden scroll-mt-20">
       <div className="absolute inset-0 bg-gradient-subtle opacity-40 pointer-events-none" />

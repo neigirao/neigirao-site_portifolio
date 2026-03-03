@@ -1,30 +1,32 @@
+# Plano de Melhorias - Site & CMS
 
+## Concluídos ✅
+- Sanitizar HTML no AboutSection (SafeHTML)
+- Unificar CV URL via useSiteSettings
+- Campo highlight_metric em Projects
+- Template Case Study (projects)
+- Sobre.tsx usar site_settings
+- Artigos na Home + nav
+- RichTextEditor no about_summary
+- llms.txt e about.txt (rotas apontam para edge functions)
+- heroStats editáveis via CMS (site_settings)
+- Methodology cards editáveis via CMS (site_settings)
+- Ocultar seções vazias quando sem dados
 
-# Plano: Ocultar seções vazias + Remover busca/filtro do roadmap
-
-## 1. Ocultar seções vazias quando sem dados
-
-As seções `CertificationsSection`, `TestimonialsSection` e `RecentArticlesSection` já retornam `null` quando vazias. As seguintes seções **não** fazem isso e precisam ser atualizadas:
-
-- **ExperienceSection** - Adicionar `if (!isLoading && experiences.length === 0) return null;`
-- **ProjectsSection** - Adicionar `if (!isLoading && projects.length === 0) return null;`
-- **SkillsSection** - Adicionar `if (!isLoading && skills.length === 0) return null;`
-- **EducationSection** - Adicionar `if (!isLoading && education.length === 0) return null;`
-- **FAQSection** - Adicionar verificação similar (quando FAQ for dinâmico, se lista vazia, ocultar)
-
-Padrão: antes do `return` principal, adicionar a guarda `if (!isLoading && items.length === 0) return null;`
-
-## 2. Atualizar plan.md
-
-- Remover o item "Busca/filtro no CMS" do roadmap de melhorias
-- Adicionar item "Ocultar seções vazias" como pendente
-- Marcar heroStats e methodology cards como concluídos (já foram implementados)
-
-## Arquivos alterados
-- `src/components/sections/ExperienceSection.tsx`
-- `src/components/sections/ProjectsSection.tsx`
-- `src/components/sections/SkillsSection.tsx`
-- `src/components/sections/EducationSection.tsx`
-- `src/components/sections/FAQSection.tsx`
-- `.lovable/plan.md`
-
+## Pendentes
+- FAQ editável via CMS (tabela `faqs` ou JSON em `site_settings`)
+- Hero tags, subtitle e description editáveis via `site_settings`
+- Subtítulos de seções editáveis via `site_settings`
+- Footer description editável
+- Navbar global em páginas standalone
+- Scroll animations consistentes (Testimonials, Certifications)
+- Project cards com imagem
+- Admin: agrupar tabs em categorias
+- Breadcrumb schema nas páginas de detalhe
+- OG Image dinâmico nos artigos
+- Formulário de contato real via edge function
+- Admin: prevenção de navegação com alterações não salvas
+- Admin: campo `is_visible` para experiences/skills/education
+- Fix WhatsApp FAB vs Back to Top overlap no mobile
+- Melhorar contrastes de acessibilidade
+- Adicionar skip-to-content na home

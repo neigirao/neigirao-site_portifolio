@@ -52,6 +52,8 @@ export function FAQSection() {
     },
   ];
 
+  if (faqItems.length === 0) return null;
+
   return (
     <section id="faq" className="py-16 relative overflow-hidden scroll-mt-20">
       <div className="max-w-3xl mx-auto px-6" ref={ref}>
