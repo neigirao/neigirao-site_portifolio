@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import ExperienceItem from "@/components/ExperienceItem";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import type { DbExperience } from "@/hooks/usePortfolioData";
 
 interface ExperienceSectionProps {
@@ -11,6 +12,8 @@ interface ExperienceSectionProps {
 
 export function ExperienceSection({ experiences, isLoading }: ExperienceSectionProps) {
   const { ref, isVisible } = useScrollAnimation();
+  const { settings } = useSiteSettings();
+  const subtitle = settings.section_subtitle_experience || "Mais de 15 anos liderando produtos digitais e equipes em grandes empresas";
 
   if (!isLoading && experiences.length === 0) return null;
 
@@ -24,7 +27,7 @@ export function ExperienceSection({ experiences, isLoading }: ExperienceSectionP
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Experiência Profissional</h2>
           <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
-            Mais de 15 anos liderando produtos digitais e equipes em grandes empresas
+            {subtitle}
           </p>
         </div>
 

@@ -70,13 +70,19 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
             </div>
           </div>
 
-          {/* Badge - 3 roles as separate tags */}
+          {/* Badge - dynamic tags */}
           <div className="flex flex-wrap gap-3 justify-center mb-6">
-            {[
-              { label: "Product Management", icon: "🎯" },
-              { label: "Transformação Digital", icon: "🚀" },
-              { label: "Dados & Observabilidade", icon: "📊" },
-            ].map((tag) => (
+            {(() => {
+              const defaultTags = [
+                { label: "Product Management", icon: "🎯" },
+                { label: "Transformação Digital", icon: "🚀" },
+                { label: "Dados & Observabilidade", icon: "📊" },
+              ];
+              try {
+                const parsed = settings.hero_tags ? JSON.parse(settings.hero_tags) : null;
+                return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultTags;
+              } catch { return defaultTags; }
+            })().map((tag: { label: string; icon: string }) => (
               <span
                 key={tag.label}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-sm font-medium"
@@ -91,14 +97,12 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
             Nei Girão
           </h1>
 
-          <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-8 leading-snug">
-            Liderança estratégica em produtos digitais,
-            <br />
-            <span className="bg-gradient-primary bg-clip-text text-transparent">dados e transformação</span>
-          </h2>
+          <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-8 leading-snug"
+              dangerouslySetInnerHTML={{ __html: settings.hero_subtitle || 'Liderança estratégica em produtos digitais,<br /><span class="bg-gradient-primary bg-clip-text text-transparent">dados e transformação</span>' }}
+          />
 
           <p className="text-lg md:text-xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
-            Product Manager e Estrategista de Dados com 15+ anos transformando observabilidade e cultura analítica em produtos digitais de alto impacto.
+            {settings.hero_description || 'Product Manager e Estrategista de Dados com 15+ anos transformando observabilidade e cultura analítica em produtos digitais de alto impacto.'}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">

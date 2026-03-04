@@ -1,6 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import ProjectCard from "@/components/ProjectCard";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import type { DbProject } from "@/hooks/usePortfolioData";
 
 interface ProjectsSectionProps {
@@ -10,6 +11,8 @@ interface ProjectsSectionProps {
 
 export function ProjectsSection({ projects, isLoading }: ProjectsSectionProps) {
   const { ref, isVisible } = useScrollAnimation();
+  const { settings } = useSiteSettings();
+  const subtitle = settings.section_subtitle_projects || "Projetos de destaque que geraram impacto significativo";
 
   if (!isLoading && projects.length === 0) return null;
 
@@ -21,7 +24,7 @@ export function ProjectsSection({ projects, isLoading }: ProjectsSectionProps) {
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Principais Projetos</h2>
           <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
-            Projetos de destaque que geraram impacto significativo
+            {subtitle}
           </p>
         </div>
 

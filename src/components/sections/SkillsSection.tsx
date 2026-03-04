@@ -1,6 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import SkillCard from "@/components/SkillCard";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import type { DbSkill } from "@/hooks/usePortfolioData";
 
 interface SkillsSectionProps {
@@ -10,6 +11,8 @@ interface SkillsSectionProps {
 
 export function SkillsSection({ skills, isLoading }: SkillsSectionProps) {
   const { ref, isVisible } = useScrollAnimation();
+  const { settings } = useSiteSettings();
+  const subtitle = settings.section_subtitle_skills || "Especializado em observabilidade, product management e análise de dados";
 
   if (!isLoading && skills.length === 0) return null;
 
@@ -20,7 +23,7 @@ export function SkillsSection({ skills, isLoading }: SkillsSectionProps) {
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Habilidades</h2>
           <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
-            Especializado em observabilidade, product management e análise de dados
+            {subtitle}
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
