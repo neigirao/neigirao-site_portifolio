@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import ExperienceItem from "@/components/ExperienceItem";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import type { DbExperience } from "@/hooks/usePortfolioData";
 
 interface ExperienceSectionProps {
