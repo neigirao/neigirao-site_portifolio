@@ -130,7 +130,7 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
               {companies.map((company) => (
                 <span
                   key={company.id}
-                  className="flex items-center gap-2 text-white/40 hover:text-white/70 transition-colors duration-300"
+                  className="flex items-center gap-2 text-white/60 hover:text-white/80 transition-colors duration-300"
                   title={company.name}
                 >
                   {company.logo_url ? (
