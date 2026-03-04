@@ -39,6 +39,11 @@ const Index = () => {
       <HomeSEOHead />
       <DynamicSchema />
       <div className="min-h-screen bg-background">
+        {/* Skip to content - Accessibility */}
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[70] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:text-sm focus:font-medium">
+          Pular para o conteúdo principal
+        </a>
+
         <NavigationBar
           activeSection={activeSection}
           isMenuOpen={isMenuOpen}
