@@ -16,12 +16,12 @@
 - Melhorar contrastes de acessibilidade (white/50→70, white/40→60)
 - Adicionar skip-to-content na home
 - Link "Artigos" no footer
-
-## Pendentes
-- FAQ editável via CMS (tabela `faqs` ou JSON em `site_settings`)
+- FAQ editável via CMS (tabela `faqs` com RLS)
 - Hero tags, subtitle e description editáveis via `site_settings`
 - Subtítulos de seções editáveis via `site_settings`
-- Footer description editável
+- Footer description editável via `site_settings`
+
+## Pendentes
 - Navbar global em páginas standalone
 - Scroll animations consistentes (Testimonials, Certifications)
 - Project cards com imagem
