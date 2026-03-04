@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Upload, Save, FileText, Image, BarChart3, User as UserIcon, ExternalLink } from 'lucide-react';
+import { Upload, Save, FileText, Image, BarChart3, User as UserIcon, ExternalLink, Type, AlignLeft } from 'lucide-react';
 
 function FileUploader({ value, onChange, label, accept = 'application/pdf', folder = 'cv' }: {
   value: string;
