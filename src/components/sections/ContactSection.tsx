@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { MailIcon, LinkedInIcon, PhoneIcon } from "@/components/Icons";
 import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, AUTHOR_WHATSAPP } from "@/config/constants";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export function ContactSection() {
+  const { settings } = useSiteSettings();
+  const subtitle = settings.section_subtitle_contact || "Aberto a desafios em Product Management, dados e observabilidade";
+
   return (
     <section id="contact" className="py-20 bg-gradient-hero relative overflow-hidden scroll-mt-20">
       <div className="absolute top-10 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse" />
@@ -13,7 +17,7 @@ export function ContactSection() {
           <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-white tracking-tight">Vamos Conversar?</h2>
           <div className="w-24 h-1 bg-white/80 mx-auto rounded-full mb-6" />
           <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed font-light">
-            Aberto a desafios em Product Management, dados e observabilidade
+            {subtitle}
           </p>
         </div>
 

@@ -12,6 +12,8 @@ interface EducationSectionProps {
 
 export function EducationSection({ education, isLoading }: EducationSectionProps) {
   const { ref, isVisible } = useScrollAnimation();
+  const { settings } = useSiteSettings();
+  const subtitle = settings.section_subtitle_education || "Sólida formação acadêmica em tecnologia e marketing digital";
 
   if (!isLoading && education.length === 0) return null;
 
@@ -23,7 +25,7 @@ export function EducationSection({ education, isLoading }: EducationSectionProps
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Formação Acadêmica</h2>
           <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
-            Sólida formação acadêmica em tecnologia e marketing digital
+            {subtitle}
           </p>
         </div>
 

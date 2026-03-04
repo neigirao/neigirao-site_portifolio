@@ -97,14 +97,12 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
             Nei Girão
           </h1>
 
-          <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-8 leading-snug">
-            Liderança estratégica em produtos digitais,
-            <br />
-            <span className="bg-gradient-primary bg-clip-text text-transparent">dados e transformação</span>
-          </h2>
+          <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-8 leading-snug"
+              dangerouslySetInnerHTML={{ __html: settings.hero_subtitle || 'Liderança estratégica em produtos digitais,<br /><span class="bg-gradient-primary bg-clip-text text-transparent">dados e transformação</span>' }}
+          />
 
           <p className="text-lg md:text-xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
-            Product Manager e Estrategista de Dados com 15+ anos transformando observabilidade e cultura analítica em produtos digitais de alto impacto.
+            {settings.hero_description || 'Product Manager e Estrategista de Dados com 15+ anos transformando observabilidade e cultura analítica em produtos digitais de alto impacto.'}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">

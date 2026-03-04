@@ -236,6 +236,33 @@ export function useCertifications() {
   return { certifications: data || [], isLoading, error: error?.message || null };
 }
 
+// Types for FAQs
+export interface DbFAQ {
+  id: string;
+  question: string;
+  answer: string;
+  order_index: number;
+  is_visible: boolean;
+}
+
+// Hook for FAQs
+export function useFAQs() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['faqs'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('faqs' as any)
+        .select('*')
+        .eq('is_visible', true)
+        .order('order_index', { ascending: true });
+      if (error) throw error;
+      return data as unknown as DbFAQ[];
+    },
+    ...queryOptions,
+  });
+  return { faqs: data || [], isLoading, error: error?.message || null };
+}
+
 // Hook for testimonials
 export function useTestimonials() {
   const { data, isLoading, error } = useQuery({

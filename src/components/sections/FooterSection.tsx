@@ -15,7 +15,7 @@ export function FooterSection() {
           <div>
             <h3 className="font-bold text-foreground mb-3">Nei Girão</h3>
             <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-              Product Manager especializado em Observabilidade e Produtos Digitais. Rio de Janeiro, Brasil.
+              {settings.footer_description || 'Product Manager especializado em Observabilidade e Produtos Digitais. Rio de Janeiro, Brasil.'}
             </p>
           </div>
 
