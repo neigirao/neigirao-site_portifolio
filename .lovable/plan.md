@@ -12,6 +12,10 @@
 - heroStats editáveis via CMS (site_settings)
 - Methodology cards editáveis via CMS (site_settings)
 - Ocultar seções vazias quando sem dados
+- Fix WhatsApp FAB vs Back to Top overlap no mobile
+- Melhorar contrastes de acessibilidade (white/50→70, white/40→60)
+- Adicionar skip-to-content na home
+- Link "Artigos" no footer
 
 ## Pendentes
 - FAQ editável via CMS (tabela `faqs` ou JSON em `site_settings`)
@@ -27,6 +31,3 @@
 - Formulário de contato real via edge function
 - Admin: prevenção de navegação com alterações não salvas
 - Admin: campo `is_visible` para experiences/skills/education
-- Fix WhatsApp FAB vs Back to Top overlap no mobile
-- Melhorar contrastes de acessibilidade
-- Adicionar skip-to-content na home
