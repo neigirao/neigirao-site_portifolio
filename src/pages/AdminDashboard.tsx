@@ -127,6 +127,10 @@ export default function AdminDashboard() {
             <TestimonialsManager />
           </TabsContent>
 
+          <TabsContent value="faqs">
+            <FAQsManager />
+          </TabsContent>
+
           <TabsContent value="settings">
             <SiteSettingsManager />
           </TabsContent>
