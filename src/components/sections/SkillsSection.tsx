@@ -1,6 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import SkillCard from "@/components/SkillCard";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import type { DbSkill } from "@/hooks/usePortfolioData";
 
 interface SkillsSectionProps {
