@@ -9,6 +9,7 @@ import { MetricsManager } from '@/components/admin/MetricsManager';
 import { CompaniesManager } from '@/components/admin/CompaniesManager';
 import { CertificationsManager } from '@/components/admin/CertificationsManager';
 import { TestimonialsManager } from '@/components/admin/TestimonialsManager';
+import { FAQsManager } from '@/components/admin/FAQsManager';
 import { DashboardStats } from '@/components/admin/DashboardStats';
 import { BulkSlugGenerator } from '@/components/admin/BulkSlugGenerator';
 import { SiteSettingsManager } from '@/components/admin/SiteSettingsManager';
