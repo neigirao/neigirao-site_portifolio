@@ -125,7 +125,7 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
 
           {/* Company Logos Bar */}
           <div className="mt-12 max-w-3xl mx-auto">
-            <p className="text-white/50 text-xs uppercase tracking-widest mb-4">Empresas onde atuei</p>
+            <p className="text-white/70 text-xs uppercase tracking-widest mb-4">Empresas onde atuei</p>
             <div className="flex items-center justify-center gap-8 flex-wrap">
               {companies.map((company) => (
                 <span
