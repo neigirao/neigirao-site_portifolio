@@ -77,6 +77,7 @@ const Index = () => {
         <ErrorBoundary><FAQSection /></ErrorBoundary>
         <ErrorBoundary><AboutSection education={education} isLoading={loadingEducation} /></ErrorBoundary>
         <ErrorBoundary><ContactSection /></ErrorBoundary>
+        </main>
         <FooterSection />
       </div>
     </>

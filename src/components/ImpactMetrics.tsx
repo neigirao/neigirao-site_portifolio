@@ -34,7 +34,7 @@ function MetricCard({ metric, index }: { metric: { id: string; value: string; la
       <div className="text-lg font-semibold text-white/90 mb-2">
         {metric.label}
       </div>
-      <p className="text-sm text-white/60 leading-relaxed">
+      <p className="text-sm text-white/70 leading-relaxed">
         {metric.description}
       </p>
     </div>

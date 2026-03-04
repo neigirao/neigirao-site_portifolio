@@ -26,6 +26,7 @@ export function FooterSection() {
               <li><Link to="/" className="hover:text-foreground transition-colors">Portfolio</Link></li>
               <li><Link to="/sobre" className="hover:text-foreground transition-colors">Sobre mim</Link></li>
               <li><Link to="/contato" className="hover:text-foreground transition-colors">Contato</Link></li>
+              <li><Link to="/artigos" className="hover:text-foreground transition-colors">Artigos</Link></li>
               <li>
                 <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
                   Download CV
