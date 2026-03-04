@@ -77,7 +77,7 @@ export default function AdminDashboard() {
         </section>
 
         <Tabs defaultValue="experiences" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 mb-8" aria-label="Gerenciar conteúdo">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 lg:grid-cols-11 mb-8" aria-label="Gerenciar conteúdo">
             <TabsTrigger value="experiences">Experiências</TabsTrigger>
             <TabsTrigger value="projects">Projetos</TabsTrigger>
             <TabsTrigger value="articles">Artigos</TabsTrigger>
@@ -87,6 +87,7 @@ export default function AdminDashboard() {
             <TabsTrigger value="companies">Empresas</TabsTrigger>
             <TabsTrigger value="certifications">Certificações</TabsTrigger>
             <TabsTrigger value="testimonials">Depoimentos</TabsTrigger>
+            <TabsTrigger value="faqs">FAQ</TabsTrigger>
             <TabsTrigger value="settings">Configurações</TabsTrigger>
           </TabsList>
           
