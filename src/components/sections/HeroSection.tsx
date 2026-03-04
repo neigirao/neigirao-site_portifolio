@@ -70,13 +70,19 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
             </div>
           </div>
 
-          {/* Badge - 3 roles as separate tags */}
+          {/* Badge - dynamic tags */}
           <div className="flex flex-wrap gap-3 justify-center mb-6">
-            {[
-              { label: "Product Management", icon: "🎯" },
-              { label: "Transformação Digital", icon: "🚀" },
-              { label: "Dados & Observabilidade", icon: "📊" },
-            ].map((tag) => (
+            {(() => {
+              const defaultTags = [
+                { label: "Product Management", icon: "🎯" },
+                { label: "Transformação Digital", icon: "🚀" },
+                { label: "Dados & Observabilidade", icon: "📊" },
+              ];
+              try {
+                const parsed = settings.hero_tags ? JSON.parse(settings.hero_tags) : null;
+                return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultTags;
+              } catch { return defaultTags; }
+            })().map((tag: { label: string; icon: string }) => (
               <span
                 key={tag.label}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white/90 text-sm font-medium"
