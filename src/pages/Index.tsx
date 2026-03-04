@@ -65,6 +65,7 @@ const Index = () => {
           <MessageCircle className="w-6 h-6" />
         </a>
 
+        <main id="main-content">
         <ErrorBoundary><HeroSection scrollToSection={scrollToSection} /></ErrorBoundary>
         <ErrorBoundary><ImpactMetrics /></ErrorBoundary>
         <ErrorBoundary><ExperienceSection experiences={experiences} isLoading={loadingExperiences} /></ErrorBoundary>
