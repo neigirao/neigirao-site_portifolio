@@ -64,7 +64,7 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
                 <img src={heroPhotoUrl} alt="Nei Girão" className="w-full h-full rounded-full object-cover" />
               ) : (
                 <div className="w-full h-full rounded-full bg-card/20 backdrop-blur-sm flex items-center justify-center">
-                  <User className="w-16 h-16 md:w-20 md:h-20 text-white/60" />
+                  <User className="w-16 h-16 md:w-20 md:h-20 text-white/70" />
                 </div>
               )}
             </div>
@@ -125,12 +125,12 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
 
           {/* Company Logos Bar */}
           <div className="mt-12 max-w-3xl mx-auto">
-            <p className="text-white/50 text-xs uppercase tracking-widest mb-4">Empresas onde atuei</p>
+            <p className="text-white/70 text-xs uppercase tracking-widest mb-4">Empresas onde atuei</p>
             <div className="flex items-center justify-center gap-8 flex-wrap">
               {companies.map((company) => (
                 <span
                   key={company.id}
-                  className="flex items-center gap-2 text-white/40 hover:text-white/70 transition-colors duration-300"
+                  className="flex items-center gap-2 text-white/60 hover:text-white/80 transition-colors duration-300"
                   title={company.name}
                 >
                   {company.logo_url ? (
