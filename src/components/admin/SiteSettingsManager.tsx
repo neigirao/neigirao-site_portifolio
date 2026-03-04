@@ -332,6 +332,125 @@ export function SiteSettingsManager() {
         </CardContent>
       </Card>
 
+      {/* Hero Tags Editor */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Type className="h-5 w-5" /> Hero Tags
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {(() => {
+            const defaultTags = [
+              { label: "Product Management", icon: "🎯" },
+              { label: "Transformação Digital", icon: "🚀" },
+              { label: "Dados & Observabilidade", icon: "📊" },
+            ];
+            let tags: { label: string; icon: string }[] = [];
+            try { tags = JSON.parse(local.hero_tags || '[]'); } catch { tags = []; }
+            if (!Array.isArray(tags) || tags.length === 0) tags = defaultTags;
+            const updateTags = (newTags: typeof tags) => set('hero_tags', JSON.stringify(newTags));
+            return (
+              <>
+                {tags.map((tag, i) => (
+                  <div key={i} className="flex gap-2 items-end">
+                    <div className="w-20">
+                      <Label>Ícone</Label>
+                      <Input value={tag.icon} onChange={(e) => { const t = [...tags]; t[i] = { ...t[i], icon: e.target.value }; updateTags(t); }} />
+                    </div>
+                    <div className="flex-1">
+                      <Label>Label</Label>
+                      <Input value={tag.label} onChange={(e) => { const t = [...tags]; t[i] = { ...t[i], label: e.target.value }; updateTags(t); }} />
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => updateTags(tags.filter((_, j) => j !== i))}>✕</Button>
+                  </div>
+                ))}
+                <Button variant="outline" size="sm" onClick={() => updateTags([...tags, { icon: "⭐", label: "" }])}>
+                  + Adicionar tag
+                </Button>
+              </>
+            );
+          })()}
+        </CardContent>
+      </Card>
+
+      {/* Hero Textos */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <AlignLeft className="h-5 w-5" /> Hero Textos
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label>Subtítulo (suporta HTML: &lt;br /&gt;, &lt;span&gt;)</Label>
+            <Textarea
+              value={local.hero_subtitle || ''}
+              onChange={(e) => set('hero_subtitle', e.target.value)}
+              placeholder='Liderança estratégica em produtos digitais,<br /><span class="bg-gradient-primary bg-clip-text text-transparent">dados e transformação</span>'
+              rows={3}
+            />
+          </div>
+          <div>
+            <Label>Descrição</Label>
+            <Textarea
+              value={local.hero_description || ''}
+              onChange={(e) => set('hero_description', e.target.value)}
+              placeholder="Product Manager e Estrategista de Dados com 15+ anos..."
+              rows={3}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Subtítulos das Seções */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Type className="h-5 w-5" /> Subtítulos das Seções
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {[
+            { key: 'section_subtitle_experience', label: 'Experiência', placeholder: 'Mais de 15 anos liderando produtos digitais e equipes em grandes empresas' },
+            { key: 'section_subtitle_projects', label: 'Projetos', placeholder: 'Projetos de destaque que geraram impacto significativo' },
+            { key: 'section_subtitle_skills', label: 'Habilidades', placeholder: 'Especializado em observabilidade, product management e análise de dados' },
+            { key: 'section_subtitle_education', label: 'Educação', placeholder: 'Sólida formação acadêmica em tecnologia e marketing digital' },
+            { key: 'section_subtitle_contact', label: 'Contato', placeholder: 'Aberto a desafios em Product Management, dados e observabilidade' },
+            { key: 'section_subtitle_faq', label: 'FAQ', placeholder: 'O que recrutadores e clientes costumam perguntar' },
+          ].map(({ key, label, placeholder }) => (
+            <div key={key}>
+              <Label>{label}</Label>
+              <Input
+                value={local[key] || ''}
+                onChange={(e) => set(key, e.target.value)}
+                placeholder={placeholder}
+              />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* Footer */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <AlignLeft className="h-5 w-5" /> Footer
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div>
+            <Label>Descrição do footer</Label>
+            <Textarea
+              value={local.footer_description || ''}
+              onChange={(e) => set('footer_description', e.target.value)}
+              placeholder="Product Manager especializado em Observabilidade e Produtos Digitais. Rio de Janeiro, Brasil."
+              rows={2}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       {/* PageSpeed link */}
       <Card>
         <CardHeader>
