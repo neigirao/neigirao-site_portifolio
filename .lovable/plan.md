@@ -22,9 +22,9 @@
 - Footer description editável via `site_settings`
 
 ## Pendentes
-- Navbar global em páginas standalone
-- Scroll animations consistentes (Testimonials, Certifications)
-- Project cards com imagem
+- ~~Navbar global em páginas standalone~~ ✅
+- ~~Scroll animations consistentes (Testimonials, Certifications)~~ ✅
+- ~~Project cards com imagem~~ ✅
 - Admin: agrupar tabs em categorias
 - ~~Breadcrumb schema nas páginas de detalhe~~ ✅
 - ~~OG Image dinâmico nos artigos~~ ✅
