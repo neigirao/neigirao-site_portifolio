@@ -7,7 +7,8 @@ import { BASE_URL } from '@/config/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, Building2, Calendar, Briefcase, ChevronRight, Lightbulb } from 'lucide-react';
+import { Building2, Calendar, Briefcase, ChevronRight, Lightbulb } from 'lucide-react';
+import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
 import SeeAlso from '@/components/SeeAlso';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 
@@ -49,7 +50,6 @@ export default function ExperienceDetail() {
               A experiência que você procura não existe ou foi removida.
             </p>
             <Button onClick={() => navigate('/')}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar ao Portfolio
             </Button>
           </CardContent>
@@ -109,8 +109,9 @@ export default function ExperienceDetail() {
       ]} />
 
       <div className="min-h-screen bg-background">
+        <StandaloneNavbar />
         {/* Header */}
-        <header className="bg-gradient-hero pt-20 pb-16">
+        <header className="bg-gradient-hero pt-24 pb-16">
           <div className="max-w-4xl mx-auto px-6">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-white/70 mb-8">
@@ -124,16 +125,6 @@ export default function ExperienceDetail() {
               <ChevronRight className="w-4 h-4" />
               <span className="text-white">{experience.company}</span>
             </nav>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/#experience')}
-              className="mb-8 bg-white/10 text-white border-white/30 hover:bg-white/20"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar
-            </Button>
 
             <div className="flex items-start gap-6">
               {experience.logo_url && (

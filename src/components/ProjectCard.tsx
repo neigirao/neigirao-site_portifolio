@@ -8,6 +8,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
+import { OptimizedImage } from './ui/optimized-image';
 import { ExternalLink, ChevronRight } from 'lucide-react';
 
 interface ProjectCardProps {
@@ -20,6 +21,7 @@ interface ProjectCardProps {
     link?: string | null;
     tags?: string[] | null;
     highlight_metric?: string | null;
+    image_url?: string | null;
   };
 }
 
@@ -29,7 +31,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     : null;
 
   return (
-    <Card className="group hover:shadow-glow transition-all duration-300 hover:-translate-y-2 bg-card border-border hover:border-teal-accent/30 h-full">
+    <Card className="group hover:shadow-glow transition-all duration-300 hover:-translate-y-2 bg-card border-border hover:border-teal-accent/30 h-full overflow-hidden">
+      {project.image_url && (
+        <OptimizedImage
+          src={project.image_url}
+          alt={project.title}
+          className="w-full h-40"
+        />
+      )}
       <CardContent className="p-8 flex flex-col h-full">
         <div className="flex items-start justify-between mb-4">
           <h3 className="text-xl font-bold text-foreground group-hover:text-teal-accent transition-colors leading-tight">

@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OptimizedImage } from '@/components/ui/optimized-image';
-import { ArrowLeft, ExternalLink, Tag, ChevronRight, Lightbulb, Target, AlertTriangle, Wrench, BarChart3, BookOpen } from 'lucide-react';
+import { ExternalLink, Tag, ChevronRight, Lightbulb, Target, AlertTriangle, Wrench, BarChart3, BookOpen } from 'lucide-react';
+import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
 import SeeAlso from '@/components/SeeAlso';
 import { SafeHTML } from '@/components/admin/SafeHTML';
 
@@ -56,7 +57,6 @@ export default function ProjectDetail() {
             <h1 className="text-2xl font-bold mb-4">Projeto não encontrado</h1>
             <p className="text-muted-foreground mb-6">O projeto que você procura não existe ou foi removido.</p>
             <Button onClick={() => navigate('/')}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar ao Portfolio
             </Button>
           </CardContent>
@@ -97,7 +97,8 @@ export default function ProjectDetail() {
       ]} />
 
       <div className="min-h-screen bg-background">
-        <header className="bg-gradient-hero pt-20 pb-16">
+        <StandaloneNavbar />
+        <header className="bg-gradient-hero pt-24 pb-16">
           <div className="max-w-4xl mx-auto px-6">
             <nav className="flex items-center gap-2 text-sm text-white/70 mb-8">
               <Link to="/" className="hover:text-white transition-colors">Início</Link>
@@ -106,11 +107,6 @@ export default function ProjectDetail() {
               <ChevronRight className="w-4 h-4" />
               <span className="text-white">{project.title}</span>
             </nav>
-
-            <Button variant="outline" size="sm" onClick={() => navigate('/#projects')} className="mb-8 bg-white/10 text-white border-white/30 hover:bg-white/20">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar
-            </Button>
 
             <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">{project.title}</h1>
 

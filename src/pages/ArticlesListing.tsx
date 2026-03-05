@@ -6,9 +6,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OptimizedImage } from '@/components/ui/optimized-image';
-import { Clock, Calendar, ArrowLeft } from 'lucide-react';
+import { Clock, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
 
 export default function ArticlesListing() {
   const { articles, isLoading } = usePublishedArticles();
@@ -24,17 +25,9 @@ export default function ArticlesListing() {
       />
 
       <div className="min-h-screen bg-background">
-        <header className="bg-gradient-hero pt-20 pb-16">
+        <StandaloneNavbar />
+        <header className="bg-gradient-hero pt-24 pb-16">
           <div className="max-w-4xl mx-auto px-6">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/')}
-              className="mb-8 bg-white/10 text-white border-white/30 hover:bg-white/20"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar
-            </Button>
             <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">Artigos</h1>
             <p className="text-lg text-white/80">
               Reflexões sobre Product Management, Observabilidade e carreira em tecnologia.

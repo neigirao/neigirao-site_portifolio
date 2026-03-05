@@ -11,7 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { SEOHead } from "@/components/SEO";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { ArrowLeft, Mail, Linkedin, MessageCircle, MapPin, Clock, ExternalLink, Send } from "lucide-react";
+import { Mail, Linkedin, MessageCircle, MapPin, Clock, ExternalLink, Send } from "lucide-react";
+import { StandaloneNavbar } from "@/components/sections/StandaloneNavbar";
 import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, AUTHOR_WHATSAPP, BASE_URL } from "@/config/constants";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
@@ -106,17 +107,12 @@ export default function Contato() {
       </Helmet>
 
       <div className="min-h-screen bg-background">
+        <StandaloneNavbar />
         {/* Header */}
-        <div className="bg-gradient-hero py-20 relative overflow-hidden">
+        <div className="bg-gradient-hero pt-24 pb-20 relative overflow-hidden">
           <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
           <div className="absolute bottom-10 right-10 w-80 h-80 bg-teal-accent/10 rounded-full blur-3xl" />
           <div className="max-w-4xl mx-auto px-6 relative">
-            <Link to="/">
-              <Button variant="ghost" className="text-white/80 hover:text-white mb-8 -ml-2">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Voltar ao Portfolio
-              </Button>
-            </Link>
             <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
               Vamos Conversar?
             </h1>

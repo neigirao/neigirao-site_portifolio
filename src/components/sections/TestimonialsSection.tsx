@@ -1,9 +1,11 @@
 import { Quote, Linkedin } from "lucide-react";
 import { useTestimonials } from "@/hooks/usePortfolioData";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 export function TestimonialsSection() {
   const { testimonials, isLoading } = useTestimonials();
+  const { ref, isVisible } = useScrollAnimation();
 
   if (isLoading) {
     return (
@@ -20,9 +22,9 @@ export function TestimonialsSection() {
   if (!testimonials.length) return null;
 
   return (
-    <section id="testimonials" className="py-16">
+    <section id="testimonials" className="py-16" ref={ref}>
       <div className="max-w-5xl mx-auto px-6">
-        <div className="text-center mb-10">
+        <div className={`text-center mb-10 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
           <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full bg-accent/10 border border-accent/20">
             <Quote className="w-4 h-4 text-teal-accent" />
             <span className="text-sm font-medium text-foreground/80">Recomendações</span>
@@ -33,10 +35,11 @@ export function TestimonialsSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {testimonials.map((t) => (
+          {testimonials.map((t, index) => (
             <div
               key={t.id}
-              className="relative p-6 rounded-2xl bg-card border border-border hover:border-teal-accent/20 transition-all duration-300"
+              className={`relative p-6 rounded-2xl bg-card border border-border hover:border-teal-accent/20 transition-all duration-500 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+              style={{ transitionDelay: isVisible ? `${index * 100}ms` : "0ms" }}
             >
               <Quote className="w-8 h-8 text-teal-accent/20 absolute top-4 right-4" />
               <p className="text-foreground/80 leading-relaxed mb-6 italic text-sm">
