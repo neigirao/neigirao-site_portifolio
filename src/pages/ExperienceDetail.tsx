@@ -102,6 +102,11 @@ export default function ExperienceDetail() {
           ...(experience.logo_url ? { "logo": experience.logo_url } : {})
         }
       }) }} />
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Experiências', url: '/#experience' },
+        { name: `${experience.role} - ${experience.company}` },
+      ]} />
 
       <div className="min-h-screen bg-background">
         {/* Header */}

@@ -90,6 +90,11 @@ export default function ProjectDetail() {
         ...(project.link ? { "mainEntityOfPage": project.link } : {}),
         ...(project.tags ? { "keywords": project.tags.join(", ") } : {})
       }) }} />
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Projetos', url: '/#projects' },
+        { name: project.title },
+      ]} />
 
       <div className="min-h-screen bg-background">
         <header className="bg-gradient-hero pt-20 pb-16">

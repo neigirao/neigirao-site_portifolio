@@ -124,6 +124,11 @@ export default function SkillDetail() {
           ...(skill.category ? { "additionalType": skill.category } : {})
         }
       }) }} />
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Habilidades', url: '/#skills' },
+        { name: skill.name },
+      ]} />
 
       <div className="min-h-screen bg-background">
         {/* Header */}

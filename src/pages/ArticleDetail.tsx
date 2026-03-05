@@ -89,6 +89,11 @@ export default function ArticleDetail() {
           "@id": `${BASE_URL}/artigo/${article.slug}`,
         },
       }) }} />
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Artigos', url: '/artigos' },
+        { name: article.title },
+      ]} />
 
       <div className="min-h-screen bg-background">
         {/* Header */}
