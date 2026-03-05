@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useArticleDetail } from '@/hooks/useArticles';
 import { SEOHead } from '@/components/SEO/SEOHead';
+import { BreadcrumbSchema } from '@/components/SEO/BreadcrumbSchema';
 import { BASE_URL } from '@/config/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -88,6 +89,11 @@ export default function ArticleDetail() {
           "@id": `${BASE_URL}/artigo/${article.slug}`,
         },
       }) }} />
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Artigos', url: '/artigos' },
+        { name: article.title },
+      ]} />
 
       <div className="min-h-screen bg-background">
         {/* Header */}

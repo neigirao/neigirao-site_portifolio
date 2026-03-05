@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useProjectDetail, useRelatedProjects, generateSlug } from '@/hooks/usePortfolioDetail';
 import { useSkillsForProject, useExperiencesForProject, useSeeAlso } from '@/hooks/useRelatedContent';
 import { SEOHead } from '@/components/SEO/SEOHead';
+import { BreadcrumbSchema } from '@/components/SEO/BreadcrumbSchema';
 import { BASE_URL } from '@/config/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -89,6 +90,11 @@ export default function ProjectDetail() {
         ...(project.link ? { "mainEntityOfPage": project.link } : {}),
         ...(project.tags ? { "keywords": project.tags.join(", ") } : {})
       }) }} />
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Projetos', url: '/#projects' },
+        { name: project.title },
+      ]} />
 
       <div className="min-h-screen bg-background">
         <header className="bg-gradient-hero pt-20 pb-16">

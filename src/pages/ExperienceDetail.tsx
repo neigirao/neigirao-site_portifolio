@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useExperienceDetail, useRelatedExperiences, generateSlug } from '@/hooks/usePortfolioDetail';
 import { useSkillsForExperience, useSeeAlso } from '@/hooks/useRelatedContent';
 import { SEOHead } from '@/components/SEO/SEOHead';
+import { BreadcrumbSchema } from '@/components/SEO/BreadcrumbSchema';
 import { BASE_URL } from '@/config/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -101,6 +102,11 @@ export default function ExperienceDetail() {
           ...(experience.logo_url ? { "logo": experience.logo_url } : {})
         }
       }) }} />
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Experiências', url: '/#experience' },
+        { name: `${experience.role} - ${experience.company}` },
+      ]} />
 
       <div className="min-h-screen bg-background">
         {/* Header */}
