@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OptimizedImage } from '@/components/ui/optimized-image';
-import { ArrowLeft, ChevronRight, Briefcase, FolderOpen } from 'lucide-react';
+import { ChevronRight, Briefcase, FolderOpen } from 'lucide-react';
+import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
 import SeeAlso from '@/components/SeeAlso';
 
 // Skill descriptions for SEO
