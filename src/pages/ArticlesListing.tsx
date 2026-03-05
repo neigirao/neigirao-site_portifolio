@@ -6,9 +6,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OptimizedImage } from '@/components/ui/optimized-image';
-import { Clock, Calendar, ArrowLeft } from 'lucide-react';
+import { Clock, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
 
 export default function ArticlesListing() {
   const { articles, isLoading } = usePublishedArticles();
