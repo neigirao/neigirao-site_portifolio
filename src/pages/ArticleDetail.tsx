@@ -8,8 +8,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OptimizedImage } from '@/components/ui/optimized-image';
-import { ArrowLeft, Clock, Calendar, Tag, ChevronRight } from 'lucide-react';
+import { Clock, Calendar, Tag, ChevronRight } from 'lucide-react';
 import { SafeHTML } from '@/components/admin/SafeHTML';
+import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
 
 export default function ArticleDetail() {
   const { slug } = useParams<{ slug: string }>();
