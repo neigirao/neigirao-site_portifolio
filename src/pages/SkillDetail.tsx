@@ -54,7 +54,6 @@ export default function SkillDetail() {
               A habilidade que você procura não existe ou foi removida.
             </p>
             <Button onClick={() => navigate('/')}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar ao Portfolio
             </Button>
           </CardContent>

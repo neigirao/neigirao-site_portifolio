@@ -40,7 +40,6 @@ export default function ArticleDetail() {
               O artigo que você procura não existe ou foi removido.
             </p>
             <Button onClick={() => navigate('/')}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar ao Portfolio
             </Button>
           </CardContent>
