@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OptimizedImage } from '@/components/ui/optimized-image';
-import { ArrowLeft, ExternalLink, Tag, ChevronRight, Lightbulb, Target, AlertTriangle, Wrench, BarChart3, BookOpen } from 'lucide-react';
+import { ExternalLink, Tag, ChevronRight, Lightbulb, Target, AlertTriangle, Wrench, BarChart3, BookOpen } from 'lucide-react';
+import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
 import SeeAlso from '@/components/SeeAlso';
 import { SafeHTML } from '@/components/admin/SafeHTML';
 
