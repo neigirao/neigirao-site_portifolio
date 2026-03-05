@@ -97,8 +97,9 @@ export default function ArticleDetail() {
       ]} />
 
       <div className="min-h-screen bg-background">
+        <StandaloneNavbar />
         {/* Header */}
-        <header className="bg-gradient-hero pt-20 pb-16">
+        <header className="bg-gradient-hero pt-24 pb-16">
           <div className="max-w-3xl mx-auto px-6">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-white/70 mb-8" aria-label="Breadcrumb">
@@ -108,16 +109,6 @@ export default function ArticleDetail() {
               <ChevronRight className="w-4 h-4" />
               <span className="text-white truncate max-w-[200px]">{article.title}</span>
             </nav>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/artigos')}
-              className="mb-8 bg-white/10 text-white border-white/30 hover:bg-white/20"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar aos Artigos
-            </Button>
 
             <h1 className="text-3xl md:text-5xl font-bold text-white mb-6">
               {article.title}

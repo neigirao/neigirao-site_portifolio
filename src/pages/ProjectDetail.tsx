@@ -98,7 +98,8 @@ export default function ProjectDetail() {
       ]} />
 
       <div className="min-h-screen bg-background">
-        <header className="bg-gradient-hero pt-20 pb-16">
+        <StandaloneNavbar />
+        <header className="bg-gradient-hero pt-24 pb-16">
           <div className="max-w-4xl mx-auto px-6">
             <nav className="flex items-center gap-2 text-sm text-white/70 mb-8">
               <Link to="/" className="hover:text-white transition-colors">Início</Link>
@@ -107,11 +108,6 @@ export default function ProjectDetail() {
               <ChevronRight className="w-4 h-4" />
               <span className="text-white">{project.title}</span>
             </nav>
-
-            <Button variant="outline" size="sm" onClick={() => navigate('/#projects')} className="mb-8 bg-white/10 text-white border-white/30 hover:bg-white/20">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar
-            </Button>
 
             <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">{project.title}</h1>
 

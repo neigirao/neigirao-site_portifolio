@@ -132,8 +132,9 @@ export default function SkillDetail() {
       ]} />
 
       <div className="min-h-screen bg-background">
+        <StandaloneNavbar />
         {/* Header */}
-        <header className="bg-gradient-hero pt-20 pb-16">
+        <header className="bg-gradient-hero pt-24 pb-16">
           <div className="max-w-4xl mx-auto px-6">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-white/70 mb-8">
@@ -147,16 +148,6 @@ export default function SkillDetail() {
               <ChevronRight className="w-4 h-4" />
               <span className="text-white">{skill.name}</span>
             </nav>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/#skills')}
-              className="mb-8 bg-white/10 text-white border-white/30 hover:bg-white/20"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar
-            </Button>
 
             <div className="flex items-center gap-6">
               <div className="w-24 h-24 rounded-2xl bg-gradient-primary p-4 flex items-center justify-center shadow-glow">

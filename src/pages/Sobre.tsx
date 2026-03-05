@@ -74,17 +74,12 @@ export default function Sobre() {
       </Helmet>
 
       <div className="min-h-screen bg-background">
+        <StandaloneNavbar />
         {/* Header */}
-        <div className="bg-gradient-hero py-20 relative overflow-hidden">
+        <div className="bg-gradient-hero pt-24 pb-20 relative overflow-hidden">
           <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
           <div className="absolute bottom-10 right-10 w-80 h-80 bg-teal-accent/10 rounded-full blur-3xl" />
           <div className="max-w-4xl mx-auto px-6 relative">
-            <Link to="/">
-              <Button variant="ghost" className="text-white/80 hover:text-white mb-8 -ml-2">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Voltar ao Portfolio
-              </Button>
-            </Link>
             <div className="flex flex-col md:flex-row md:items-end gap-8">
               <div className="flex-1">
                 <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">

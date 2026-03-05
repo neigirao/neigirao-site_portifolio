@@ -1,4 +1,5 @@
 export { NavigationBar } from "./NavigationBar";
+export { StandaloneNavbar } from "./StandaloneNavbar";
 export { HeroSection } from "./HeroSection";
 export { AboutSection } from "./AboutSection";
 export { SkillsSection } from "./SkillsSection";
