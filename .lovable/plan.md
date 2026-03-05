@@ -26,8 +26,8 @@
 - Scroll animations consistentes (Testimonials, Certifications)
 - Project cards com imagem
 - Admin: agrupar tabs em categorias
-- Breadcrumb schema nas páginas de detalhe
-- OG Image dinâmico nos artigos
+- ~~Breadcrumb schema nas páginas de detalhe~~ ✅
+- ~~OG Image dinâmico nos artigos~~ ✅
 - Formulário de contato real via edge function
 - Admin: prevenção de navegação com alterações não salvas
 - Admin: campo `is_visible` para experiences/skills/education
