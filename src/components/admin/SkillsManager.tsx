@@ -7,8 +7,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2, Eye, Copy } from 'lucide-react';
+import { Pencil, Trash2, Eye, Copy, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { SEOFields } from './SEOFields';
@@ -27,11 +28,16 @@ interface Skill {
   meta_title: string | null;
   meta_description: string | null;
   slug: string | null;
+  is_visible: boolean;
+}
+
+interface SkillsManagerProps {
+  onDirtyChange?: (dirty: boolean) => void;
 }
 
 const emptyForm = { name: '', logo_url: '', category: '', meta_title: '', meta_description: '', slug: '' };
 
-export function SkillsManager() {
+export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
@@ -42,6 +48,11 @@ export function SkillsManager() {
     data: formData,
     onRecover: useCallback((data: typeof emptyForm) => { setFormData(data); }, []),
   });
+
+  useEffect(() => {
+    const hasContent = Object.values(formData).some(v => typeof v === 'string' && v.trim().length > 0);
+    onDirtyChange?.(hasContent);
+  }, [formData, onDirtyChange]);
 
   useEffect(() => { fetchSkills(); }, []);
 
@@ -102,6 +113,13 @@ export function SkillsManager() {
     fetchSkills();
   };
 
+  const handleToggleVisibility = async (skill: Skill) => {
+    const { error } = await supabase.from('skills').update({ is_visible: !skill.is_visible }).eq('id', skill.id);
+    if (error) { toast.error('Erro ao alterar visibilidade'); return; }
+    toast.success(skill.is_visible ? 'Skill ocultada' : 'Skill visível');
+    fetchSkills();
+  };
+
   const handleReorder = async (reorderedItems: Skill[]) => {
     setSkills(reorderedItems);
     for (const [index, item] of reorderedItems.entries()) {
@@ -110,7 +128,7 @@ export function SkillsManager() {
     toast.success('Ordem atualizada!');
   };
 
-  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); };
+  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
   return (
     <div className="space-y-6">
@@ -156,7 +174,7 @@ export function SkillsManager() {
           <SortableList items={skills} onReorder={handleReorder}
             className="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
             renderItem={(skill) => (
-              <Card className="h-full">
+              <Card className={`h-full ${!skill.is_visible ? 'opacity-50' : ''}`}>
                 <CardContent className="pt-4 pb-4">
                   <div className="flex items-center gap-3">
                     {skill.logo_url ? (
@@ -169,11 +187,13 @@ export function SkillsManager() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold truncate">{skill.name}</h3>
+                        {!skill.is_visible && <EyeOff className="h-3 w-3 text-muted-foreground flex-shrink-0" />}
                         <CompletenessIndicator hasSeo={!!(skill.meta_title && skill.meta_description)} hasImage={!!skill.logo_url} hasSlug={!!skill.slug} itemName={skill.name} />
                       </div>
                       {skill.category && <p className="text-sm text-muted-foreground truncate">{skill.category}</p>}
                     </div>
-                    <div className="flex gap-1 flex-shrink-0">
+                    <div className="flex gap-1 items-center flex-shrink-0">
+                      <Switch checked={skill.is_visible} onCheckedChange={() => handleToggleVisibility(skill)} aria-label={`Visibilidade de ${skill.name}`} />
                       <Button size="icon" variant="ghost" onClick={() => handleDuplicate(skill)} aria-label={`Duplicar ${skill.name}`}>
                         <Copy className="h-4 w-4" aria-hidden="true" />
                       </Button>
