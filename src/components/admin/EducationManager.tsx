@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2, Eye, Copy } from 'lucide-react';
+import { Pencil, Trash2, Eye, Copy, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { SEOFields } from './SEOFields';
 import { SortableList } from './SortableList';
@@ -28,11 +29,16 @@ interface Education {
   meta_title: string | null;
   meta_description: string | null;
   slug: string | null;
+  is_visible: boolean;
+}
+
+interface EducationManagerProps {
+  onDirtyChange?: (dirty: boolean) => void;
 }
 
 const emptyForm = { institution: '', degree: '', period: '', description: '', meta_title: '', meta_description: '', slug: '' };
 
-export function EducationManager() {
+export function EducationManager({ onDirtyChange }: EducationManagerProps) {
   const [education, setEducation] = useState<Education[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
@@ -43,6 +49,11 @@ export function EducationManager() {
     data: formData,
     onRecover: useCallback((data: typeof emptyForm) => { setFormData(data); }, []),
   });
+
+  useEffect(() => {
+    const hasContent = Object.values(formData).some(v => typeof v === 'string' && v.trim().length > 0);
+    onDirtyChange?.(hasContent);
+  }, [formData, onDirtyChange]);
 
   useEffect(() => { fetchEducation(); }, []);
 
@@ -105,6 +116,13 @@ export function EducationManager() {
     fetchEducation();
   };
 
+  const handleToggleVisibility = async (edu: Education) => {
+    const { error } = await supabase.from('education').update({ is_visible: !edu.is_visible }).eq('id', edu.id);
+    if (error) { toast.error('Erro ao alterar visibilidade'); return; }
+    toast.success(edu.is_visible ? 'Educação ocultada' : 'Educação visível');
+    fetchEducation();
+  };
+
   const handleReorder = async (reorderedItems: Education[]) => {
     setEducation(reorderedItems);
     for (const [index, item] of reorderedItems.entries()) {
@@ -113,7 +131,7 @@ export function EducationManager() {
     toast.success('Ordem atualizada!');
   };
 
-  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); };
+  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
   return (
     <div className="space-y-6">
@@ -163,18 +181,20 @@ export function EducationManager() {
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
         <SortableList items={education} onReorder={handleReorder} renderItem={(edu) => (
-          <Card>
+          <Card className={!edu.is_visible ? 'opacity-50' : ''}>
             <CardContent className="pt-4 pb-4">
               <div className="flex justify-between items-start">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-lg truncate">{edu.degree}</h3>
+                    {!edu.is_visible && <EyeOff className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
                     <CompletenessIndicator hasSeo={!!(edu.meta_title && edu.meta_description)} hasImage={true} hasSlug={!!edu.slug} itemName={edu.degree} />
                   </div>
                   <p className="text-muted-foreground truncate">{edu.institution}</p>
                   <p className="text-sm text-muted-foreground">{edu.period}</p>
                 </div>
-                <div className="flex gap-2 flex-shrink-0 ml-4">
+                <div className="flex gap-2 items-center flex-shrink-0 ml-4">
+                  <Switch checked={edu.is_visible} onCheckedChange={() => handleToggleVisibility(edu)} aria-label={`Visibilidade de ${edu.degree}`} />
                   <Button size="icon" variant="outline" onClick={() => handleDuplicate(edu)} aria-label={`Duplicar ${edu.degree}`}>
                     <Copy className="h-4 w-4" aria-hidden="true" />
                   </Button>
