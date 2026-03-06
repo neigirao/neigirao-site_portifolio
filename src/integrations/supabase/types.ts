@@ -138,6 +138,7 @@ export type Database = {
           description: string | null
           id: string
           institution: string
+          is_visible: boolean
           meta_description: string | null
           meta_title: string | null
           order_index: number
@@ -151,6 +152,7 @@ export type Database = {
           description?: string | null
           id?: string
           institution: string
+          is_visible?: boolean
           meta_description?: string | null
           meta_title?: string | null
           order_index?: number
@@ -164,6 +166,7 @@ export type Database = {
           description?: string | null
           id?: string
           institution?: string
+          is_visible?: boolean
           meta_description?: string | null
           meta_title?: string | null
           order_index?: number
@@ -179,6 +182,7 @@ export type Database = {
           created_at: string
           description: string
           id: string
+          is_visible: boolean
           logo_url: string | null
           meta_description: string | null
           meta_title: string | null
@@ -193,6 +197,7 @@ export type Database = {
           created_at?: string
           description: string
           id?: string
+          is_visible?: boolean
           logo_url?: string | null
           meta_description?: string | null
           meta_title?: string | null
@@ -207,6 +212,7 @@ export type Database = {
           created_at?: string
           description?: string
           id?: string
+          is_visible?: boolean
           logo_url?: string | null
           meta_description?: string | null
           meta_title?: string | null
@@ -397,6 +403,7 @@ export type Database = {
           category: string | null
           created_at: string
           id: string
+          is_visible: boolean
           logo_url: string | null
           meta_description: string | null
           meta_title: string | null
@@ -409,6 +416,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           id?: string
+          is_visible?: boolean
           logo_url?: string | null
           meta_description?: string | null
           meta_title?: string | null
@@ -421,6 +429,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           id?: string
+          is_visible?: boolean
           logo_url?: string | null
           meta_description?: string | null
           meta_title?: string | null
