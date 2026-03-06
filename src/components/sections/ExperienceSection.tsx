@@ -1,9 +1,14 @@
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import ExperienceItem from "@/components/ExperienceItem";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import type { DbExperience } from "@/hooks/usePortfolioData";
+
+const INITIAL_COUNT = 4;
 
 interface ExperienceSectionProps {
   experiences: DbExperience[];
@@ -14,8 +19,12 @@ export function ExperienceSection({ experiences, isLoading }: ExperienceSectionP
   const { ref, isVisible } = useScrollAnimation();
   const { settings } = useSiteSettings();
   const subtitle = settings.section_subtitle_experience || "Mais de 15 anos liderando produtos digitais e equipes em grandes empresas";
+  const [expanded, setExpanded] = useState(false);
 
   if (!isLoading && experiences.length === 0) return null;
+
+  const visibleExperiences = expanded ? experiences : experiences.slice(0, INITIAL_COUNT);
+  const hasMore = experiences.length > INITIAL_COUNT;
 
   return (
     <section id="experience" className="py-16 bg-muted/30 relative overflow-hidden scroll-mt-20">
@@ -36,8 +45,25 @@ export function ExperienceSection({ experiences, isLoading }: ExperienceSectionP
             <div className="space-y-10">
               {isLoading
                 ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-32 rounded-lg" />)
-                : experiences.map((experience, index) => <ExperienceItem key={experience.id || index} experience={experience} />)}
+                : visibleExperiences.map((experience, index) => <ExperienceItem key={experience.id || index} experience={experience} />)}
             </div>
+
+            {!isLoading && hasMore && (
+              <div className="text-center mt-10 pt-6 border-t border-border/50">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => setExpanded(!expanded)}
+                  className="gap-2 border-2 border-teal-accent/30 text-teal-accent hover:bg-teal-accent/10 hover:border-teal-accent/50 transition-all"
+                >
+                  {expanded ? (
+                    <>Ver menos <ChevronUp className="w-4 h-4" /></>
+                  ) : (
+                    <>Ver todas as {experiences.length} experiências <ChevronDown className="w-4 h-4" /></>
+                  )}
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
