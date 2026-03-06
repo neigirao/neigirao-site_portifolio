@@ -1,33 +1,31 @@
-# Plano de Melhorias - Site & CMS
 
-## Concluídos ✅
-- Sanitizar HTML no AboutSection (SafeHTML)
-- Unificar CV URL via useSiteSettings
-- Campo highlight_metric em Projects
-- Template Case Study (projects)
-- Sobre.tsx usar site_settings
-- Artigos na Home + nav
-- RichTextEditor no about_summary
-- llms.txt e about.txt (rotas apontam para edge functions)
-- heroStats editáveis via CMS (site_settings)
-- Methodology cards editáveis via CMS (site_settings)
-- Ocultar seções vazias quando sem dados
-- Fix WhatsApp FAB vs Back to Top overlap no mobile
-- Melhorar contrastes de acessibilidade (white/50→70, white/40→60)
-- Adicionar skip-to-content na home
-- Link "Artigos" no footer
-- FAQ editável via CMS (tabela `faqs` com RLS)
-- Hero tags, subtitle e description editáveis via `site_settings`
-- Subtítulos de seções editáveis via `site_settings`
-- Footer description editável via `site_settings`
 
-## Pendentes
-- ~~Navbar global em páginas standalone~~ ✅
-- ~~Scroll animations consistentes (Testimonials, Certifications)~~ ✅
-- ~~Project cards com imagem~~ ✅
-- ~~Admin: agrupar tabs em categorias~~ ✅
-- ~~Breadcrumb schema nas páginas de detalhe~~ ✅
-- ~~OG Image dinâmico nos artigos~~ ✅
-- Formulário de contato real via edge function
-- ~~Admin: prevenção de navegação com alterações não salvas~~ ✅
-- ~~Admin: campo `is_visible` para experiences/skills/education~~ ✅
+# Diagnóstico: Espaço entre Impacto Mensurável e Principais Projetos
+
+## O que está acontecendo
+
+A ordem das seções na página é: **Hero → Impacto Mensurável → Experiência Profissional → Principais Projetos**. A seção de Experiência Profissional contém 7+ experiências com descrições longas, ocupando uma altura enorme (~4000px). Isso cria a sensação de um grande "vazio" entre Impacto e Projetos.
+
+Além disso, é possível que a animação de scroll (`opacity-0` → `opacity-100`) não dispare corretamente em certas condições, fazendo o conteúdo da Experience section ficar invisível mas ocupando espaço no layout.
+
+## Proposta de correção (2 ações)
+
+### 1. Mover Projetos para logo após Impacto Mensurável
+
+Reordenar em `Index.tsx`:
+```
+Hero → Impacto → Projetos → Experiência → Skills → ...
+```
+Isso coloca as duas seções de "resultados" juntas, criando um fluxo visual mais coeso.
+
+### 2. Limitar experiências na home com "Ver todas"
+
+Na `ExperienceSection`, mostrar apenas as 3-4 primeiras experiências e adicionar um botão "Ver todas as experiências" que expande a lista ou navega para uma página dedicada. Isso reduz drasticamente a altura da seção.
+
+## Arquivos alterados
+
+| Arquivo | Ação |
+|---------|------|
+| `src/pages/Index.tsx` | Reordenar seções (Projects antes de Experience) |
+| `src/components/sections/ExperienceSection.tsx` | Limitar a 4 experiências com botão expandir |
+
