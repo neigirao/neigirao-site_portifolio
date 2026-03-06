@@ -1,33 +1,19 @@
-# Plano de Melhorias - Site & CMS
 
-## Concluídos ✅
-- Sanitizar HTML no AboutSection (SafeHTML)
-- Unificar CV URL via useSiteSettings
-- Campo highlight_metric em Projects
-- Template Case Study (projects)
-- Sobre.tsx usar site_settings
-- Artigos na Home + nav
-- RichTextEditor no about_summary
-- llms.txt e about.txt (rotas apontam para edge functions)
-- heroStats editáveis via CMS (site_settings)
-- Methodology cards editáveis via CMS (site_settings)
-- Ocultar seções vazias quando sem dados
-- Fix WhatsApp FAB vs Back to Top overlap no mobile
-- Melhorar contrastes de acessibilidade (white/50→70, white/40→60)
-- Adicionar skip-to-content na home
-- Link "Artigos" no footer
-- FAQ editável via CMS (tabela `faqs` com RLS)
-- Hero tags, subtitle e description editáveis via `site_settings`
-- Subtítulos de seções editáveis via `site_settings`
-- Footer description editável via `site_settings`
 
-## Pendentes
-- ~~Navbar global em páginas standalone~~ ✅
-- ~~Scroll animations consistentes (Testimonials, Certifications)~~ ✅
-- ~~Project cards com imagem~~ ✅
-- ~~Admin: agrupar tabs em categorias~~ ✅
-- ~~Breadcrumb schema nas páginas de detalhe~~ ✅
-- ~~OG Image dinâmico nos artigos~~ ✅
-- Formulário de contato real via edge function
-- ~~Admin: prevenção de navegação com alterações não salvas~~ ✅
-- ~~Admin: campo `is_visible` para experiences/skills/education~~ ✅
+# Correção: Seção de Experiência em Branco
+
+## Causa raiz
+
+A `ExperienceSection` usa `useScrollAnimation` que inicia com `opacity-0` e só muda para `opacity-100` quando o IntersectionObserver detecta a seção na viewport. Em certas condições (viewport pequeno, scroll rápido, iframe do preview), o observer não dispara e o conteúdo fica invisível mas ocupando espaço.
+
+## Correção
+
+Remover completamente o `useScrollAnimation` da `ExperienceSection.tsx`:
+- Remover o import e uso do hook
+- Remover as classes condicionais `opacity-0/opacity-100` e `translate-y-0/translate-y-8` do header e do Card
+- O conteúdo ficará sempre visível imediatamente
+
+| Arquivo | Ação |
+|---------|------|
+| `src/components/sections/ExperienceSection.tsx` | Remover useScrollAnimation, tornar conteúdo sempre visível |
+
