@@ -68,8 +68,8 @@ const Index = () => {
         <main id="main-content">
         <ErrorBoundary><HeroSection scrollToSection={scrollToSection} /></ErrorBoundary>
         <ErrorBoundary><ImpactMetrics /></ErrorBoundary>
-        <ErrorBoundary><ExperienceSection experiences={experiences} isLoading={loadingExperiences} /></ErrorBoundary>
         <ErrorBoundary><ProjectsSection projects={projects} isLoading={loadingProjects} /></ErrorBoundary>
+        <ErrorBoundary><ExperienceSection experiences={experiences} isLoading={loadingExperiences} /></ErrorBoundary>
         <ErrorBoundary><SkillsSection skills={skills} isLoading={loadingSkills} /></ErrorBoundary>
         <ErrorBoundary><CertificationsSection /></ErrorBoundary>
         <ErrorBoundary><TestimonialsSection /></ErrorBoundary>
