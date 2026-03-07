@@ -1,23 +1,15 @@
 /**
- * About Section - Combines former "Resumo" + "Formação" + "Como Trabalho"
- * into a single "Sobre" section with varied layout.
+ * About Section - Professional Summary + Methodology
+ * Education is now rendered as a separate section.
  */
 
 import { Card, CardContent } from "@/components/ui/card";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { BarChart3, Users, Activity, Search, GraduationCap } from "lucide-react";
-import EducationItem from "@/components/EducationItem";
-import { Skeleton } from "@/components/ui/skeleton";
-import type { DbEducation } from "@/hooks/usePortfolioData";
+import { BarChart3, Users, Activity, Search } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { SafeHTML } from "@/components/admin/SafeHTML";
 
-interface AboutSectionProps {
-  education: DbEducation[];
-  isLoading: boolean;
-}
-
-const ICON_MAP: Record<string, any> = { BarChart3, Users, Activity, Search, GraduationCap };
+const ICON_MAP: Record<string, any> = { BarChart3, Users, Activity, Search };
 
 const DEFAULT_METHODOLOGY_ITEMS = [
   { icon: "BarChart3", title: "Data-Driven", description: "Decisões fundamentadas em dados, métricas e experimentação contínua." },
@@ -26,10 +18,10 @@ const DEFAULT_METHODOLOGY_ITEMS = [
   { icon: "Search", title: "Discovery Contínuo", description: "Validação constante com usuários e stakeholders." },
 ];
 
-export function AboutSection({ education, isLoading }: AboutSectionProps) {
+export function AboutSection() {
   const { ref, isVisible } = useScrollAnimation();
   const { settings } = useSiteSettings();
-  const aboutSubtitle = settings.about_subtitle || 'Trajetória, metodologia e formação';
+  const aboutSubtitle = settings.about_subtitle || 'Trajetória e metodologia de trabalho';
   const aboutSummary = settings.about_summary;
   const aboutTools = settings.about_tools || 'Dynatrace, Grafana, Azure Monitor, Google Analytics';
 
@@ -52,14 +44,13 @@ export function AboutSection({ education, isLoading }: AboutSectionProps) {
           </p>
         </div>
 
-        {/* 2-column layout: About text + Methodology */}
-        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 transition-all duration-700 delay-200 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-          {/* Left: Professional Summary (concise) */}
+        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 transition-all duration-700 delay-200 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+          {/* Left: Professional Summary */}
           <Card className="shadow-elegant border-2 border-border/50 bg-card/95 h-full">
             <CardContent className="p-8 md:p-10">
               <h3 className="text-2xl font-bold text-foreground mb-4">Resumo Profissional</h3>
               <div className="space-y-4">
-              {aboutSummary ? (
+                {aboutSummary ? (
                   <SafeHTML html={aboutSummary} className="text-muted-foreground leading-relaxed" />
                 ) : (
                   <>
@@ -100,32 +91,6 @@ export function AboutSection({ education, isLoading }: AboutSectionProps) {
                 </Card>
               );
             })}
-          </div>
-        </div>
-
-        {/* Education - horizontal cards */}
-        <div className={`transition-all duration-700 delay-400 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-teal-accent/10 flex items-center justify-center">
-              <GraduationCap className="w-5 h-5 text-teal-accent" />
-            </div>
-            <h3 className="text-2xl font-bold text-foreground">Formação Acadêmica</h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {isLoading
-              ? Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-32 rounded-xl" />)
-              : education.map((edu, index) => (
-                  <Card key={edu.id || index} className="border-2 border-border/50 bg-card/95 hover:border-teal-accent/30 transition-all duration-300">
-                    <CardContent className="p-6">
-                      <span className="inline-block text-xs font-bold uppercase text-teal-accent bg-teal-accent/10 px-3 py-1 rounded-full border border-teal-accent/20 mb-3">
-                        {edu.period}
-                      </span>
-                      <h4 className="text-lg font-bold text-foreground mb-1 leading-tight">{edu.degree}</h4>
-                      <p className="text-sm text-muted-foreground font-medium">{edu.institution}</p>
-                    </CardContent>
-                  </Card>
-                ))}
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 /**
  * Index Page - Main Portfolio Page (Composition Only)
+ * Order: Hero → Impact → About → Experience → Projects → Skills → Certifications → Testimonials → Articles → Education → FAQ → Contact
  */
 
 import { useExperiences, useSkills, useEducation, useProjects } from "@/hooks/usePortfolioData";
@@ -68,14 +69,15 @@ const Index = () => {
         <main id="main-content">
         <ErrorBoundary><HeroSection scrollToSection={scrollToSection} /></ErrorBoundary>
         <ErrorBoundary><ImpactMetrics /></ErrorBoundary>
-        <ErrorBoundary><ProjectsSection projects={projects} isLoading={loadingProjects} /></ErrorBoundary>
+        <ErrorBoundary><AboutSection /></ErrorBoundary>
         <ErrorBoundary><ExperienceSection experiences={experiences} isLoading={loadingExperiences} /></ErrorBoundary>
+        <ErrorBoundary><ProjectsSection projects={projects} isLoading={loadingProjects} /></ErrorBoundary>
         <ErrorBoundary><SkillsSection skills={skills} isLoading={loadingSkills} /></ErrorBoundary>
         <ErrorBoundary><CertificationsSection /></ErrorBoundary>
         <ErrorBoundary><TestimonialsSection /></ErrorBoundary>
         <ErrorBoundary><RecentArticlesSection /></ErrorBoundary>
+        <ErrorBoundary><EducationSection education={education} isLoading={loadingEducation} /></ErrorBoundary>
         <ErrorBoundary><FAQSection /></ErrorBoundary>
-        <ErrorBoundary><AboutSection education={education} isLoading={loadingEducation} /></ErrorBoundary>
         <ErrorBoundary><ContactSection /></ErrorBoundary>
         </main>
         <FooterSection />
