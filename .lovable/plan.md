@@ -20,14 +20,21 @@
 - Hero tags, subtitle e description editáveis via `site_settings`
 - Subtítulos de seções editáveis via `site_settings`
 - Footer description editável via `site_settings`
+- Navbar global em páginas standalone ✅
+- Scroll animations consistentes (Testimonials, Certifications) ✅
+- Project cards com imagem ✅
+- Admin: agrupar tabs em categorias ✅
+- Breadcrumb schema nas páginas de detalhe ✅
+- OG Image dinâmico nos artigos ✅
+- Admin: prevenção de navegação com alterações não salvas ✅
+- Admin: campo `is_visible` para experiences/skills/education ✅
+- Reordenar seções na perspectiva de recrutador ✅
+- Separar Educação do AboutSection (seção independente na nav) ✅
+- Formulário de contato real (tabela contact_messages + validação) ✅
+- Fix seção Experiência em branco (remover scroll animation) ✅
 
 ## Pendentes
-- ~~Navbar global em páginas standalone~~ ✅
-- ~~Scroll animations consistentes (Testimonials, Certifications)~~ ✅
-- ~~Project cards com imagem~~ ✅
-- ~~Admin: agrupar tabs em categorias~~ ✅
-- ~~Breadcrumb schema nas páginas de detalhe~~ ✅
-- ~~OG Image dinâmico nos artigos~~ ✅
-- Formulário de contato real via edge function
-- ~~Admin: prevenção de navegação com alterações não salvas~~ ✅
-- ~~Admin: campo `is_visible` para experiences/skills/education~~ ✅
+- Admin: visualizar mensagens de contato recebidas
+- Envio de email via edge function (Resend/SMTP) ao receber contato
+- Rate limiting no formulário de contato (anti-spam)
+- Admin: exportar mensagens de contato (CSV)

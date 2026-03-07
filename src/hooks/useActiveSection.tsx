@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const SECTION_IDS = ["home", "experience", "projects", "skills", "articles", "about", "contact"];
+const SECTION_IDS = ["home", "about", "experience", "projects", "skills", "articles", "education", "contact"];
 
 export function useActiveSection() {
   const [activeSection, setActiveSection] = useState("home");
@@ -9,7 +9,6 @@ export function useActiveSection() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        // Find the most visible section
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
@@ -40,11 +39,12 @@ export function useActiveSection() {
 
   const menuItems = [
     { id: "home", label: "Início" },
+    { id: "about", label: "Sobre" },
     { id: "experience", label: "Experiência" },
     { id: "projects", label: "Projetos" },
     { id: "skills", label: "Skills" },
     { id: "articles", label: "Artigos" },
-    { id: "about", label: "Sobre" },
+    { id: "education", label: "Formação" },
     { id: "contact", label: "Contato" },
   ];
 
