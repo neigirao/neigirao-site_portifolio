@@ -1,33 +1,75 @@
-# Plano de Melhorias - Site & CMS
 
-## Concluídos ✅
-- Sanitizar HTML no AboutSection (SafeHTML)
-- Unificar CV URL via useSiteSettings
-- Campo highlight_metric em Projects
-- Template Case Study (projects)
-- Sobre.tsx usar site_settings
-- Artigos na Home + nav
-- RichTextEditor no about_summary
-- llms.txt e about.txt (rotas apontam para edge functions)
-- heroStats editáveis via CMS (site_settings)
-- Methodology cards editáveis via CMS (site_settings)
-- Ocultar seções vazias quando sem dados
-- Fix WhatsApp FAB vs Back to Top overlap no mobile
-- Melhorar contrastes de acessibilidade (white/50→70, white/40→60)
-- Adicionar skip-to-content na home
-- Link "Artigos" no footer
-- FAQ editável via CMS (tabela `faqs` com RLS)
-- Hero tags, subtitle e description editáveis via `site_settings`
-- Subtítulos de seções editáveis via `site_settings`
-- Footer description editável via `site_settings`
 
-## Pendentes
-- ~~Navbar global em páginas standalone~~ ✅
-- ~~Scroll animations consistentes (Testimonials, Certifications)~~ ✅
-- ~~Project cards com imagem~~ ✅
-- ~~Admin: agrupar tabs em categorias~~ ✅
-- ~~Breadcrumb schema nas páginas de detalhe~~ ✅
-- ~~OG Image dinâmico nos artigos~~ ✅
-- Formulário de contato real via edge function
-- ~~Admin: prevenção de navegação com alterações não salvas~~ ✅
-- ~~Admin: campo `is_visible` para experiences/skills/education~~ ✅
+# Análise de Recrutador/RH + Plano de Melhorias
+
+## Análise da Perspectiva de Recrutamento
+
+### Ordem Atual
+```
+Hero → Impacto Mensurável → Projetos → Experiência → Skills → Certificações → Depoimentos → Artigos → FAQ → Sobre (Resumo + Metodologia + Educação) → Contato
+```
+
+### Problemas Identificados por um Recrutador
+
+1. **"Sobre" está enterrado no final** — Recrutadores querem entender quem é o candidato logo após o Hero. O resumo profissional é uma das primeiras coisas que buscam.
+
+2. **Experiência depois de Projetos é contra-intuitivo** — RH lê experiência cronológica antes de projetos. A trajetória profissional contextualiza os projetos.
+
+3. **Certificações e Depoimentos separados de credenciais** — Certificações validam skills; depoimentos validam experiência. Devem estar próximos.
+
+4. **FAQ antes do Sobre** — FAQ é informação auxiliar, não deveria preceder o resumo profissional.
+
+5. **Falta de seção de Educação visível na nav** — Educação está escondida dentro do "Sobre", sem destaque próprio.
+
+6. **Contato sem formulário real** — Apenas links mailto/WhatsApp/LinkedIn. Recrutadores preferem formulário direto.
+
+7. **Navbar não reflete a nova ordem** — `useActiveSection` tem ordem hardcoded diferente do layout.
+
+### Ordem Recomendada (Perspectiva RH)
+```
+Hero → Impacto Mensurável → Sobre (Resumo + Metodologia) → Experiência → Projetos → Skills → Certificações → Depoimentos → Artigos → Educação → FAQ → Contato
+```
+
+**Lógica**: Quem sou → O que fiz (carreira) → O que construí (projetos) → O que domino (skills + certificações) → O que dizem de mim → Conteúdo → Formação → Perguntas → Fale comigo.
+
+---
+
+## Plano de Implementação
+
+### 1. Reordenar seções em `Index.tsx`
+Nova sequência:
+```
+HeroSection → ImpactMetrics → AboutSection → ExperienceSection → ProjectsSection → SkillsSection → CertificationsSection → TestimonialsSection → RecentArticlesSection → EducationSection (nova seção separada) → FAQSection → ContactSection
+```
+
+### 2. Atualizar `useActiveSection.tsx`
+- Ajustar `SECTION_IDS` e `menuItems` para refletir a nova ordem
+- Adicionar "Educação" como item separado na nav se for extraída do About
+
+### 3. Separar Educação do AboutSection
+- Mover a renderização de Educação para fora do `AboutSection` no `Index.tsx` (já é passada como prop, basta renderizar em posição separada)
+- `AboutSection` fica apenas com Resumo + Metodologia
+
+### 4. Formulário de Contato real (item pendente do roadmap)
+- Criar edge function `send-contact` que recebe nome, email, mensagem
+- Adicionar formulário com validação na `ContactSection` (mantendo os botões atuais como alternativas)
+- Usar Resend ou SMTP para enviar email
+
+### 5. Atualizar `plan.md`
+- Marcar formulário de contato como concluído
+- Adicionar novos itens implementados
+
+---
+
+## Arquivos a Alterar
+
+| Arquivo | Ação |
+|---------|------|
+| `src/pages/Index.tsx` | Reordenar seções, separar educação |
+| `src/hooks/useActiveSection.tsx` | Atualizar ordem dos IDs e menu items |
+| `src/components/sections/AboutSection.tsx` | Remover educação (manter resumo + metodologia) |
+| `src/components/sections/EducationSection.tsx` | Já existe, usar diretamente no Index |
+| `src/components/sections/ContactSection.tsx` | Adicionar formulário de contato |
+| `supabase/functions/send-contact/index.ts` | Nova edge function para envio de email |
+| `.lovable/plan.md` | Atualizar status |
+
