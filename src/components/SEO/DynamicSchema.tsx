@@ -47,7 +47,7 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
     } : undefined,
     "hasOccupation": {
       "@type": "Occupation",
-      "name": "Product Manager",
+      "name": "Product Leader",
       "skills": skills.map(s => s.name).join(", "),
       "occupationLocation": {
         "@type": "City",
