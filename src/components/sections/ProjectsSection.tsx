@@ -21,7 +21,7 @@ export function ProjectsSection({ projects, isLoading }: ProjectsSectionProps) {
       <div className="absolute inset-0 bg-gradient-subtle opacity-40 pointer-events-none" />
       <div className="max-w-7xl mx-auto px-6 relative" ref={ref}>
         <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Principais Projetos</h2>
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Projetos de Produtos Digitais</h2>
           <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
             {subtitle}

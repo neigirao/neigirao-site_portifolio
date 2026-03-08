@@ -31,7 +31,7 @@ export function ExperienceSection({ experiences, isLoading }: ExperienceSectionP
 
       <div className="max-w-7xl mx-auto px-6 relative">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Experiência Profissional</h2>
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Experiência Profissional em Produtos Digitais</h2>
           <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
             {subtitle}

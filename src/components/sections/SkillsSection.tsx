@@ -20,7 +20,7 @@ export function SkillsSection({ skills, isLoading }: SkillsSectionProps) {
     <section id="skills" className="py-16 bg-muted/30 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-6" ref={ref}>
         <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Habilidades</h2>
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-foreground tracking-tight">Especialidades</h2>
           <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6" />
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
             {subtitle}

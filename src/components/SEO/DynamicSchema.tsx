@@ -63,7 +63,7 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
     "@type": "WebSite",
     "name": "Nei Girão - Portfolio",
     "url": baseUrl,
-    "description": "Portfolio profissional de Nei Girão, Product Manager especializado em Observabilidade",
+    "description": "Portfolio profissional de Nei Girão, Product Leader em Transformação Digital e Observabilidade",
     "author": {
       "@type": "Person",
       "name": "Nei Girão"

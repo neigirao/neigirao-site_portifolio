@@ -95,6 +95,9 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-4 leading-tight tracking-tight">
             Nei Girão
+            <span className="block text-2xl md:text-3xl lg:text-4xl font-bold text-white/80 mt-2">
+              Product Leader em Transformação Digital
+            </span>
           </h1>
 
           <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-8 leading-snug"
