@@ -28,8 +28,8 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Nei Girão",
-    "jobTitle": "Product Manager",
-    "description": "Product Manager especializado em Observabilidade e Produtos Digitais com +15 anos de experiência liderando equipes em Icatu, Oi, TIM e Globo",
+    "jobTitle": "Product Leader",
+    "description": "Product Leader em Transformação Digital com +15 anos de experiência em produtos digitais, observabilidade e customer experience em Icatu, Oi, TIM e Globo",
     "url": baseUrl,
     "email": "neigirao@gmail.com",
     "telephone": "+5521989921711",
@@ -47,7 +47,7 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
     } : undefined,
     "hasOccupation": {
       "@type": "Occupation",
-      "name": "Product Manager",
+      "name": "Product Leader",
       "skills": skills.map(s => s.name).join(", "),
       "occupationLocation": {
         "@type": "City",
@@ -63,7 +63,7 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
     "@type": "WebSite",
     "name": "Nei Girão - Portfolio",
     "url": baseUrl,
-    "description": "Portfolio profissional de Nei Girão, Product Manager especializado em Observabilidade",
+    "description": "Portfolio profissional de Nei Girão, Product Leader em Transformação Digital e Observabilidade",
     "author": {
       "@type": "Person",
       "name": "Nei Girão"
