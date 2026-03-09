@@ -49,6 +49,7 @@ const tabGroups = [
     label: 'Sistema',
     icon: Settings,
     tabs: [
+      { value: 'messages', label: 'Mensagens' },
       { value: 'settings', label: 'Configurações' },
     ],
   },
