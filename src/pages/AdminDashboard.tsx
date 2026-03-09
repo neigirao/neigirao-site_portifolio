@@ -16,6 +16,7 @@ import { DashboardStats } from '@/components/admin/DashboardStats';
 import { BulkSlugGenerator } from '@/components/admin/BulkSlugGenerator';
 import { SiteSettingsManager } from '@/components/admin/SiteSettingsManager';
 import { ArticlesManager } from '@/components/admin/ArticlesManager';
+import { ContactMessagesManager } from '@/components/admin/ContactMessagesManager';
 import { useAdminDashboardData } from '@/hooks/useAdminData';
 import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
 import { LogOut, RefreshCw, Home, ChevronDown, Briefcase, Wrench, Settings } from 'lucide-react';
