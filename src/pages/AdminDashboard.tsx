@@ -16,9 +16,10 @@ import { DashboardStats } from '@/components/admin/DashboardStats';
 import { BulkSlugGenerator } from '@/components/admin/BulkSlugGenerator';
 import { SiteSettingsManager } from '@/components/admin/SiteSettingsManager';
 import { ArticlesManager } from '@/components/admin/ArticlesManager';
+import { ContactMessagesManager } from '@/components/admin/ContactMessagesManager';
 import { useAdminDashboardData } from '@/hooks/useAdminData';
 import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
-import { LogOut, RefreshCw, Home, ChevronDown, Briefcase, Wrench, Settings } from 'lucide-react';
+import { LogOut, RefreshCw, Home, ChevronDown, Briefcase, Wrench, Settings, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const tabGroups = [
@@ -48,6 +49,7 @@ const tabGroups = [
     label: 'Sistema',
     icon: Settings,
     tabs: [
+      { value: 'messages', label: 'Mensagens' },
       { value: 'settings', label: 'Configurações' },
     ],
   },
@@ -165,6 +167,9 @@ export default function AdminDashboard() {
           </TabsContent>
           <TabsContent value="faqs">
             <FAQsManager />
+          </TabsContent>
+          <TabsContent value="messages">
+            <ContactMessagesManager />
           </TabsContent>
           <TabsContent value="settings">
             <SiteSettingsManager />
