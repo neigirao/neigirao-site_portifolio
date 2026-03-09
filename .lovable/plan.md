@@ -34,7 +34,7 @@
 - Fix seção Experiência em branco (remover scroll animation) ✅
 
 ## Pendentes
-- Admin: visualizar mensagens de contato recebidas
+- Admin: visualizar mensagens de contato recebidas ✅
 - Envio de email via edge function (Resend/SMTP) ao receber contato
 - Rate limiting no formulário de contato (anti-spam)
 - Admin: exportar mensagens de contato (CSV)
