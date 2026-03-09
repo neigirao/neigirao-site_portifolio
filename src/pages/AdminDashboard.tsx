@@ -19,7 +19,7 @@ import { ArticlesManager } from '@/components/admin/ArticlesManager';
 import { ContactMessagesManager } from '@/components/admin/ContactMessagesManager';
 import { useAdminDashboardData } from '@/hooks/useAdminData';
 import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
-import { LogOut, RefreshCw, Home, ChevronDown, Briefcase, Wrench, Settings } from 'lucide-react';
+import { LogOut, RefreshCw, Home, ChevronDown, Briefcase, Wrench, Settings, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const tabGroups = [
