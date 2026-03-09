@@ -168,6 +168,9 @@ export default function AdminDashboard() {
           <TabsContent value="faqs">
             <FAQsManager />
           </TabsContent>
+          <TabsContent value="messages">
+            <ContactMessagesManager />
+          </TabsContent>
           <TabsContent value="settings">
             <SiteSettingsManager />
           </TabsContent>
