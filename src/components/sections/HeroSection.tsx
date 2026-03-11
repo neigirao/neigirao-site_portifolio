@@ -19,7 +19,7 @@ function CountUpStat({ value, label }: { value: string; label: string }) {
       <div className="text-2xl md:text-4xl font-bold text-white mb-1 md:mb-2">
         {parsed ? `${count}${parsed.suffix}` : value}
       </div>
-      <div className="text-white/80 text-sm">{label}</div>
+      <div className="text-white/80 text-xs md:text-sm">{label}</div>
     </div>
   );
 }
