@@ -117,7 +117,7 @@ export default function Contato() {
               Vamos Conversar?
             </h1>
             <p className="text-xl text-white/80 max-w-2xl leading-relaxed">
-              Aberto a desafios em Product Management, dados e observabilidade.
+              Transformando desafios em produtos digitais de alto impacto.
             </p>
             <div className="flex flex-wrap gap-4 mt-8 text-white/70 text-sm">
               <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
@@ -127,10 +127,6 @@ export default function Contato() {
               <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
                 <Clock className="w-4 h-4" />
                 BRT (UTC-3)
-              </span>
-              <span className="flex items-center gap-2 bg-teal-accent/20 text-teal-accent px-4 py-2 rounded-full">
-                <span className="w-2 h-2 bg-teal-accent rounded-full" />
-                Disponível para oportunidades
               </span>
             </div>
           </div>
