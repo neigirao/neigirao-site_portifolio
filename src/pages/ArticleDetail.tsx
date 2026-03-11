@@ -11,6 +11,8 @@ import { OptimizedImage } from '@/components/ui/optimized-image';
 import { Clock, Calendar, Tag, ChevronRight } from 'lucide-react';
 import { SafeHTML } from '@/components/admin/SafeHTML';
 import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
+import { Helmet } from 'react-helmet-async';
+
 
 export default function ArticleDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -68,6 +70,14 @@ export default function ArticleDetail() {
           'Nei Girão',
         ]}
       />
+      <Helmet>
+        {article.published_at && <meta property="article:published_time" content={article.published_at} />}
+        <meta property="article:modified_time" content={article.updated_at} />
+        <meta property="article:author" content="Nei Girão" />
+        {article.tags?.map((tag, i) => (
+          <meta key={i} property="article:tag" content={tag} />
+        ))}
+      </Helmet>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",

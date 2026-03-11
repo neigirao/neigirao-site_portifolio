@@ -86,19 +86,28 @@ export default function Contato() {
       return;
     }
     setSending(true);
-    // Build mailto link with form data as fallback
-    const subject = encodeURIComponent(formData.subject || `Contato de ${formData.name}`);
-    const body = encodeURIComponent(`Nome: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`);
-    window.location.href = `mailto:${AUTHOR_EMAIL}?subject=${subject}&body=${body}`;
-    setSending(false);
-    toast.success("Redirecionando para seu cliente de email...");
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { error } = await supabase.from("contact_messages").insert({
+        name: formData.name,
+        email: formData.email,
+        message: formData.subject ? `[${formData.subject}] ${formData.message}` : formData.message,
+      });
+      if (error) throw error;
+      toast.success("Mensagem enviada com sucesso! Retorno em breve.");
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch {
+      toast.error("Erro ao enviar mensagem. Tente novamente.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
     <>
       <SEOHead
         title="Contato - Nei Girão | Product Manager"
-        description="Entre em contato com Nei Girão. Disponível para novas oportunidades, parcerias e projetos em Product Management e Observabilidade. Rio de Janeiro, Brasil."
+        description="Entre em contato com Nei Girão para projetos, parcerias e oportunidades em Product Management e Observabilidade. Rio de Janeiro, Brasil."
         canonicalUrl={`${BASE_URL}/contato`}
         keywords={["contato", "Nei Girão", "Product Manager", "oportunidades", "parcerias", "Rio de Janeiro"]}
       />
@@ -110,14 +119,14 @@ export default function Contato() {
         <StandaloneNavbar />
         {/* Header */}
         <div className="bg-gradient-hero pt-24 pb-20 relative overflow-hidden">
-          <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-10 right-10 w-80 h-80 bg-teal-accent/10 rounded-full blur-3xl" />
+          <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl" aria-hidden="true" />
+          <div className="absolute bottom-10 right-10 w-80 h-80 bg-teal-accent/10 rounded-full blur-3xl" aria-hidden="true" />
           <div className="max-w-4xl mx-auto px-6 relative">
             <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
               Vamos Conversar?
             </h1>
             <p className="text-xl text-white/80 max-w-2xl leading-relaxed">
-              Aberto a desafios em Product Management, dados e observabilidade.
+              Transformando desafios em produtos digitais de alto impacto.
             </p>
             <div className="flex flex-wrap gap-4 mt-8 text-white/70 text-sm">
               <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
@@ -127,10 +136,6 @@ export default function Contato() {
               <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
                 <Clock className="w-4 h-4" />
                 BRT (UTC-3)
-              </span>
-              <span className="flex items-center gap-2 bg-teal-accent/20 text-teal-accent px-4 py-2 rounded-full">
-                <span className="w-2 h-2 bg-teal-accent rounded-full" />
-                Disponível para oportunidades
               </span>
             </div>
           </div>

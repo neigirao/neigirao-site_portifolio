@@ -15,18 +15,18 @@ function CountUpStat({ value, label }: { value: string; label: string }) {
   const parsed = parseMetricValue(value);
   const { count, ref } = useCountUp(parsed?.number || 0, 2000);
   return (
-    <div ref={ref} className="p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-      <div className="text-3xl md:text-4xl font-bold text-white mb-2">
+    <div ref={ref} className="p-4 md:p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+      <div className="text-2xl md:text-4xl font-bold text-white mb-1 md:mb-2">
         {parsed ? `${count}${parsed.suffix}` : value}
       </div>
-      <div className="text-white/80 text-sm">{label}</div>
+      <div className="text-white/80 text-xs md:text-sm">{label}</div>
     </div>
   );
 }
 
 function HeroStats({ stats }: { stats: { value: string; label: string }[] }) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-4xl mx-auto">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mt-12 md:mt-16 max-w-4xl mx-auto">
       {stats.map((stat) => (
         <CountUpStat key={stat.label} {...stat} />
       ))}
@@ -52,8 +52,8 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-hero pt-20 relative overflow-hidden">
-      <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-accent/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1.5s" }} />
+      <div className="absolute top-20 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-teal-accent/10 rounded-full blur-3xl" />
 
       <div className="max-w-7xl mx-auto px-6 py-20 text-center relative">
         <div className="animate-fade-in-up">
@@ -61,7 +61,7 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
           <div className="mb-8 flex justify-center">
             <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-primary p-1">
               {heroPhotoUrl ? (
-                <img src={heroPhotoUrl} alt="Nei Girão" className="w-full h-full rounded-full object-cover" />
+                <img src={heroPhotoUrl} alt="Nei Girão" width={160} height={160} fetchPriority="high" className="w-full h-full rounded-full object-cover" />
               ) : (
                 <div className="w-full h-full rounded-full bg-card/20 backdrop-blur-sm flex items-center justify-center">
                   <User className="w-16 h-16 md:w-20 md:h-20 text-white/70" />
@@ -114,7 +114,7 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
               onClick={() => scrollToSection("contact")}
               className="bg-teal-accent text-white hover:bg-teal-accent/90 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold"
             >
-              Agendar Conversa
+              Conversar sobre Projetos
             </Button>
             <Button
               size="lg"
@@ -144,6 +144,8 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
                     <img
                       src={company.logo_url}
                       alt={company.name}
+                      width={80}
+                      height={32}
                       className="h-8 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity grayscale brightness-200"
                       loading="lazy"
                       onError={(e) => {

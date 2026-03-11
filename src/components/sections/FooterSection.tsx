@@ -68,13 +68,8 @@ export function FooterSection() {
           </div>
         </div>
 
-        <div className="border-t border-border pt-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-sm text-muted-foreground">
+        <div className="border-t border-border pt-6 text-center text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} Nei Girão. Todos os direitos reservados.</p>
-          <div className="flex gap-4">
-            <Link to="/sobre" className="hover:text-foreground transition-colors">Sobre</Link>
-            <Link to="/contato" className="hover:text-foreground transition-colors">Contato</Link>
-            
-          </div>
         </div>
       </div>
     </footer>
