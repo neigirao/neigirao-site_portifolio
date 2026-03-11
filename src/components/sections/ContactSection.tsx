@@ -50,6 +50,11 @@ export function ContactSection() {
       return;
     }
 
+    if (!checkRateLimit()) {
+      toast.error("Limite de envios atingido. Tente novamente em 1 hora.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const { error } = await supabase.from("contact_messages" as any).insert({
