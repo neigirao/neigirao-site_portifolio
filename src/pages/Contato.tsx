@@ -119,8 +119,8 @@ export default function Contato() {
         <StandaloneNavbar />
         {/* Header */}
         <div className="bg-gradient-hero pt-24 pb-20 relative overflow-hidden">
-          <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-10 right-10 w-80 h-80 bg-teal-accent/10 rounded-full blur-3xl" />
+          <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl" aria-hidden="true" />
+          <div className="absolute bottom-10 right-10 w-80 h-80 bg-teal-accent/10 rounded-full blur-3xl" aria-hidden="true" />
           <div className="max-w-4xl mx-auto px-6 relative">
             <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
               Vamos Conversar?

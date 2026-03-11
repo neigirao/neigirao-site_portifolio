@@ -100,10 +100,13 @@ export function NavigationBar({
                       {item.label}
                     </button>
                   ))}
-                  <Button onClick={() => window.open(cvUrl, "_blank")} className="mt-4">
-                    <Download className="w-4 h-4 mr-2" />
-                    Download CV
-                  </Button>
+                  <div className="flex items-center gap-3 mt-4">
+                    <ThemeToggle />
+                    <Button onClick={() => window.open(cvUrl, "_blank")} className="flex-1">
+                      <Download className="w-4 h-4 mr-2" />
+                      Download CV
+                    </Button>
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>

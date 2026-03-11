@@ -114,7 +114,7 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
               onClick={() => scrollToSection("contact")}
               className="bg-teal-accent text-white hover:bg-teal-accent/90 shadow-glow hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold"
             >
-              Agendar Conversa
+              Conversar sobre Projetos
             </Button>
             <Button
               size="lg"
