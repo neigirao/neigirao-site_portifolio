@@ -61,7 +61,7 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
           <div className="mb-8 flex justify-center">
             <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-primary p-1">
               {heroPhotoUrl ? (
-                <img src={heroPhotoUrl} alt="Nei Girão" className="w-full h-full rounded-full object-cover" />
+                <img src={heroPhotoUrl} alt="Nei Girão" width={160} height={160} fetchPriority="high" className="w-full h-full rounded-full object-cover" />
               ) : (
                 <div className="w-full h-full rounded-full bg-card/20 backdrop-blur-sm flex items-center justify-center">
                   <User className="w-16 h-16 md:w-20 md:h-20 text-white/70" />
