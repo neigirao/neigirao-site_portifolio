@@ -12,7 +12,7 @@ import { Clock, Calendar, Tag, ChevronRight } from 'lucide-react';
 import { SafeHTML } from '@/components/admin/SafeHTML';
 import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
 import { Helmet } from 'react-helmet-async';
-import SeeAlso from '@/components/SeeAlso';
+
 
 export default function ArticleDetail() {
   const { slug } = useParams<{ slug: string }>();
