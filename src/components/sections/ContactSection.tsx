@@ -19,7 +19,7 @@ const contactSchema = z.object({
 
 export function ContactSection() {
   const { settings } = useSiteSettings();
-  const subtitle = settings.section_subtitle_contact || "Aberto a desafios em Product Management, dados e observabilidade";
+  const subtitle = settings.section_subtitle_contact || "Transformando desafios em produtos digitais de alto impacto";
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
