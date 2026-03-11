@@ -144,6 +144,8 @@ export function HeroSection({ scrollToSection }: HeroSectionProps) {
                     <img
                       src={company.logo_url}
                       alt={company.name}
+                      width={80}
+                      height={32}
                       className="h-8 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity grayscale brightness-200"
                       loading="lazy"
                       onError={(e) => {
