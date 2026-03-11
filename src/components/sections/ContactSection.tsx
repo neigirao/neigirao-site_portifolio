@@ -24,6 +24,18 @@ export function ContactSection() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const checkRateLimit = (): boolean => {
+    const key = "contact_form_timestamps";
+    const now = Date.now();
+    const hour = 60 * 60 * 1000;
+    const stored = JSON.parse(localStorage.getItem(key) || "[]") as number[];
+    const recent = stored.filter((t) => now - t < hour);
+    if (recent.length >= 3) return false;
+    recent.push(now);
+    localStorage.setItem(key, JSON.stringify(recent));
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
