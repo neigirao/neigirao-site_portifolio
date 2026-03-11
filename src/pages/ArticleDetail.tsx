@@ -15,7 +15,7 @@ import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
 import { Helmet } from 'react-helmet-async';
 
 function RelatedArticles({ currentArticle }: { currentArticle: DbArticle }) {
-  const { data: allArticles } = usePublishedArticles();
+  const { articles: allArticles } = usePublishedArticles();
   if (!allArticles || !currentArticle.tags?.length) return null;
 
   const related = allArticles
