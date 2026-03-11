@@ -98,7 +98,7 @@ export default function Contato() {
     <>
       <SEOHead
         title="Contato - Nei Girão | Product Manager"
-        description="Entre em contato com Nei Girão. Disponível para novas oportunidades, parcerias e projetos em Product Management e Observabilidade. Rio de Janeiro, Brasil."
+        description="Entre em contato com Nei Girão para projetos, parcerias e oportunidades em Product Management e Observabilidade. Rio de Janeiro, Brasil."
         canonicalUrl={`${BASE_URL}/contato`}
         keywords={["contato", "Nei Girão", "Product Manager", "oportunidades", "parcerias", "Rio de Janeiro"]}
       />
