@@ -15,8 +15,8 @@ function CountUpStat({ value, label }: { value: string; label: string }) {
   const parsed = parseMetricValue(value);
   const { count, ref } = useCountUp(parsed?.number || 0, 2000);
   return (
-    <div ref={ref} className="p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-      <div className="text-3xl md:text-4xl font-bold text-white mb-2">
+    <div ref={ref} className="p-4 md:p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+      <div className="text-2xl md:text-4xl font-bold text-white mb-1 md:mb-2">
         {parsed ? `${count}${parsed.suffix}` : value}
       </div>
       <div className="text-white/80 text-sm">{label}</div>
