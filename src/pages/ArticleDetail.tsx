@@ -194,9 +194,6 @@ export default function ArticleDetail() {
             </CardContent>
           </Card>
 
-          {/* Related Content */}
-          <SeeAlso currentSlug={article.slug || ''} contentType="article" />
-
           {/* CTA */}
           <div className="mt-12 text-center">
             <p className="text-muted-foreground mb-4">
