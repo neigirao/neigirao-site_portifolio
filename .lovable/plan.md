@@ -1,40 +1,64 @@
-# Plano de Melhorias - Site & CMS
+# Pendências e Sugestões de Melhoria
 
-## Concluídos ✅
-- Sanitizar HTML no AboutSection (SafeHTML)
-- Unificar CV URL via useSiteSettings
-- Campo highlight_metric em Projects
-- Template Case Study (projects)
-- Sobre.tsx usar site_settings
-- Artigos na Home + nav
-- RichTextEditor no about_summary
-- llms.txt e about.txt (rotas apontam para edge functions)
-- heroStats editáveis via CMS (site_settings)
-- Methodology cards editáveis via CMS (site_settings)
-- Ocultar seções vazias quando sem dados
-- Fix WhatsApp FAB vs Back to Top overlap no mobile
-- Melhorar contrastes de acessibilidade (white/50→70, white/40→60)
-- Adicionar skip-to-content na home
-- Link "Artigos" no footer
-- FAQ editável via CMS (tabela `faqs` com RLS)
-- Hero tags, subtitle e description editáveis via `site_settings`
-- Subtítulos de seções editáveis via `site_settings`
-- Footer description editável via `site_settings`
-- Navbar global em páginas standalone ✅
-- Scroll animations consistentes (Testimonials, Certifications) ✅
-- Project cards com imagem ✅
-- Admin: agrupar tabs em categorias ✅
-- Breadcrumb schema nas páginas de detalhe ✅
-- OG Image dinâmico nos artigos ✅
-- Admin: prevenção de navegação com alterações não salvas ✅
-- Admin: campo `is_visible` para experiences/skills/education ✅
-- Reordenar seções na perspectiva de recrutador ✅
-- Separar Educação do AboutSection (seção independente na nav) ✅
-- Formulário de contato real (tabela contact_messages + validação) ✅
-- Fix seção Experiência em branco (remover scroll animation) ✅
+## Do plano original (ainda pendentes)
 
-## Pendentes
-- Admin: visualizar mensagens de contato recebidas ✅
-- Envio de email via edge function (Resend/SMTP) ao receber contato
-- Rate limiting no formulário de contato (anti-spam)
-- Admin: exportar mensagens de contato (CSV) ✅
+1. **Envio de email via edge function** ao receber contato (Resend)
+2. **Rate limiting no formulário de contato** (anti-spam)
+
+## Da auditoria (ainda não implementados)
+
+### Performance
+
+3. **Lazy load de seções below-fold** -- todas as seções renderizam de uma vez; usar `React.lazy` + `IntersectionObserver` para carregar sob demanda
+4. **Consolidar queries da home** -- ~10 requests paralelos ao Supabase no carregamento; agrupar via RPC ou reduzir waterfall
+
+### SEO
+
+5. **Internal linking nos artigos** -- componente `SeeAlso` existe mas não é usado no `ArticleDetail`; adicionar artigos relacionados por tags
+6. **Verificar sitemap edge function** inclui artigos publicados dinamicamente
+7. **Publicar os 3 artigos pillar** (ainda em draft)
+
+### CMS
+
+8. **Campo `is_read` em `contact_messages**` + badge de não lidas na tab Mensagens
+9. **Busca/filtro** na lista de artigos e mensagens no admin
+10. **Preview de artigos draft** (botão preview que abre modal com layout do ArticleDetail)
+11. **Paginação nas mensagens de contato** (para escalar)
+
+### Design
+
+12. **Agrupar certificações por categoria** quando houver muitas
+  &nbsp;
+
+### Redação
+
+14. **ContactSection subtitle** ainda tem fallback "Aberto a desafios" (linha 22) -- substituir por texto sem conotação de disponibilidade
+15. **Enriquecer conteúdo dos 3 artigos SEO** com dados reais, cases e CTAs contextuais
+
+---
+
+## Recomendação de prioridade
+
+```text
+Impacto imediato (segurança + SEO):
+├── Rate limiting no formulário (anti-spam)
+├── Corrigir fallback "Aberto a desafios" na ContactSection
+├── Publicar artigos pillar
+└── SeeAlso / internal linking nos artigos
+
+Valor alto, esforço médio:
+├── Email notification via edge function
+├── is_read + badge não lidas no admin
+└── Preview de artigos draft
+
+Nice to have:
+├── Lazy load seções below-fold
+├── Busca/filtro no admin
+├── Paginação mensagens
+├── Agrupar certificações
+└── Consolidar queries
+```
+
+## Sugestão
+
+Recomendo atacar primeiro o bloco "impacto imediato": rate limiting, corrigir o fallback de disponibilidade, publicar os artigos e adicionar internal linking. Quer que eu implemente esse bloco?
