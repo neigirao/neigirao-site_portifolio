@@ -68,6 +68,14 @@ export default function ArticleDetail() {
           'Nei Girão',
         ]}
       />
+      <Helmet>
+        {article.published_at && <meta property="article:published_time" content={article.published_at} />}
+        <meta property="article:modified_time" content={article.updated_at} />
+        <meta property="article:author" content="Nei Girão" />
+        {article.tags?.map((tag, i) => (
+          <meta key={i} property="article:tag" content={tag} />
+        ))}
+      </Helmet>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
