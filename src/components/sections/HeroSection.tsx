@@ -26,7 +26,7 @@ function CountUpStat({ value, label }: { value: string; label: string }) {
 
 function HeroStats({ stats }: { stats: { value: string; label: string }[] }) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-4xl mx-auto">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mt-12 md:mt-16 max-w-4xl mx-auto">
       {stats.map((stat) => (
         <CountUpStat key={stat.label} {...stat} />
       ))}
