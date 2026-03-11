@@ -86,12 +86,21 @@ export default function Contato() {
       return;
     }
     setSending(true);
-    // Build mailto link with form data as fallback
-    const subject = encodeURIComponent(formData.subject || `Contato de ${formData.name}`);
-    const body = encodeURIComponent(`Nome: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`);
-    window.location.href = `mailto:${AUTHOR_EMAIL}?subject=${subject}&body=${body}`;
-    setSending(false);
-    toast.success("Redirecionando para seu cliente de email...");
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { error } = await supabase.from("contact_messages").insert({
+        name: formData.name,
+        email: formData.email,
+        message: formData.subject ? `[${formData.subject}] ${formData.message}` : formData.message,
+      });
+      if (error) throw error;
+      toast.success("Mensagem enviada com sucesso! Retorno em breve.");
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch {
+      toast.error("Erro ao enviar mensagem. Tente novamente.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
