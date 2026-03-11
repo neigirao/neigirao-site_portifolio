@@ -19,10 +19,22 @@ const contactSchema = z.object({
 
 export function ContactSection() {
   const { settings } = useSiteSettings();
-  const subtitle = settings.section_subtitle_contact || "Aberto a desafios em Product Management, dados e observabilidade";
+  const subtitle = settings.section_subtitle_contact || "Transformando desafios em produtos digitais de alto impacto";
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const checkRateLimit = (): boolean => {
+    const key = "contact_form_timestamps";
+    const now = Date.now();
+    const hour = 60 * 60 * 1000;
+    const stored = JSON.parse(localStorage.getItem(key) || "[]") as number[];
+    const recent = stored.filter((t) => now - t < hour);
+    if (recent.length >= 3) return false;
+    recent.push(now);
+    localStorage.setItem(key, JSON.stringify(recent));
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +47,11 @@ export function ContactSection() {
         if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
       });
       setErrors(fieldErrors);
+      return;
+    }
+
+    if (!checkRateLimit()) {
+      toast.error("Limite de envios atingido. Tente novamente em 1 hora.");
       return;
     }
 

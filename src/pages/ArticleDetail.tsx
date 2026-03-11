@@ -1,5 +1,6 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useArticleDetail } from '@/hooks/useArticles';
+import { useArticleDetail, usePublishedArticles } from '@/hooks/useArticles';
+import type { DbArticle } from '@/hooks/useArticles';
 import { SEOHead } from '@/components/SEO/SEOHead';
 import { BreadcrumbSchema } from '@/components/SEO/BreadcrumbSchema';
 import { BASE_URL } from '@/config/constants';
@@ -12,6 +13,51 @@ import { Clock, Calendar, Tag, ChevronRight } from 'lucide-react';
 import { SafeHTML } from '@/components/admin/SafeHTML';
 import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
 import { Helmet } from 'react-helmet-async';
+
+function RelatedArticles({ currentArticle }: { currentArticle: DbArticle }) {
+  const { articles: allArticles } = usePublishedArticles();
+  if (!allArticles || !currentArticle.tags?.length) return null;
+
+  const related = allArticles
+    .filter((a) => a.id !== currentArticle.id)
+    .map((a) => ({
+      ...a,
+      score: (a.tags || []).filter((t) => currentArticle.tags!.includes(t)).length,
+    }))
+    .filter((a) => a.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+
+  if (related.length === 0) return null;
+
+  return (
+    <section className="mt-12">
+      <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+        <span className="text-accent">→</span>
+        Artigos Relacionados
+      </h2>
+      <div className="grid gap-4">
+        {related.map((a) => (
+          <Link key={a.id} to={`/artigo/${a.slug}`} className="group">
+            <Card className="hover:shadow-elegant transition-all hover:border-accent/30 hover:-translate-y-0.5">
+              <CardContent className="p-5 flex items-center gap-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-foreground group-hover:text-accent transition-colors truncate">
+                    {a.title}
+                  </h3>
+                  {a.excerpt && (
+                    <p className="text-sm text-muted-foreground line-clamp-1 mt-1">{a.excerpt}</p>
+                  )}
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-accent transition-colors flex-shrink-0" />
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 
 export default function ArticleDetail() {
@@ -193,6 +239,9 @@ export default function ArticleDetail() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Related Articles */}
+          <RelatedArticles currentArticle={article} />
 
           {/* CTA */}
           <div className="mt-12 text-center">
