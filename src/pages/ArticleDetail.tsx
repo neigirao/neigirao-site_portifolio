@@ -1,5 +1,6 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useArticleDetail, useArticles } from '@/hooks/useArticles';
+import { useArticleDetail, usePublishedArticles } from '@/hooks/useArticles';
+import type { DbArticle } from '@/hooks/useArticles';
 import { SEOHead } from '@/components/SEO/SEOHead';
 import { BreadcrumbSchema } from '@/components/SEO/BreadcrumbSchema';
 import { BASE_URL } from '@/config/constants';
