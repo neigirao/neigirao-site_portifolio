@@ -103,6 +103,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       company: exp.company, role: exp.role, period: exp.period,
       description: exp.description, logo_url: exp.logo_url || '',
       meta_title: exp.meta_title || '', meta_description: exp.meta_description || '', slug: exp.slug || '',
+      is_case: exp.is_case, case_result: exp.case_result || '',
     });
   };
 
