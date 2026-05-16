@@ -96,6 +96,8 @@ export function ProjectsManager() {
       solution: formData.solution || null,
       results: formData.results || null,
       learnings: formData.learnings || null,
+      brand: formData.brand || null,
+      project_subtitle: formData.project_subtitle || null,
       order_index: editingId ? projects.find(p => p.id === editingId)?.order_index || 0 : nextOrderIndex,
     };
 
