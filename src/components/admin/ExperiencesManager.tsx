@@ -32,6 +32,8 @@ interface Experience {
   meta_description: string | null;
   slug: string | null;
   is_visible: boolean;
+  is_case: boolean;
+  case_result: string | null;
 }
 
 interface ExperiencesManagerProps {
@@ -40,7 +42,7 @@ interface ExperiencesManagerProps {
 
 const emptyForm = {
   company: '', role: '', period: '', description: '', logo_url: '',
-  meta_title: '', meta_description: '', slug: '',
+  meta_title: '', meta_description: '', slug: '', is_case: false, case_result: '',
 };
 
 export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
