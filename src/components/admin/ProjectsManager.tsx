@@ -36,6 +36,8 @@ interface Project {
   solution: string | null;
   results: string | null;
   learnings: string | null;
+  brand: string | null;
+  project_subtitle: string | null;
 }
 
 const emptyForm = {
@@ -53,6 +55,8 @@ const emptyForm = {
   solution: '',
   results: '',
   learnings: '',
+  brand: '',
+  project_subtitle: '',
 };
 
 export function ProjectsManager() {
