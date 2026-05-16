@@ -128,6 +128,8 @@ export function ProjectsManager() {
       solution: project.solution || '',
       results: project.results || '',
       learnings: project.learnings || '',
+      brand: project.brand || '',
+      project_subtitle: project.project_subtitle || '',
     });
   };
 
