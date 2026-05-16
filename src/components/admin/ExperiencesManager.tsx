@@ -113,6 +113,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       company: exp.company, role: `${exp.role} (cópia)`, period: exp.period,
       description: exp.description, logo_url: exp.logo_url,
       meta_title: null, meta_description: null, slug: null, order_index: nextOrderIndex,
+      is_case: exp.is_case, case_result: exp.case_result,
     }]);
     if (error) { toast.error('Erro ao duplicar'); return; }
     toast.success('Experiência duplicada!');
