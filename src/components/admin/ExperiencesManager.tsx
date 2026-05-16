@@ -79,6 +79,8 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       description: formData.description, logo_url: formData.logo_url || null,
       meta_title: formData.meta_title || null, meta_description: formData.meta_description || null,
       slug: formData.slug || null,
+      is_case: formData.is_case,
+      case_result: formData.case_result || null,
       order_index: editingId ? experiences.find(e => e.id === editingId)?.order_index || 0 : nextOrderIndex,
     };
 
