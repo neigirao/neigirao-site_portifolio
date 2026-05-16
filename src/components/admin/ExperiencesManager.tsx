@@ -172,6 +172,21 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
             </div>
             <ImageUploader value={formData.logo_url} onChange={(url) => setFormData({ ...formData, logo_url: url })} label="Logo da Empresa" folder="experiences" />
             <RichTextEditor value={formData.description} onChange={(value) => setFormData({ ...formData, description: value })} label="Descrição" />
+            <div className="flex items-center gap-3 py-2">
+              <Switch
+                id="is_case"
+                checked={formData.is_case}
+                onCheckedChange={(checked) => setFormData({ ...formData, is_case: checked })}
+              />
+              <Label htmlFor="is_case" className="cursor-pointer">Marcar como Case Study</Label>
+            </div>
+            {formData.is_case && (
+              <div className="space-y-2">
+                <Label htmlFor="case_result">Resultado do Case</Label>
+                <Input id="case_result" value={formData.case_result} onChange={(e) => setFormData({ ...formData, case_result: e.target.value })} placeholder="Ex: Aumento de 40% na eficiência" />
+                <p className="text-xs text-muted-foreground">Resuma o principal resultado ou impacto deste case study</p>
+              </div>
+            )}
             <SEOFields
               metaTitle={formData.meta_title} metaDescription={formData.meta_description} slug={formData.slug}
               onMetaTitleChange={(value) => setFormData({ ...formData, meta_title: value })}
