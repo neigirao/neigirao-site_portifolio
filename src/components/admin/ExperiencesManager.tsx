@@ -32,6 +32,8 @@ interface Experience {
   meta_description: string | null;
   slug: string | null;
   is_visible: boolean;
+  is_case: boolean;
+  case_result: string | null;
 }
 
 interface ExperiencesManagerProps {
@@ -40,7 +42,7 @@ interface ExperiencesManagerProps {
 
 const emptyForm = {
   company: '', role: '', period: '', description: '', logo_url: '',
-  meta_title: '', meta_description: '', slug: '',
+  meta_title: '', meta_description: '', slug: '', is_case: false, case_result: '',
 };
 
 export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
@@ -77,6 +79,8 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       description: formData.description, logo_url: formData.logo_url || null,
       meta_title: formData.meta_title || null, meta_description: formData.meta_description || null,
       slug: formData.slug || null,
+      is_case: formData.is_case,
+      case_result: formData.case_result || null,
       order_index: editingId ? experiences.find(e => e.id === editingId)?.order_index || 0 : nextOrderIndex,
     };
 
@@ -99,6 +103,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       company: exp.company, role: exp.role, period: exp.period,
       description: exp.description, logo_url: exp.logo_url || '',
       meta_title: exp.meta_title || '', meta_description: exp.meta_description || '', slug: exp.slug || '',
+      is_case: exp.is_case, case_result: exp.case_result || '',
     });
   };
 
@@ -108,6 +113,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       company: exp.company, role: `${exp.role} (cópia)`, period: exp.period,
       description: exp.description, logo_url: exp.logo_url,
       meta_title: null, meta_description: null, slug: null, order_index: nextOrderIndex,
+      is_case: exp.is_case, case_result: exp.case_result,
     }]);
     if (error) { toast.error('Erro ao duplicar'); return; }
     toast.success('Experiência duplicada!');
@@ -166,6 +172,21 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
             </div>
             <ImageUploader value={formData.logo_url} onChange={(url) => setFormData({ ...formData, logo_url: url })} label="Logo da Empresa" folder="experiences" />
             <RichTextEditor value={formData.description} onChange={(value) => setFormData({ ...formData, description: value })} label="Descrição" />
+            <div className="flex items-center gap-3 py-2">
+              <Switch
+                id="is_case"
+                checked={formData.is_case}
+                onCheckedChange={(checked) => setFormData({ ...formData, is_case: checked })}
+              />
+              <Label htmlFor="is_case" className="cursor-pointer">Marcar como Case Study</Label>
+            </div>
+            {formData.is_case && (
+              <div className="space-y-2">
+                <Label htmlFor="case_result">Resultado do Case</Label>
+                <Input id="case_result" value={formData.case_result} onChange={(e) => setFormData({ ...formData, case_result: e.target.value })} placeholder="Ex: Aumento de 40% na eficiência" />
+                <p className="text-xs text-muted-foreground">Resuma o principal resultado ou impacto deste case study</p>
+              </div>
+            )}
             <SEOFields
               metaTitle={formData.meta_title} metaDescription={formData.meta_description} slug={formData.slug}
               onMetaTitleChange={(value) => setFormData({ ...formData, meta_title: value })}

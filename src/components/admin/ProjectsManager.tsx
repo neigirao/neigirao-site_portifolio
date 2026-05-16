@@ -36,6 +36,8 @@ interface Project {
   solution: string | null;
   results: string | null;
   learnings: string | null;
+  brand: string | null;
+  project_subtitle: string | null;
 }
 
 const emptyForm = {
@@ -53,6 +55,8 @@ const emptyForm = {
   solution: '',
   results: '',
   learnings: '',
+  brand: '',
+  project_subtitle: '',
 };
 
 export function ProjectsManager() {
@@ -92,6 +96,8 @@ export function ProjectsManager() {
       solution: formData.solution || null,
       results: formData.results || null,
       learnings: formData.learnings || null,
+      brand: formData.brand || null,
+      project_subtitle: formData.project_subtitle || null,
       order_index: editingId ? projects.find(p => p.id === editingId)?.order_index || 0 : nextOrderIndex,
     };
 
@@ -122,6 +128,8 @@ export function ProjectsManager() {
       solution: project.solution || '',
       results: project.results || '',
       learnings: project.learnings || '',
+      brand: project.brand || '',
+      project_subtitle: project.project_subtitle || '',
     });
   };
 
@@ -134,6 +142,7 @@ export function ProjectsManager() {
       highlight_metric: project.highlight_metric,
       context: project.context, challenge: project.challenge,
       solution: project.solution, results: project.results, learnings: project.learnings,
+      brand: project.brand, project_subtitle: project.project_subtitle,
       order_index: nextOrderIndex,
     }]);
     if (error) { toast.error('Erro ao duplicar'); return; }
@@ -170,9 +179,20 @@ export function ProjectsManager() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Título</Label>
+                <Input id="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="brand">Marca / Cliente</Label>
+                <Input id="brand" value={formData.brand} onChange={(e) => setFormData({ ...formData, brand: e.target.value })} placeholder="Ex: Nubank, Itaú" />
+              </div>
+            </div>
             <div className="space-y-2">
-              <Label htmlFor="title">Título</Label>
-              <Input id="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
+              <Label htmlFor="project_subtitle">Subtítulo</Label>
+              <Input id="project_subtitle" value={formData.project_subtitle} onChange={(e) => setFormData({ ...formData, project_subtitle: e.target.value })} placeholder="Ex: Plataforma de onboarding digital" />
+              <p className="text-xs text-muted-foreground">Subtítulo ou tagline curta exibida abaixo do título</p>
             </div>
             <RichTextEditor value={formData.description} onChange={(value) => setFormData({ ...formData, description: value })} label="Descrição" />
             <ImageUploader value={formData.image_url} onChange={(url) => setFormData({ ...formData, image_url: url })} label="Imagem do Projeto" folder="projects" />

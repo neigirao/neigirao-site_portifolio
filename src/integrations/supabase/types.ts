@@ -202,10 +202,12 @@ export type Database = {
       }
       experiences: {
         Row: {
+          case_result: string | null
           company: string
           created_at: string
           description: string
           id: string
+          is_case: boolean
           is_visible: boolean
           logo_url: string | null
           meta_description: string | null
@@ -217,10 +219,12 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          case_result?: string | null
           company: string
           created_at?: string
           description: string
           id?: string
+          is_case?: boolean
           is_visible?: boolean
           logo_url?: string | null
           meta_description?: string | null
@@ -232,10 +236,12 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          case_result?: string | null
           company?: string
           created_at?: string
           description?: string
           id?: string
+          is_case?: boolean
           is_visible?: boolean
           logo_url?: string | null
           meta_description?: string | null
@@ -343,6 +349,7 @@ export type Database = {
       }
       projects: {
         Row: {
+          brand: string | null
           challenge: string | null
           context: string | null
           created_at: string
@@ -355,6 +362,7 @@ export type Database = {
           meta_description: string | null
           meta_title: string | null
           order_index: number
+          project_subtitle: string | null
           results: string | null
           slug: string | null
           solution: string | null
@@ -363,6 +371,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          brand?: string | null
           challenge?: string | null
           context?: string | null
           created_at?: string
@@ -375,6 +384,7 @@ export type Database = {
           meta_description?: string | null
           meta_title?: string | null
           order_index?: number
+          project_subtitle?: string | null
           results?: string | null
           slug?: string | null
           solution?: string | null
@@ -383,6 +393,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          brand?: string | null
           challenge?: string | null
           context?: string | null
           created_at?: string
@@ -395,6 +406,7 @@ export type Database = {
           meta_description?: string | null
           meta_title?: string | null
           order_index?: number
+          project_subtitle?: string | null
           results?: string | null
           slug?: string | null
           solution?: string | null
