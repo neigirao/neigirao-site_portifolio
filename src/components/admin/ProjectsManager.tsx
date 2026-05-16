@@ -142,6 +142,7 @@ export function ProjectsManager() {
       highlight_metric: project.highlight_metric,
       context: project.context, challenge: project.challenge,
       solution: project.solution, results: project.results, learnings: project.learnings,
+      brand: project.brand, project_subtitle: project.project_subtitle,
       order_index: nextOrderIndex,
     }]);
     if (error) { toast.error('Erro ao duplicar'); return; }
