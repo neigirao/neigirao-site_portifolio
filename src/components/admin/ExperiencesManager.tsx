@@ -42,7 +42,8 @@ interface ExperiencesManagerProps {
 
 const emptyForm = {
   company: '', role: '', period: '', description: '', logo_url: '',
-  meta_title: '', meta_description: '', slug: '', is_case: false, case_result: '',
+  meta_title: '', meta_description: '', slug: '',
+  is_case: false, case_result: '',
 };
 
 export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
@@ -103,7 +104,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       company: exp.company, role: exp.role, period: exp.period,
       description: exp.description, logo_url: exp.logo_url || '',
       meta_title: exp.meta_title || '', meta_description: exp.meta_description || '', slug: exp.slug || '',
-      is_case: exp.is_case, case_result: exp.case_result || '',
+      is_case: exp.is_case || false, case_result: exp.case_result || '',
     });
   };
 
@@ -113,7 +114,6 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       company: exp.company, role: `${exp.role} (cópia)`, period: exp.period,
       description: exp.description, logo_url: exp.logo_url,
       meta_title: null, meta_description: null, slug: null, order_index: nextOrderIndex,
-      is_case: exp.is_case, case_result: exp.case_result,
     }]);
     if (error) { toast.error('Erro ao duplicar'); return; }
     toast.success('Experiência duplicada!');
@@ -172,21 +172,33 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
             </div>
             <ImageUploader value={formData.logo_url} onChange={(url) => setFormData({ ...formData, logo_url: url })} label="Logo da Empresa" folder="experiences" />
             <RichTextEditor value={formData.description} onChange={(value) => setFormData({ ...formData, description: value })} label="Descrição" />
-            <div className="flex items-center gap-3 py-2">
-              <Switch
-                id="is_case"
-                checked={formData.is_case}
-                onCheckedChange={(checked) => setFormData({ ...formData, is_case: checked })}
-              />
-              <Label htmlFor="is_case" className="cursor-pointer">Marcar como Case Study</Label>
-            </div>
-            {formData.is_case && (
-              <div className="space-y-2">
-                <Label htmlFor="case_result">Resultado do Case</Label>
-                <Input id="case_result" value={formData.case_result} onChange={(e) => setFormData({ ...formData, case_result: e.target.value })} placeholder="Ex: Aumento de 40% na eficiência" />
-                <p className="text-xs text-muted-foreground">Resuma o principal resultado ou impacto deste case study</p>
+
+            {/* Campos para design editorial (Cases) */}
+            <div className="space-y-3 p-3 border rounded-lg bg-muted/30">
+              <div className="flex items-center gap-3">
+                <Switch
+                  id="is_case"
+                  checked={formData.is_case}
+                  onCheckedChange={(checked) => setFormData({ ...formData, is_case: checked })}
+                />
+                <Label htmlFor="is_case" className="font-medium cursor-pointer">
+                  Destacar como Case (seção editorial)
+                </Label>
               </div>
-            )}
+              {formData.is_case && (
+                <div className="space-y-2">
+                  <Label htmlFor="case_result">Resultado / Outcome</Label>
+                  <Input
+                    id="case_result"
+                    value={formData.case_result}
+                    onChange={(e) => setFormData({ ...formData, case_result: e.target.value })}
+                    placeholder="+20% conversão · 6 produtos lançados · 35 pessoas em squads"
+                  />
+                  <p className="text-xs text-muted-foreground">Exibido na seção "Cases" da home editorial.</p>
+                </div>
+              )}
+            </div>
+
             <SEOFields
               metaTitle={formData.meta_title} metaDescription={formData.meta_description} slug={formData.slug}
               onMetaTitleChange={(value) => setFormData({ ...formData, meta_title: value })}

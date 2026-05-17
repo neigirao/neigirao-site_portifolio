@@ -142,7 +142,6 @@ export function ProjectsManager() {
       highlight_metric: project.highlight_metric,
       context: project.context, challenge: project.challenge,
       solution: project.solution, results: project.results, learnings: project.learnings,
-      brand: project.brand, project_subtitle: project.project_subtitle,
       order_index: nextOrderIndex,
     }]);
     if (error) { toast.error('Erro ao duplicar'); return; }
@@ -179,20 +178,9 @@ export function ProjectsManager() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Título</Label>
-                <Input id="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="brand">Marca / Cliente</Label>
-                <Input id="brand" value={formData.brand} onChange={(e) => setFormData({ ...formData, brand: e.target.value })} placeholder="Ex: Nubank, Itaú" />
-              </div>
-            </div>
             <div className="space-y-2">
-              <Label htmlFor="project_subtitle">Subtítulo</Label>
-              <Input id="project_subtitle" value={formData.project_subtitle} onChange={(e) => setFormData({ ...formData, project_subtitle: e.target.value })} placeholder="Ex: Plataforma de onboarding digital" />
-              <p className="text-xs text-muted-foreground">Subtítulo ou tagline curta exibida abaixo do título</p>
+              <Label htmlFor="title">Título</Label>
+              <Input id="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
             </div>
             <RichTextEditor value={formData.description} onChange={(value) => setFormData({ ...formData, description: value })} label="Descrição" />
             <ImageUploader value={formData.image_url} onChange={(url) => setFormData({ ...formData, image_url: url })} label="Imagem do Projeto" folder="projects" />
@@ -210,6 +198,22 @@ export function ProjectsManager() {
               <Label htmlFor="highlight_metric">Métrica de Destaque</Label>
               <Input id="highlight_metric" value={formData.highlight_metric} onChange={(e) => setFormData({ ...formData, highlight_metric: e.target.value })} placeholder="Ex: 40% redução MTTR" />
               <p className="text-xs text-muted-foreground">Métrica-chave exibida em destaque no card e na página do projeto</p>
+            </div>
+
+            {/* Campos para design editorial */}
+            <div className="space-y-3 p-3 border rounded-lg bg-muted/30">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Campos para Home Editorial</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="brand">Marca/Empresa (ex: ICATU, OI, TIM)</Label>
+                  <Input id="brand" value={formData.brand} onChange={(e) => setFormData({ ...formData, brand: e.target.value })} placeholder="ICATU" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="project_subtitle">Subtítulo do projeto</Label>
+                  <Input id="project_subtitle" value={formData.project_subtitle} onChange={(e) => setFormData({ ...formData, project_subtitle: e.target.value })} placeholder="Conversão online +15%" />
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">Exibidos no grid de projetos da home editorial (Direction C).</p>
             </div>
 
             {/* Case Study Fields */}

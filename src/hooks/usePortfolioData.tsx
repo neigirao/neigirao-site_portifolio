@@ -11,6 +11,8 @@ export interface DbExperience {
   logo_url: string | null;
   slug: string | null;
   order_index: number;
+  is_case?: boolean;
+  case_result?: string | null;
 }
 
 export interface DbSkill {
@@ -42,6 +44,8 @@ export interface DbProject {
   slug: string | null;
   order_index: number;
   highlight_metric: string | null;
+  brand?: string | null;
+  project_subtitle?: string | null;
 }
 
 export interface DbCertification {
