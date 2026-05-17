@@ -413,8 +413,8 @@ export function SiteSettingsManager() {
           <div><Label>Texto introdutório (pitch)</Label><Textarea value={local.contact_pitch || ''} onChange={(e) => set('contact_pitch', e.target.value)} rows={3} /></div>
           <div className="grid grid-cols-2 gap-3">
             <TextField k="contact_email" label="Email" placeholder="neigirao@gmail.com" local={local} set={set} />
-            <TextField k="contact_linkedin" label="URL LinkedIn" placeholder="https://linkedin.com/in/neigirao" />
-            <TextField k="contact_whatsapp" label="URL WhatsApp" placeholder="https://wa.me/..." />
+            <TextField k="contact_linkedin" label="URL LinkedIn" placeholder="https://linkedin.com/in/neigirao" local={local} set={set} />
+            <TextField k="contact_whatsapp" label="URL WhatsApp" placeholder="https://wa.me/..." local={local} set={set} />
             <TextField k="contact_phone" label="Telefone exibido" placeholder="+55 21 98992-1711" local={local} set={set} />
           </div>
           <div className="grid grid-cols-2 gap-3 border-t pt-3">
@@ -422,7 +422,7 @@ export function SiteSettingsManager() {
             <TextField k="contact_label_linkedin" label="Card — label LinkedIn" placeholder="LinkedIn" local={local} set={set} />
             <TextField k="contact_label_whatsapp" label="Card — label WhatsApp" placeholder="No WhatsApp" local={local} set={set} />
             <TextField k="contact_label_cv" label="Card — label CV" placeholder="Baixar CV (.pdf)" local={local} set={set} />
-            <TextField k="contact_linkedin_display" label="Card — texto LinkedIn exibido" placeholder="linkedin.com/in/neigirao" />
+            <TextField k="contact_linkedin_display" label="Card — texto LinkedIn exibido" placeholder="linkedin.com/in/neigirao" local={local} set={set} />
             <TextField k="contact_cv_value" label="Card — texto CV exibido" placeholder="Nei Girão · CV · 2026" local={local} set={set} />
           </div>
         </CardContent>
