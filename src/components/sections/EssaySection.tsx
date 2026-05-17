@@ -1,4 +1,10 @@
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { parseJsonSetting } from "@/lib/siteSettingsHelpers";
+
+const DEFAULT_SECTORS = ["Seguros & Serviços financeiros", "Telecom", "Mídia & Entretenimento"];
+const DEFAULT_DOMAINS = ["Ecommerce", "Produto Digital", "Dados", "Observabilidade"];
+const DEFAULT_LOCATION = ["Rio de Janeiro", "Brasil"];
+const DEFAULT_LANGUAGES = ["PT · Nativo", "EN · Fluente"];
 
 export function EssaySection() {
   const { settings } = useSiteSettings();
@@ -13,6 +19,20 @@ export function EssaySection() {
   const currentRole = settings.essay_current_role || "PM · Coordenador de TI";
   const teamDirect = settings.essay_team_direct || "20";
   const teamSquads = settings.essay_team_squads || "35";
+  const teamDirectLabel = settings.essay_team_direct_label || "diretos";
+  const teamSquadsLabel = settings.essay_team_squads_label || "em squads";
+
+  const labelCurrent = settings.essay_label_current || "Atualmente";
+  const labelTeam = settings.essay_label_team || "Time";
+  const labelSectors = settings.essay_label_sectors || "Setores";
+  const labelDomains = settings.essay_label_domains || "Domínios";
+  const labelLocation = settings.essay_label_location || "Reside";
+  const labelLanguages = settings.essay_label_languages || "Idiomas";
+
+  const sectors = parseJsonSetting<string[]>(settings.essay_sectors, DEFAULT_SECTORS);
+  const domains = parseJsonSetting<string[]>(settings.essay_domains, DEFAULT_DOMAINS);
+  const location = parseJsonSetting<string[]>(settings.essay_location_lines, DEFAULT_LOCATION);
+  const languages = parseJsonSetting<string[]>(settings.essay_languages, DEFAULT_LANGUAGES);
 
   return (
     <section className="ed-essay">
@@ -20,20 +40,18 @@ export function EssaySection() {
         <div className="ed-essay-grid">
           <div className="ed-essay-side">
             <div className="row">
-              <div className="h">Atualmente</div>
+              <div className="h">{labelCurrent}</div>
               <div>{currentCompany}</div>
               <div>{currentRole}</div>
             </div>
             <div className="row">
-              <div className="h">Time</div>
-              <div>{teamDirect} diretos</div>
-              <div>{teamSquads} em squads</div>
+              <div className="h">{labelTeam}</div>
+              <div>{teamDirect} {teamDirectLabel}</div>
+              <div>{teamSquads} {teamSquadsLabel}</div>
             </div>
             <div className="row">
-              <div className="h">Setores</div>
-              <div>Seguros &amp; Serviços financeiros</div>
-              <div>Telecom</div>
-              <div>Mídia &amp; Entretenimento</div>
+              <div className="h">{labelSectors}</div>
+              {sectors.map((s, i) => <div key={i}>{s}</div>)}
             </div>
           </div>
 
@@ -47,21 +65,16 @@ export function EssaySection() {
 
           <div className="ed-essay-side" style={{ textAlign: "right" }}>
             <div className="row">
-              <div className="h">Domínios</div>
-              <div>Ecommerce</div>
-              <div>Produto Digital</div>
-              <div>Dados</div>
-              <div>Observabilidade</div>
+              <div className="h">{labelDomains}</div>
+              {domains.map((d, i) => <div key={i}>{d}</div>)}
             </div>
             <div className="row">
-              <div className="h">Reside</div>
-              <div>Rio de Janeiro</div>
-              <div>Brasil</div>
+              <div className="h">{labelLocation}</div>
+              {location.map((l, i) => <div key={i}>{l}</div>)}
             </div>
             <div className="row">
-              <div className="h">Idiomas</div>
-              <div>PT · Nativo</div>
-              <div>EN · Fluente</div>
+              <div className="h">{labelLanguages}</div>
+              {languages.map((lng, i) => <div key={i}>{lng}</div>)}
             </div>
           </div>
         </div>

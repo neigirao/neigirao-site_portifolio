@@ -1,4 +1,7 @@
 import { DbEducation, DbCertification } from "@/hooks/usePortfolioData";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { parseJsonSetting } from "@/lib/siteSettingsHelpers";
+import { SafeHTML } from "@/components/admin/SafeHTML";
 
 interface Props {
   education: DbEducation[];
@@ -6,7 +9,23 @@ interface Props {
   isLoading: boolean;
 }
 
+const DEFAULT_COURSES = [
+  { title: "Curso de Google Analytics", meta: "Google" },
+  { title: "Scrum & Agile Foundations", meta: "Prática contínua" },
+  { title: "Design Thinking", meta: "Prática contínua" },
+];
+
 export function CredentialsSection({ education, certifications, isLoading }: Props) {
+  const { settings } = useSiteSettings();
+
+  const sectionNum = settings.cred_section_num || "№ 05 — Formação, cursos & certificações";
+  const titleHtml = settings.cred_title_html || "<em>Credenciais</em>.";
+  const lead = settings.cred_lead || "A formação acadêmica, os cursos relevantes e as certificações que sustentam a prática.";
+  const labelEducation = settings.cred_label_education || "Formação acadêmica";
+  const labelCerts = settings.cred_label_certs || "Certificações";
+  const labelCourses = settings.cred_label_courses || "Cursos";
+  const courses = parseJsonSetting<{ title: string; meta: string }[]>(settings.cred_courses, DEFAULT_COURSES);
+
   if (isLoading) {
     return (
       <section className="ed-section">
@@ -22,19 +41,15 @@ export function CredentialsSection({ education, certifications, isLoading }: Pro
       <div className="ed-container">
         <div className="ed-section-head">
           <div>
-            <div className="ed-section-num">№ 05 — Formação, cursos &amp; certificações</div>
-            <h2 className="ed-section-title">
-              <em>Credenciais</em>.
-            </h2>
+            <div className="ed-section-num">{sectionNum}</div>
+            <SafeHTML as="h2" className="ed-section-title" html={titleHtml} />
           </div>
-          <p className="ed-section-lead">
-            A formação acadêmica, os cursos relevantes e as certificações que sustentam a prática.
-          </p>
+          <p className="ed-section-lead">{lead}</p>
         </div>
 
         <div className="ed-cred-grid">
           <div className="ed-cred-col">
-            <h3>Formação acadêmica</h3>
+            <h3>{labelEducation}</h3>
             {education.map((e) => (
               <div key={e.id} className="ed-cred-item">
                 <div className="t">{e.institution}</div>
@@ -47,7 +62,7 @@ export function CredentialsSection({ education, certifications, isLoading }: Pro
           </div>
 
           <div className="ed-cred-col">
-            <h3>Certificações</h3>
+            <h3>{labelCerts}</h3>
             {certifications.map((c) => (
               <div key={c.id} className="ed-cred-item">
                 <div className="t">{c.name}</div>
@@ -60,19 +75,13 @@ export function CredentialsSection({ education, certifications, isLoading }: Pro
           </div>
 
           <div className="ed-cred-col">
-            <h3>Cursos</h3>
-            <div className="ed-cred-item">
-              <div className="t">Curso de Google Analytics</div>
-              <div className="meta">Google</div>
-            </div>
-            <div className="ed-cred-item">
-              <div className="t">Scrum &amp; Agile Foundations</div>
-              <div className="meta">Prática contínua</div>
-            </div>
-            <div className="ed-cred-item">
-              <div className="t">Design Thinking</div>
-              <div className="meta">Prática contínua</div>
-            </div>
+            <h3>{labelCourses}</h3>
+            {courses.map((co, i) => (
+              <div key={i} className="ed-cred-item">
+                <div className="t">{co.title}</div>
+                <div className="meta">{co.meta}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

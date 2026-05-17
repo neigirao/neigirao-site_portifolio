@@ -1,4 +1,6 @@
 import { DbExperience } from "@/hooks/usePortfolioData";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { SafeHTML } from "@/components/admin/SafeHTML";
 
 interface Props {
   experiences: DbExperience[];
@@ -6,7 +8,13 @@ interface Props {
 }
 
 export function CasesSection({ experiences, isLoading }: Props) {
+  const { settings } = useSiteSettings();
   const cases = experiences.filter((e) => e.is_case).slice(0, 3);
+
+  const sectionNum = settings.cases_section_num || "№ 01 — Cases selecionados";
+  const titleHtml = settings.cases_title_html || "Histórias <em>com</em> resultado.";
+  const lead = settings.cases_lead || "Três projetos que, somados, contam o que ele faz quando recebe um problema e um orçamento.";
+  const resultLabel = settings.cases_result_label || "Resultado";
 
   if (isLoading) {
     return (
@@ -25,14 +33,10 @@ export function CasesSection({ experiences, isLoading }: Props) {
       <div className="ed-container">
         <div className="ed-section-head">
           <div>
-            <div className="ed-section-num">№ 01 — Cases selecionados</div>
-            <h2 className="ed-section-title">
-              Histórias <em>com</em> resultado.
-            </h2>
+            <div className="ed-section-num">{sectionNum}</div>
+            <SafeHTML as="h2" className="ed-section-title" html={titleHtml} />
           </div>
-          <p className="ed-section-lead">
-            Três projetos que, somados, contam o que ele faz quando recebe um problema e um orçamento.
-          </p>
+          <p className="ed-section-lead">{lead}</p>
         </div>
 
         <div>
@@ -43,7 +47,7 @@ export function CasesSection({ experiences, isLoading }: Props) {
                 <div className="ed-case-year">{c.period}</div>
                 {c.case_result && (
                   <div className="ed-case-result">
-                    <strong>Resultado</strong>
+                    <strong>{resultLabel}</strong>
                     {c.case_result}
                   </div>
                 )}

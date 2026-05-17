@@ -1,4 +1,6 @@
 import { DbProject } from "@/hooks/usePortfolioData";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { SafeHTML } from "@/components/admin/SafeHTML";
 
 interface Props {
   projects: DbProject[];
@@ -6,6 +8,12 @@ interface Props {
 }
 
 export function ProjectsEditorialSection({ projects, isLoading }: Props) {
+  const { settings } = useSiteSettings();
+
+  const sectionNum = settings.projects_section_num || "№ 03 — Produtos que entreguei";
+  const titleHtml = settings.projects_title_html || "Produtos <em>vivos</em>.";
+  const lead = settings.projects_lead || "Produtos vivos, usados em escala por milhões de pessoas.";
+
   if (isLoading) {
     return (
       <section className="ed-section" id="projects">
@@ -21,14 +29,10 @@ export function ProjectsEditorialSection({ projects, isLoading }: Props) {
       <div className="ed-container">
         <div className="ed-section-head">
           <div>
-            <div className="ed-section-num">№ 03 — Produtos que entreguei</div>
-            <h2 className="ed-section-title">
-              Produtos <em>vivos</em>.
-            </h2>
+            <div className="ed-section-num">{sectionNum}</div>
+            <SafeHTML as="h2" className="ed-section-title" html={titleHtml} />
           </div>
-          <p className="ed-section-lead">
-            Produtos vivos, usados em escala por milhões de pessoas.
-          </p>
+          <p className="ed-section-lead">{lead}</p>
         </div>
 
         <div className="ed-projects">

@@ -1,4 +1,6 @@
 import { DbExperience } from "@/hooks/usePortfolioData";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { SafeHTML } from "@/components/admin/SafeHTML";
 
 interface Props {
   experiences: DbExperience[];
@@ -23,7 +25,12 @@ function groupByCompany(experiences: DbExperience[]): CompanyGroup[] {
 }
 
 export function WorkSection({ experiences, isLoading }: Props) {
+  const { settings } = useSiteSettings();
   const groups = groupByCompany(experiences);
+
+  const sectionNum = settings.work_section_num || "№ 02 — Onde estive";
+  const titleHtml = settings.work_title_html || "A <em>trajetória</em>.";
+  const lead = settings.work_lead || "A trajetória — companhias, cargos e os times sob sua liderança.";
 
   if (isLoading) {
     return (
@@ -40,14 +47,10 @@ export function WorkSection({ experiences, isLoading }: Props) {
       <div className="ed-container">
         <div className="ed-section-head">
           <div>
-            <div className="ed-section-num">№ 02 — Onde estive</div>
-            <h2 className="ed-section-title">
-              A <em>trajetória</em>.
-            </h2>
+            <div className="ed-section-num">{sectionNum}</div>
+            <SafeHTML as="h2" className="ed-section-title" html={titleHtml} />
           </div>
-          <p className="ed-section-lead">
-            A trajetória — companhias, cargos e os times sob sua liderança.
-          </p>
+          <p className="ed-section-lead">{lead}</p>
         </div>
 
         <div className="ed-work">
@@ -55,7 +58,7 @@ export function WorkSection({ experiences, isLoading }: Props) {
             <div key={g.company} className="ed-work-row">
               <div className="ed-work-co">{g.company}</div>
               <div className="ed-work-roles">
-                {g.roles.map((r, j) => (
+                {g.roles.map((r) => (
                   <div key={r.id} className="r">
                     <span className="title">{r.role}</span>
                     <span className="meta">{r.period}</span>
