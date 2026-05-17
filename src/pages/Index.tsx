@@ -1,21 +1,22 @@
+import { lazy, Suspense } from "react";
 import { useExperiences, useSkills, useEducation, useProjects, useCertifications } from "@/hooks/usePortfolioData";
 import { HomeSEOHead, DynamicSchema } from "@/components/SEO";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import {
-  MastheadSection,
-  CoverSection,
-  EssaySection,
-  PullQuoteSection,
-  CasesSection,
-  WorkSection,
-  ProjectsEditorialSection,
-  StackSection,
-  CredentialsSection,
-  ContactEditorialSection,
-  FooterEditorialSection,
-} from "@/components/sections";
+import { MastheadSection, CoverSection } from "@/components/sections";
+
+// Lazy-load below-fold sections so their JS is deferred past first render
+const EssaySection = lazy(() => import("@/components/sections/EssaySection").then(m => ({ default: m.EssaySection })));
+const PullQuoteSection = lazy(() => import("@/components/sections/PullQuoteSection").then(m => ({ default: m.PullQuoteSection })));
+const CasesSection = lazy(() => import("@/components/sections/CasesSection").then(m => ({ default: m.CasesSection })));
+const WorkSection = lazy(() => import("@/components/sections/WorkSection").then(m => ({ default: m.WorkSection })));
+const ProjectsEditorialSection = lazy(() => import("@/components/sections/ProjectsEditorialSection").then(m => ({ default: m.ProjectsEditorialSection })));
+const StackSection = lazy(() => import("@/components/sections/StackSection").then(m => ({ default: m.StackSection })));
+const CredentialsSection = lazy(() => import("@/components/sections/CredentialsSection").then(m => ({ default: m.CredentialsSection })));
+const ContactEditorialSection = lazy(() => import("@/components/sections/ContactEditorialSection").then(m => ({ default: m.ContactEditorialSection })));
+const FooterEditorialSection = lazy(() => import("@/components/sections/FooterEditorialSection").then(m => ({ default: m.FooterEditorialSection })));
 
 const Index = () => {
+  // Fetch all data eagerly so it's ready when lazy sections render
   const { experiences, isLoading: loadingExperiences } = useExperiences();
   const { skills, isLoading: loadingSkills } = useSkills();
   const { education, isLoading: loadingEducation } = useEducation();
@@ -39,31 +40,36 @@ const Index = () => {
 
         <main id="main-content">
           <ErrorBoundary><CoverSection /></ErrorBoundary>
-          <ErrorBoundary><EssaySection /></ErrorBoundary>
-          <ErrorBoundary><PullQuoteSection /></ErrorBoundary>
-          <ErrorBoundary>
-            <CasesSection experiences={experiences} isLoading={loadingExperiences} />
-          </ErrorBoundary>
-          <ErrorBoundary>
-            <WorkSection experiences={experiences} isLoading={loadingExperiences} />
-          </ErrorBoundary>
-          <ErrorBoundary>
-            <ProjectsEditorialSection projects={projects} isLoading={loadingProjects} />
-          </ErrorBoundary>
-          <ErrorBoundary>
-            <StackSection skills={skills} isLoading={loadingSkills} />
-          </ErrorBoundary>
-          <ErrorBoundary>
-            <CredentialsSection
-              education={education}
-              certifications={certifications}
-              isLoading={loadingEducation || loadingCerts}
-            />
-          </ErrorBoundary>
-          <ErrorBoundary><ContactEditorialSection /></ErrorBoundary>
+
+          <Suspense fallback={null}>
+            <ErrorBoundary><EssaySection /></ErrorBoundary>
+            <ErrorBoundary><PullQuoteSection /></ErrorBoundary>
+            <ErrorBoundary>
+              <CasesSection experiences={experiences} isLoading={loadingExperiences} />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <WorkSection experiences={experiences} isLoading={loadingExperiences} />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <ProjectsEditorialSection projects={projects} isLoading={loadingProjects} />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <StackSection skills={skills} isLoading={loadingSkills} />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <CredentialsSection
+                education={education}
+                certifications={certifications}
+                isLoading={loadingEducation || loadingCerts}
+              />
+            </ErrorBoundary>
+            <ErrorBoundary><ContactEditorialSection /></ErrorBoundary>
+          </Suspense>
         </main>
 
-        <FooterEditorialSection />
+        <Suspense fallback={null}>
+          <FooterEditorialSection />
+        </Suspense>
       </div>
     </>
   );

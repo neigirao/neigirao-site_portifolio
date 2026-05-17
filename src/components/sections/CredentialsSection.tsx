@@ -1,7 +1,7 @@
 import { DbEducation, DbCertification } from "@/hooks/usePortfolioData";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { parseJsonSetting } from "@/lib/siteSettingsHelpers";
-import { SafeHTML } from "@/components/admin/SafeHTML";
+import { SafeHTMLLite as SafeHTML } from "./SafeHTMLLite";
 
 interface Props {
   education: DbEducation[];

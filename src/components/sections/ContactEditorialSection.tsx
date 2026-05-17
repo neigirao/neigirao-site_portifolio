@@ -1,6 +1,6 @@
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, AUTHOR_WHATSAPP, AUTHOR_PHONE } from "@/config/constants";
-import { SafeHTML } from "@/components/admin/SafeHTML";
+import { SafeHTMLLite as SafeHTML } from "./SafeHTMLLite";
 
 export function ContactEditorialSection() {
   const { settings } = useSiteSettings();
