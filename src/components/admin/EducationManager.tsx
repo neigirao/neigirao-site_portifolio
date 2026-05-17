@@ -108,8 +108,8 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
     fetchEducation();
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Tem certeza que deseja excluir esta educação?')) return;
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Excluir "${name}"?`)) return;
     const { error } = await supabase.from('education').delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir educação'); return; }
     toast.success('Educação excluída!');
@@ -125,9 +125,11 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
 
   const handleReorder = async (reorderedItems: Education[]) => {
     setEducation(reorderedItems);
-    for (const [index, item] of reorderedItems.entries()) {
-      await supabase.from('education').update({ order_index: index }).eq('id', item.id);
-    }
+    await Promise.all(
+      reorderedItems.map((item, index) =>
+        supabase.from('education').update({ order_index: index }).eq('id', item.id)
+      )
+    );
     toast.success('Ordem atualizada!');
   };
 
@@ -180,6 +182,9 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
 
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
+        {education.length === 0 && (
+          <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma educação adicionada ainda.</p>
+        )}
         <SortableList items={education} onReorder={handleReorder} renderItem={(edu) => (
           <Card className={!edu.is_visible ? 'opacity-50' : ''}>
             <CardContent className="pt-4 pb-4">
@@ -188,7 +193,7 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-lg truncate">{edu.degree}</h3>
                     {!edu.is_visible && <EyeOff className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
-                    <CompletenessIndicator hasSeo={!!(edu.meta_title && edu.meta_description)} hasImage={true} hasSlug={!!edu.slug} itemName={edu.degree} />
+                    <CompletenessIndicator hasSeo={!!(edu.meta_title && edu.meta_description)} hasImage={false} hasSlug={!!edu.slug} itemName={edu.degree} />
                   </div>
                   <p className="text-muted-foreground truncate">{edu.institution}</p>
                   <p className="text-sm text-muted-foreground">{edu.period}</p>
@@ -201,7 +206,7 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
                   <Button size="icon" variant="outline" onClick={() => handleEdit(edu)} aria-label={`Editar ${edu.degree}`}>
                     <Pencil className="h-4 w-4" aria-hidden="true" />
                   </Button>
-                  <Button size="icon" variant="destructive" onClick={() => handleDelete(edu.id)} aria-label={`Excluir ${edu.degree}`}>
+                  <Button size="icon" variant="destructive" onClick={() => handleDelete(edu.id, edu.degree)} aria-label={`Excluir ${edu.degree}`}>
                     <Trash2 className="h-4 w-4" aria-hidden="true" />
                   </Button>
                 </div>

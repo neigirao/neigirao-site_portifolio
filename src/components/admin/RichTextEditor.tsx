@@ -7,13 +7,14 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
+import DOMPurify from 'dompurify';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { 
-  Bold, 
-  Italic, 
-  List, 
-  ListOrdered, 
+import {
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
   Link as LinkIcon,
   Heading2,
   Undo,
@@ -56,7 +57,7 @@ export function RichTextEditor({
       },
     },
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      onChange(DOMPurify.sanitize(editor.getHTML()));
     },
   });
 

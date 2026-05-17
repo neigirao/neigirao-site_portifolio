@@ -11,6 +11,7 @@ export interface DbExperience {
   logo_url: string | null;
   slug: string | null;
   order_index: number;
+  is_visible?: boolean;
   is_case?: boolean;
   case_result?: string | null;
 }
@@ -86,6 +87,7 @@ export function useExperiences() {
       const { data, error } = await supabase
         .from('experiences')
         .select('*')
+        .eq('is_visible', true)
         .order('order_index', { ascending: true });
 
       if (error) throw error;

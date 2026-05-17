@@ -36,7 +36,8 @@ export function ContactMessagesManager() {
 
   useEffect(() => { fetchMessages(); }, []);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Excluir mensagem de ${name}?`)) return;
     const { error } = await supabase.from('contact_messages').delete().eq('id', id);
     if (error) {
       toast.error('Erro ao excluir mensagem');
@@ -105,7 +106,7 @@ export function ContactMessagesManager() {
                   <Button variant="ghost" size="icon" onClick={() => setSelectedMessage(m)} aria-label="Ver mensagem">
                     <Eye className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(m.id)} aria-label="Excluir mensagem">
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(m.id, m.name)} aria-label="Excluir mensagem">
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
                 </TableCell>

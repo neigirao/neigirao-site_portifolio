@@ -9,7 +9,7 @@ interface Props {
 
 export function CasesSection({ experiences, isLoading }: Props) {
   const { settings } = useSiteSettings();
-  const cases = experiences.filter((e) => e.is_case).slice(0, 3);
+  const cases = experiences.filter((e) => e.is_case && e.is_visible !== false).slice(0, 3);
 
   const sectionNum = settings.cases_section_num || "№ 01 — Cases selecionados";
   const titleHtml = settings.cases_title_html || "Histórias <em>com</em> resultado.";

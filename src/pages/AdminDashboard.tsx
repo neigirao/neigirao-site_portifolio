@@ -119,7 +119,7 @@ export default function AdminDashboard() {
           {/* Grouped tabs navigation */}
           <div className="mb-8 space-y-3">
             {tabGroups.map((group) => (
-              <Collapsible key={group.label} defaultOpen>
+              <Collapsible key={group.label} defaultOpen={group.label === 'Portfólio'}>
                 <CollapsibleTrigger className="flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors w-full">
                   <group.icon className="h-4 w-4" />
                   {group.label}
