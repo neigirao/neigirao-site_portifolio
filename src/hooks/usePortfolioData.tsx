@@ -14,6 +14,7 @@ export interface DbExperience {
   is_visible?: boolean;
   is_case?: boolean;
   case_result?: string | null;
+  case_body?: string | null;
 }
 
 export interface DbSkill {
@@ -87,7 +88,7 @@ export function useExperiences() {
       const { data, error } = await supabase
         .from('experiences')
         .select('*')
-        .eq('is_visible', true)
+        .neq('is_visible', false)
         .order('order_index', { ascending: true });
 
       if (error) throw error;

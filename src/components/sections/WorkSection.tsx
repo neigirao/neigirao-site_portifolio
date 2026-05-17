@@ -62,6 +62,7 @@ export function WorkSection({ experiences, isLoading }: Props) {
                   <div key={r.id} className="r">
                     <span className="title">{r.role}</span>
                     <span className="meta">{r.period}</span>
+                    {r.description && <SafeHTML as="div" className="desc" html={r.description} />}
                   </div>
                 ))}
               </div>
