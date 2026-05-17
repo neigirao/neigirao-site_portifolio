@@ -164,6 +164,7 @@ export function SiteSettingsManager() {
   const updateSetting = useUpdateSiteSetting();
   const [local, setLocal] = useState<Record<string, string>>({});
   const [dirty, setDirty] = useState(false);
+  const [savedMsg, setSavedMsg] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -188,12 +189,18 @@ export function SiteSettingsManager() {
         if (local[key] !== settings[key]) await updateSetting.mutateAsync({ key, value: local[key] });
       }
       setDirty(false);
-      toast.success('Configurações salvas!');
+      setSavedMsg(true);
+      setTimeout(() => setSavedMsg(false), 3000);
       refetch();
       if (iframeRef.current) {
         iframeRef.current.src = iframeRef.current.src;
       }
     } catch { toast.error('Erro ao salvar configurações'); }
+  };
+
+  const discardChanges = () => {
+    setLocal(settings);
+    setDirty(false);
   };
 
   if (isLoading) return <div className="space-y-4">{[1,2,3].map(i => <Skeleton key={i} className="h-32" />)}</div>;
@@ -204,11 +211,17 @@ export function SiteSettingsManager() {
       <div className="flex-1 min-w-0 space-y-6">
       <div className="flex justify-between items-center sticky top-0 bg-background z-10 py-2">
         <h2 className="text-xl font-bold">Configurações do Site</h2>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          {savedMsg && <span className="text-sm text-green-600 font-medium">✓ Salvo</span>}
           <Button variant="outline" size="sm" onClick={() => setPreviewOpen(p => !p)}>
             <ExternalLink className="h-4 w-4 mr-2" />
             {previewOpen ? 'Fechar Prévia' : 'Ver Prévia'}
           </Button>
+          {dirty && (
+            <Button variant="ghost" size="sm" onClick={discardChanges}>
+              Descartar
+            </Button>
+          )}
           <Button onClick={saveAll} disabled={!dirty || updateSetting.isPending}>
             <Save className="h-4 w-4 mr-2" />
             {updateSetting.isPending ? 'Salvando...' : 'Salvar Alterações'}

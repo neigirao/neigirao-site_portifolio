@@ -105,8 +105,8 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
     fetchSkills();
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Tem certeza que deseja excluir esta skill?')) return;
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Excluir skill "${name}"?`)) return;
     const { error } = await supabase.from('skills').delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir skill'); return; }
     toast.success('Skill excluída!');
@@ -122,9 +122,11 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
 
   const handleReorder = async (reorderedItems: Skill[]) => {
     setSkills(reorderedItems);
-    for (const [index, item] of reorderedItems.entries()) {
-      await supabase.from('skills').update({ order_index: index }).eq('id', item.id);
-    }
+    await Promise.all(
+      reorderedItems.map((item, index) =>
+        supabase.from('skills').update({ order_index: index }).eq('id', item.id)
+      )
+    );
     toast.success('Ordem atualizada!');
   };
 
@@ -170,8 +172,12 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
 
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
+        {skills.length === 0 && (
+          <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma skill adicionada ainda.</p>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <SortableList items={skills} onReorder={handleReorder}
+            strategy="grid"
             className="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
             renderItem={(skill) => (
               <Card className={`h-full ${!skill.is_visible ? 'opacity-50' : ''}`}>
@@ -200,7 +206,7 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
                       <Button size="icon" variant="ghost" onClick={() => handleEdit(skill)} aria-label={`Editar ${skill.name}`}>
                         <Pencil className="h-4 w-4" aria-hidden="true" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="text-destructive" onClick={() => handleDelete(skill.id)} aria-label={`Excluir ${skill.name}`}>
+                      <Button size="icon" variant="ghost" className="text-destructive" onClick={() => handleDelete(skill.id, skill.name)} aria-label={`Excluir ${skill.name}`}>
                         <Trash2 className="h-4 w-4" aria-hidden="true" />
                       </Button>
                     </div>

@@ -120,8 +120,8 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
     fetchExperiences();
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Tem certeza que deseja excluir esta experiência?')) return;
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Excluir experiência "${name}"?`)) return;
     const { error } = await supabase.from('experiences').delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir experiência'); return; }
     toast.success('Experiência excluída!');
@@ -137,9 +137,11 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
 
   const handleReorder = async (reorderedItems: Experience[]) => {
     setExperiences(reorderedItems);
-    for (const [index, item] of reorderedItems.entries()) {
-      await supabase.from('experiences').update({ order_index: index }).eq('id', item.id);
-    }
+    await Promise.all(
+      reorderedItems.map((item, index) =>
+        supabase.from('experiences').update({ order_index: index }).eq('id', item.id)
+      )
+    );
     toast.success('Ordem atualizada!');
   };
 
@@ -219,6 +221,9 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
 
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
+        {experiences.length === 0 && (
+          <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma experiência adicionada ainda.</p>
+        )}
         <SortableList items={experiences} onReorder={handleReorder} renderItem={(exp) => (
           <Card className={!exp.is_visible ? 'opacity-50' : ''}>
             <CardContent className="pt-4 pb-4">
@@ -240,7 +245,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
                   <Button size="icon" variant="outline" onClick={() => handleEdit(exp)} aria-label={`Editar ${exp.role}`}>
                     <Pencil className="h-4 w-4" aria-hidden="true" />
                   </Button>
-                  <Button size="icon" variant="destructive" onClick={() => handleDelete(exp.id)} aria-label={`Excluir ${exp.role}`}>
+                  <Button size="icon" variant="destructive" onClick={() => handleDelete(exp.id, exp.role)} aria-label={`Excluir ${exp.role}`}>
                     <Trash2 className="h-4 w-4" aria-hidden="true" />
                   </Button>
                 </div>

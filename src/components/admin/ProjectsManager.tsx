@@ -149,8 +149,8 @@ export function ProjectsManager() {
     fetchProjects();
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Tem certeza que deseja excluir este projeto?')) return;
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Excluir projeto "${name}"?`)) return;
     const { error } = await supabase.from('projects').delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir projeto'); return; }
     toast.success('Projeto excluído!');
@@ -159,9 +159,11 @@ export function ProjectsManager() {
 
   const handleReorder = async (reorderedItems: Project[]) => {
     setProjects(reorderedItems);
-    for (const [index, item] of reorderedItems.entries()) {
-      await supabase.from('projects').update({ order_index: index }).eq('id', item.id);
-    }
+    await Promise.all(
+      reorderedItems.map((item, index) =>
+        supabase.from('projects').update({ order_index: index }).eq('id', item.id)
+      )
+    );
     toast.success('Ordem atualizada!');
   };
 
@@ -246,6 +248,9 @@ export function ProjectsManager() {
 
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
+        {projects.length === 0 && (
+          <p className="text-center text-muted-foreground py-8 text-sm">Nenhum projeto adicionado ainda.</p>
+        )}
         <SortableList items={projects} onReorder={handleReorder} renderItem={(project) => (
           <Card>
             <CardContent className="pt-4 pb-4">
@@ -273,7 +278,7 @@ export function ProjectsManager() {
                   <Button size="icon" variant="outline" onClick={() => handleEdit(project)} aria-label={`Editar ${project.title}`}>
                     <Pencil className="h-4 w-4" aria-hidden="true" />
                   </Button>
-                  <Button size="icon" variant="destructive" onClick={() => handleDelete(project.id)} aria-label={`Excluir ${project.title}`}>
+                  <Button size="icon" variant="destructive" onClick={() => handleDelete(project.id, project.title)} aria-label={`Excluir ${project.title}`}>
                     <Trash2 className="h-4 w-4" aria-hidden="true" />
                   </Button>
                 </div>

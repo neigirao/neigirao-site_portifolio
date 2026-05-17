@@ -18,9 +18,12 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
+  rectSortingStrategy,
 } from '@dnd-kit/sortable';
 import { SortableItem } from './SortableItem';
 import { cn } from '@/lib/utils';
+
+type SortStrategy = 'vertical' | 'grid';
 
 interface SortableListProps<T extends { id: string }> {
   items: T[];
@@ -28,6 +31,7 @@ interface SortableListProps<T extends { id: string }> {
   renderItem: (item: T, index: number) => React.ReactNode;
   className?: string;
   itemClassName?: string;
+  strategy?: SortStrategy;
 }
 
 export function SortableList<T extends { id: string }>({
@@ -36,6 +40,7 @@ export function SortableList<T extends { id: string }>({
   renderItem,
   className,
   itemClassName,
+  strategy = 'vertical',
 }: SortableListProps<T>) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -66,7 +71,7 @@ export function SortableList<T extends { id: string }>({
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
     >
-      <SortableContext items={items} strategy={verticalListSortingStrategy}>
+      <SortableContext items={items} strategy={strategy === 'grid' ? rectSortingStrategy : verticalListSortingStrategy}>
         <div className={cn('space-y-3', className)}>
           {items.map((item, index) => (
             <SortableItem key={item.id} id={item.id} className={itemClassName}>
