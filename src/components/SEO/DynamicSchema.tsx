@@ -81,55 +81,6 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
     ]
   };
 
-  // Build FAQ schema dynamically
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Você está disponível para novas oportunidades?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Sim, estou aberto a conversas sobre posições de Product Manager, Head de Produto ou consultoria em observabilidade e produtos digitais. Atuo preferencialmente remoto ou híbrido a partir do Rio de Janeiro."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Qual foi o maior resultado que você entregou como PM?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": `Um dos resultados mais expressivos foi a evolução da nota do app Meu TIM de 1.5 para 4.5 na App Store, liderando um time multidisciplinar com foco em qualidade e experiência do usuário.`
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Qual o tamanho de equipe que você já liderou?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Já gerenciei equipes de até 35+ membros, incluindo squads ágeis multidisciplinares com desenvolvedores, designers, QAs e analistas de dados."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Quais ferramentas e metodologias você domina?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": `${skills.length > 0 ? `Trabalho com ${skills.slice(0, 5).map(s => s.name).join(", ")}, entre outras.` : ""} Em observabilidade, sou especialista em Dynatrace, Grafana e Azure Monitor. Metodologias: Scrum, Kanban, SAFe, OKRs e Discovery contínuo.`
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Qual é sua formação?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": education.length > 0
-            ? `Possuo ${education.map(e => `${e.degree} pela ${e.institution}`).join(", ")}. Complemento com certificações em Scrum, Product Ownership e ferramentas de observabilidade.`
-            : "Formação sólida em tecnologia e gestão, complementada por certificações em Scrum, Product Ownership e ferramentas de observabilidade."
-        }
-      }
-    ]
-  };
 
   // Build ItemList schema for Experiences
   const experienceListSchema = experiences.length > 0 ? {
@@ -189,10 +140,6 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       {experienceListSchema && (
         <script

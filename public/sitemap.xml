@@ -6,64 +6,40 @@
   <!-- Homepage -->
   <url>
     <loc>https://neigirao.lovable.app/</loc>
-    <lastmod>2025-10-26</lastmod>
+    <lastmod>2026-05-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-  
-  <!-- Sobre / About Section -->
+
+  <!-- Sobre -->
   <url>
-    <loc>https://neigirao.lovable.app/#about</loc>
-    <lastmod>2025-10-26</lastmod>
+    <loc>https://neigirao.lovable.app/sobre</loc>
+    <lastmod>2026-05-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
-  
-  <!-- Skills Section -->
+
+  <!-- Contato -->
   <url>
-    <loc>https://neigirao.lovable.app/#skills</loc>
-    <lastmod>2025-10-26</lastmod>
+    <loc>https://neigirao.lovable.app/contato</loc>
+    <lastmod>2026-05-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  
-  <!-- Formação / Education Section -->
+
+  <!-- Artigos -->
   <url>
-    <loc>https://neigirao.lovable.app/#education</loc>
-    <lastmod>2025-10-26</lastmod>
-    <changefreq>yearly</changefreq>
+    <loc>https://neigirao.lovable.app/artigos</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
-  
-  <!-- Experiência / Experience Section -->
+
+  <!-- LLMs.txt -->
   <url>
-    <loc>https://neigirao.lovable.app/#experience</loc>
-    <lastmod>2025-10-26</lastmod>
+    <loc>https://neigirao.lovable.app/llms.txt</loc>
+    <lastmod>2026-05-17</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <!-- Projetos / Projects Section -->
-  <url>
-    <loc>https://neigirao.lovable.app/#projects</loc>
-    <lastmod>2025-10-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- Contato / Contact Section -->
-  <url>
-    <loc>https://neigirao.lovable.app/#contact</loc>
-    <lastmod>2025-10-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- CV PDF -->
-  <url>
-    <loc>https://neigirao.lovable.app/cv-nei-girao.pdf</loc>
-    <lastmod>2025-10-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.5</priority>
   </url>
 </urlset>
