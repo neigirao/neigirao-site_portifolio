@@ -412,6 +412,11 @@ All colors MUST be HSL.
   font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--ed-muted); margin-top: 4px;
 }
+.ed-work-roles .desc {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 14px; line-height: 1.65; color: var(--ed-muted);
+  margin-top: 8px;
+}
 .ed-work-range {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 12px; letter-spacing: 0.08em; color: var(--ed-accent); text-align: right;
