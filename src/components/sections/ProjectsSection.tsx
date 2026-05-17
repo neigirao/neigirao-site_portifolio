@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ProjectCard from "@/components/ProjectCard";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { SafeHTML } from "@/components/admin/SafeHTML";
+import { SafeHTMLLite as SafeHTML } from "./SafeHTMLLite";
 import type { DbProject } from "@/hooks/usePortfolioData";
 
 interface ProjectsSectionProps {

@@ -1,6 +1,6 @@
 import { DbProject } from "@/hooks/usePortfolioData";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { SafeHTML } from "@/components/admin/SafeHTML";
+import { SafeHTMLLite as SafeHTML } from "./SafeHTMLLite";
 
 interface Props {
   projects: DbProject[];
