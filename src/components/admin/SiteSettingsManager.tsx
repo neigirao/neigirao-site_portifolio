@@ -1,11 +1,10 @@
 /**
- * SiteSettingsManager - Admin component for managing site settings:
- * Hero photo, CV file, Impact Metrics texts, About section texts.
+ * SiteSettingsManager - Admin for the editorial home + CV/About.
+ * Every text on the home (`/`) can be edited here.
  */
 
 import { useState, useEffect } from 'react';
 import { useSiteSettings, useUpdateSiteSetting } from '@/hooks/useSiteSettings';
-import { ImageUploader } from '@/components/admin/ImageUploader';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Upload, Save, FileText, Image, BarChart3, User as UserIcon, ExternalLink, Type, AlignLeft } from 'lucide-react';
+import { Upload, Save, FileText, ExternalLink, Newspaper, Star, FileSignature, Briefcase, Wrench, GraduationCap, Mail, AlignLeft, User as UserIcon, BookOpen } from 'lucide-react';
 
 function FileUploader({ value, onChange, label, accept = 'application/pdf', folder = 'cv' }: {
   value: string;
@@ -25,41 +24,22 @@ function FileUploader({ value, onChange, label, accept = 'application/pdf', fold
   folder?: string;
 }) {
   const [isUploading, setIsUploading] = useState(false);
-
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error('Arquivo deve ter no máximo 10MB');
-      return;
-    }
-
+    if (file.size > 10 * 1024 * 1024) { toast.error('Arquivo deve ter no máximo 10MB'); return; }
     setIsUploading(true);
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${folder}/${Date.now()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('portfolio-images')
-        .upload(fileName, file, { upsert: true });
-
+      const { error: uploadError } = await supabase.storage.from('portfolio-images').upload(fileName, file, { upsert: true });
       if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('portfolio-images')
-        .getPublicUrl(fileName);
-
+      const { data: { publicUrl } } = supabase.storage.from('portfolio-images').getPublicUrl(fileName);
       onChange(publicUrl);
-      toast.success('Arquivo enviado com sucesso!');
-    } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('Erro ao enviar arquivo');
-    } finally {
-      setIsUploading(false);
-    }
+      toast.success('Arquivo enviado!');
+    } catch (e) { console.error(e); toast.error('Erro ao enviar arquivo'); }
+    finally { setIsUploading(false); }
   };
-
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
@@ -81,6 +61,84 @@ function FileUploader({ value, onChange, label, accept = 'application/pdf', fold
   );
 }
 
+/* ---------- Generic JSON array editor ---------- */
+function StringArrayEditor({ value, onChange, itemLabel }: { value: string[]; onChange: (v: string[]) => void; itemLabel: string }) {
+  return (
+    <div className="space-y-2">
+      {value.map((v, i) => (
+        <div key={i} className="flex gap-2">
+          <Input value={v} onChange={(e) => { const n = [...value]; n[i] = e.target.value; onChange(n); }} placeholder={itemLabel} />
+          <Button variant="ghost" size="sm" onClick={() => onChange(value.filter((_, j) => j !== i))}>✕</Button>
+        </div>
+      ))}
+      <Button variant="outline" size="sm" onClick={() => onChange([...value, ''])}>+ Adicionar</Button>
+    </div>
+  );
+}
+
+function KeyValueEditor({ value, onChange }: { value: Record<string, string>; onChange: (v: Record<string, string>) => void }) {
+  const entries = Object.entries(value);
+  return (
+    <div className="space-y-2">
+      {entries.map(([k, v], i) => (
+        <div key={i} className="flex gap-2 items-end">
+          <div className="flex-1">
+            <Label className="text-xs">Chave</Label>
+            <Input value={k} onChange={(e) => {
+              const newEntries = [...entries];
+              newEntries[i] = [e.target.value, v];
+              onChange(Object.fromEntries(newEntries));
+            }} placeholder="ex: product" />
+          </div>
+          <div className="flex-1">
+            <Label className="text-xs">Label exibida</Label>
+            <Input value={v} onChange={(e) => {
+              const newEntries = [...entries];
+              newEntries[i] = [k, e.target.value];
+              onChange(Object.fromEntries(newEntries));
+            }} placeholder="ex: Produto" />
+          </div>
+          <Button variant="ghost" size="sm" onClick={() => {
+            const next = { ...value }; delete next[k]; onChange(next);
+          }}>✕</Button>
+        </div>
+      ))}
+      <Button variant="outline" size="sm" onClick={() => onChange({ ...value, '': '' })}>+ Adicionar</Button>
+    </div>
+  );
+}
+
+function NavEditor({ value, onChange }: { value: { label: string; href: string }[]; onChange: (v: { label: string; href: string }[]) => void }) {
+  return (
+    <div className="space-y-2">
+      {value.map((item, i) => (
+        <div key={i} className="flex gap-2">
+          <Input value={item.label} onChange={(e) => { const n = [...value]; n[i] = { ...n[i], label: e.target.value }; onChange(n); }} placeholder="Label" />
+          <Input value={item.href} onChange={(e) => { const n = [...value]; n[i] = { ...n[i], href: e.target.value }; onChange(n); }} placeholder="#section" />
+          <Button variant="ghost" size="sm" onClick={() => onChange(value.filter((_, j) => j !== i))}>✕</Button>
+        </div>
+      ))}
+      <Button variant="outline" size="sm" onClick={() => onChange([...value, { label: '', href: '#' }])}>+ Adicionar item</Button>
+    </div>
+  );
+}
+
+function CoursesEditor({ value, onChange }: { value: { title: string; meta: string }[]; onChange: (v: { title: string; meta: string }[]) => void }) {
+  return (
+    <div className="space-y-2">
+      {value.map((c, i) => (
+        <div key={i} className="flex gap-2">
+          <Input value={c.title} onChange={(e) => { const n = [...value]; n[i] = { ...n[i], title: e.target.value }; onChange(n); }} placeholder="Título do curso" />
+          <Input value={c.meta} onChange={(e) => { const n = [...value]; n[i] = { ...n[i], meta: e.target.value }; onChange(n); }} placeholder="Instituição / fonte" />
+          <Button variant="ghost" size="sm" onClick={() => onChange(value.filter((_, j) => j !== i))}>✕</Button>
+        </div>
+      ))}
+      <Button variant="outline" size="sm" onClick={() => onChange([...value, { title: '', meta: '' }])}>+ Adicionar curso</Button>
+    </div>
+  );
+}
+
+/* ---------- Main ---------- */
 export function SiteSettingsManager() {
   const { settings, isLoading, refetch } = useSiteSettings();
   const updateSetting = useUpdateSiteSetting();
@@ -88,39 +146,46 @@ export function SiteSettingsManager() {
   const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
-    if (settings && Object.keys(settings).length > 0) {
-      setLocal(settings);
-    }
+    if (settings && Object.keys(settings).length > 0) setLocal(settings);
   }, [settings]);
 
-  const set = (key: string, value: string) => {
-    setLocal(prev => ({ ...prev, [key]: value }));
-    setDirty(true);
+  const set = (key: string, value: string) => { setLocal(p => ({ ...p, [key]: value })); setDirty(true); };
+  const setJson = (key: string, obj: unknown) => set(key, JSON.stringify(obj));
+
+  const getJson = <T,>(key: string, fallback: T): T => {
+    try {
+      if (!local[key]) return fallback;
+      const p = JSON.parse(local[key]);
+      return p ?? fallback;
+    } catch { return fallback; }
   };
 
   const saveAll = async () => {
     try {
-      const keys = Object.keys(local);
-      for (const key of keys) {
-        if (local[key] !== settings[key]) {
-          await updateSetting.mutateAsync({ key, value: local[key] });
-        }
+      for (const key of Object.keys(local)) {
+        if (local[key] !== settings[key]) await updateSetting.mutateAsync({ key, value: local[key] });
       }
       setDirty(false);
       toast.success('Configurações salvas!');
       refetch();
-    } catch (error) {
-      toast.error('Erro ao salvar configurações');
-    }
+    } catch { toast.error('Erro ao salvar configurações'); }
   };
 
-  if (isLoading) {
-    return <div className="space-y-4">{[1,2,3].map(i => <Skeleton key={i} className="h-32" />)}</div>;
-  }
+  if (isLoading) return <div className="space-y-4">{[1,2,3].map(i => <Skeleton key={i} className="h-32" />)}</div>;
+
+  // helpers for repeated text fields
+  const TextField = ({ k, label, placeholder, rows }: { k: string; label: string; placeholder?: string; rows?: number }) => (
+    <div>
+      <Label>{label}</Label>
+      {rows && rows > 1
+        ? <Textarea value={local[k] || ''} onChange={(e) => set(k, e.target.value)} placeholder={placeholder} rows={rows} />
+        : <Input value={local[k] || ''} onChange={(e) => set(k, e.target.value)} placeholder={placeholder} />}
+    </div>
+  );
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center sticky top-0 bg-background z-10 py-2">
         <h2 className="text-xl font-bold">Configurações do Site</h2>
         <Button onClick={saveAll} disabled={!dirty || updateSetting.isPending}>
           <Save className="h-4 w-4 mr-2" />
@@ -128,479 +193,248 @@ export function SiteSettingsManager() {
         </Button>
       </div>
 
-      {/* Hero Photo */}
+      {/* CV upload */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <UserIcon className="h-5 w-5" /> Foto do Hero
-          </CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><FileText className="h-5 w-5" /> Currículo (CV)</CardTitle></CardHeader>
         <CardContent>
-          <ImageUploader
-            value={local.hero_photo_url || ''}
-            onChange={(url) => set('hero_photo_url', url)}
-            label="Foto de perfil (exibida no Hero)"
-            folder="hero"
-          />
+          <FileUploader value={local.cv_file_url || '/cv-nei-girao.pdf'} onChange={(url) => set('cv_file_url', url)} label="Arquivo PDF do CV" />
         </CardContent>
       </Card>
 
-      {/* CV Upload */}
+      {/* About summary (used em /sobre) */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <FileText className="h-5 w-5" /> Currículo (CV)
-          </CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><BookOpen className="h-5 w-5" /> Página /sobre — Resumo profissional</CardTitle></CardHeader>
         <CardContent>
-          <FileUploader
-            value={local.cv_file_url || '/cv-nei-girao.pdf'}
-            onChange={(url) => set('cv_file_url', url)}
-            label="Arquivo PDF do CV"
-          />
+          <RichTextEditor value={local.about_summary || ''} onChange={(v) => set('about_summary', v)} label="Resumo (renderizado na página Sobre)" />
         </CardContent>
       </Card>
 
-      {/* Impact Metrics texts */}
+      {/* ================================================================ */}
+      {/* HOME EDITORIAL                                                   */}
+      {/* ================================================================ */}
+
+      <div className="pt-4">
+        <h3 className="text-lg font-bold text-muted-foreground uppercase tracking-wider">Home Editorial — Textos por seção</h3>
+        <p className="text-sm text-muted-foreground mt-1">Todos os textos da home (<code>/</code>) podem ser editados abaixo. Campos com <em>HTML</em> aceitam tags como <code>&lt;em&gt;</code> e <code>&lt;strong&gt;</code>.</p>
+      </div>
+
+      {/* Masthead */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <BarChart3 className="h-5 w-5" /> Textos do Impacto Mensurável
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Newspaper className="h-5 w-5" /> Masthead (topo)</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <TextField k="masthead_brand" label="Marca" placeholder="Nei Girão" />
+          <TextField k="masthead_edition" label="Edição (subtítulo)" placeholder="Edição 2026 · Vol. XV" />
           <div>
-            <Label>Badge (tag superior)</Label>
-            <Input
-              value={local.impact_badge_text || ''}
-              onChange={(e) => set('impact_badge_text', e.target.value)}
-              placeholder="Ex: Resultados Comprovados"
-            />
+            <Label>Navegação</Label>
+            <NavEditor value={getJson('masthead_nav', [
+              { label: 'Cases', href: '#cases' },
+              { label: 'Experiência', href: '#work' },
+              { label: 'Projetos', href: '#projects' },
+              { label: 'Contato', href: '#contact' },
+            ])} onChange={(v) => setJson('masthead_nav', v)} />
           </div>
-          <div>
-            <Label>Título da seção</Label>
-            <Input
-              value={local.impact_title || ''}
-              onChange={(e) => set('impact_title', e.target.value)}
-              placeholder="Ex: Impacto Mensurável"
-            />
-          </div>
-          <div>
-            <Label>Subtítulo</Label>
-            <Textarea
-              value={local.impact_subtitle || ''}
-              onChange={(e) => set('impact_subtitle', e.target.value)}
-              placeholder="Ex: Resultados concretos que demonstram..."
-              rows={2}
-            />
-          </div>
+          <TextField k="masthead_cta_label" label="Botão CTA (canto direito)" placeholder="Baixar CV" />
         </CardContent>
       </Card>
 
-      {/* About Section texts */}
+      {/* Cover */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Image className="h-5 w-5" /> Textos da Seção Sobre
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label>Subtítulo da seção</Label>
-            <Input
-              value={local.about_subtitle || ''}
-              onChange={(e) => set('about_subtitle', e.target.value)}
-              placeholder="Ex: Trajetória, metodologia e formação"
-            />
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Star className="h-5 w-5" /> Cover (capa)</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-3 gap-3">
+            <TextField k="cover_issue_left" label="Edição (esq.)" placeholder="Perfil № 01" />
+            <TextField k="cover_issue_center" label="Edição (centro)" placeholder="— Um Product Leader..." />
+            <TextField k="hero_location" label="Localização (dir.)" placeholder="Rio de Janeiro, Brasil" />
           </div>
-          <div>
-            <RichTextEditor
-              value={local.about_summary || ''}
-              onChange={(value) => set('about_summary', value)}
-              label="Resumo profissional (texto principal)"
-            />
+          <TextField k="cover_name" label="Nome em destaque" placeholder="Nei Girão" />
+          <TextField k="hero_headline" label="Headline (frase central)" placeholder="Lidero produtos digitais que entregam resultado mensurável." />
+          <div className="grid grid-cols-2 gap-3">
+            <TextField k="hero_years" label="Stat — anos" placeholder="15+" />
+            <TextField k="cover_stat_years_label" label="Stat — label (anos)" placeholder="anos" />
+            <TextField k="hero_companies_count" label="Stat — companhias" placeholder="5" />
+            <TextField k="cover_stat_companies_label" label="Stat — label (companhias)" placeholder="companhias" />
           </div>
-          <div>
-            <Label>Ferramentas (separadas por vírgula)</Label>
-            <Input
-              value={local.about_tools || ''}
-              onChange={(e) => set('about_tools', e.target.value)}
-              placeholder="Ex: Dynatrace, Grafana, Azure Monitor, Google Analytics"
-            />
+          <TextField k="cover_email_prefix" label='Frase de email (ex: "Para conversar, escreva para")' placeholder="Para conversar, escreva para" />
+          <div className="grid grid-cols-3 gap-3">
+            <TextField k="cover_btn_primary" label="Botão primário" placeholder="Falar comigo" />
+            <TextField k="cover_btn_secondary" label="Botão secundário" placeholder="Baixar CV (.pdf)" />
+            <TextField k="cover_btn_linkedin" label="Botão LinkedIn" placeholder="LinkedIn ↗" />
           </div>
         </CardContent>
       </Card>
 
-      {/* Hero Stats Editor */}
+      {/* Essay */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <BarChart3 className="h-5 w-5" /> Hero Stats (cards numéricos)
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {(() => {
-            let stats: { value: string; label: string }[] = [];
-            try { stats = JSON.parse(local.hero_stats || '[]'); } catch { stats = []; }
-            if (!Array.isArray(stats) || stats.length === 0) {
-              stats = [
-                { value: "15+", label: "Anos de Experiência" },
-                { value: "35+", label: "Membros Gerenciados" },
-                { value: "6+", label: "Produtos Lançados" },
-                { value: "4", label: "Grandes Empresas" },
-              ];
-            }
-            const updateStats = (newStats: typeof stats) => set('hero_stats', JSON.stringify(newStats));
-            return (
-              <>
-                {stats.map((stat, i) => (
-                  <div key={i} className="flex gap-2 items-end">
-                    <div className="flex-1">
-                      <Label>Valor {i + 1}</Label>
-                      <Input value={stat.value} onChange={(e) => { const s = [...stats]; s[i] = { ...s[i], value: e.target.value }; updateStats(s); }} />
-                    </div>
-                    <div className="flex-[2]">
-                      <Label>Label</Label>
-                      <Input value={stat.label} onChange={(e) => { const s = [...stats]; s[i] = { ...s[i], label: e.target.value }; updateStats(s); }} />
-                    </div>
-                    <Button variant="ghost" size="sm" onClick={() => { const s = stats.filter((_, j) => j !== i); updateStats(s); }}>✕</Button>
-                  </div>
-                ))}
-                <Button variant="outline" size="sm" onClick={() => updateStats([...stats, { value: "", label: "" }])}>
-                  + Adicionar stat
-                </Button>
-              </>
-            );
-          })()}
-        </CardContent>
-      </Card>
-
-      {/* Methodology Cards Editor */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <BarChart3 className="h-5 w-5" /> Methodology Cards (Sobre)
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {(() => {
-            const ICONS = ["BarChart3", "Users", "Activity", "Search", "GraduationCap"];
-            let items: { icon: string; title: string; description: string }[] = [];
-            try { items = JSON.parse(local.methodology_items || '[]'); } catch { items = []; }
-            if (!Array.isArray(items) || items.length === 0) {
-              items = [
-                { icon: "BarChart3", title: "Data-Driven", description: "Decisões fundamentadas em dados, métricas e experimentação contínua." },
-                { icon: "Users", title: "Agile Leadership", description: "Liderança de squads multidisciplinares com Scrum e Kanban." },
-                { icon: "Activity", title: "Observabilidade", description: "Cultura de monitoramento proativo com Dynatrace, Grafana e Azure Monitor." },
-                { icon: "Search", title: "Discovery Contínuo", description: "Validação constante com usuários e stakeholders." },
-              ];
-            }
-            const updateItems = (newItems: typeof items) => set('methodology_items', JSON.stringify(newItems));
-            return (
-              <>
-                {items.map((item, i) => (
-                  <div key={i} className="p-3 border rounded-lg space-y-2">
-                    <div className="flex gap-2 items-end">
-                      <div>
-                        <Label>Ícone</Label>
-                        <select
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                          value={item.icon}
-                          onChange={(e) => { const s = [...items]; s[i] = { ...s[i], icon: e.target.value }; updateItems(s); }}
-                        >
-                          {ICONS.map(ic => <option key={ic} value={ic}>{ic}</option>)}
-                        </select>
-                      </div>
-                      <div className="flex-1">
-                        <Label>Título</Label>
-                        <Input value={item.title} onChange={(e) => { const s = [...items]; s[i] = { ...s[i], title: e.target.value }; updateItems(s); }} />
-                      </div>
-                      <Button variant="ghost" size="sm" onClick={() => updateItems(items.filter((_, j) => j !== i))}>✕</Button>
-                    </div>
-                    <div>
-                      <Label>Descrição</Label>
-                      <Input value={item.description} onChange={(e) => { const s = [...items]; s[i] = { ...s[i], description: e.target.value }; updateItems(s); }} />
-                    </div>
-                  </div>
-                ))}
-                <Button variant="outline" size="sm" onClick={() => updateItems([...items, { icon: "BarChart3", title: "", description: "" }])}>
-                  + Adicionar card
-                </Button>
-              </>
-            );
-          })()}
-        </CardContent>
-      </Card>
-
-      {/* Hero Tags Editor */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Type className="h-5 w-5" /> Hero Tags
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {(() => {
-            const defaultTags = [
-              { label: "Product Management", icon: "🎯" },
-              { label: "Transformação Digital", icon: "🚀" },
-              { label: "Dados & Observabilidade", icon: "📊" },
-            ];
-            let tags: { label: string; icon: string }[] = [];
-            try { tags = JSON.parse(local.hero_tags || '[]'); } catch { tags = []; }
-            if (!Array.isArray(tags) || tags.length === 0) tags = defaultTags;
-            const updateTags = (newTags: typeof tags) => set('hero_tags', JSON.stringify(newTags));
-            return (
-              <>
-                {tags.map((tag, i) => (
-                  <div key={i} className="flex gap-2 items-end">
-                    <div className="w-20">
-                      <Label>Ícone</Label>
-                      <Input value={tag.icon} onChange={(e) => { const t = [...tags]; t[i] = { ...t[i], icon: e.target.value }; updateTags(t); }} />
-                    </div>
-                    <div className="flex-1">
-                      <Label>Label</Label>
-                      <Input value={tag.label} onChange={(e) => { const t = [...tags]; t[i] = { ...t[i], label: e.target.value }; updateTags(t); }} />
-                    </div>
-                    <Button variant="ghost" size="sm" onClick={() => updateTags(tags.filter((_, j) => j !== i))}>✕</Button>
-                  </div>
-                ))}
-                <Button variant="outline" size="sm" onClick={() => updateTags([...tags, { icon: "⭐", label: "" }])}>
-                  + Adicionar tag
-                </Button>
-              </>
-            );
-          })()}
-        </CardContent>
-      </Card>
-
-      {/* Hero Textos */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <AlignLeft className="h-5 w-5" /> Hero Textos
-          </CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><AlignLeft className="h-5 w-5" /> Essay (ensaio + sidebars)</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Subtítulo (suporta HTML: &lt;br /&gt;, &lt;span&gt;)</Label>
-            <Textarea
-              value={local.hero_subtitle || ''}
-              onChange={(e) => set('hero_subtitle', e.target.value)}
-              placeholder='Liderança estratégica em produtos digitais,<br /><span class="bg-gradient-primary bg-clip-text text-transparent">dados e transformação</span>'
-              rows={3}
-            />
+            <Label>Parágrafo de abertura (HTML permitido — drop cap "N" automático)</Label>
+            <Textarea value={local.essay_opening || ''} onChange={(e) => set('essay_opening', e.target.value)} rows={5} placeholder="ei Girão começou..." />
           </div>
           <div>
-            <Label>Descrição</Label>
-            <Textarea
-              value={local.hero_description || ''}
-              onChange={(e) => set('hero_description', e.target.value)}
-              placeholder="Product Manager e Estrategista de Dados com 15+ anos..."
-              rows={3}
-            />
+            <Label>Segundo parágrafo (HTML permitido)</Label>
+            <Textarea value={local.essay_second || ''} onChange={(e) => set('essay_second', e.target.value)} rows={4} placeholder="Sua abordagem combina..." />
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Subtítulos das Seções */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Type className="h-5 w-5" /> Subtítulos das Seções
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {[
-            { key: 'section_subtitle_experience', label: 'Experiência', placeholder: 'Mais de 15 anos liderando produtos digitais e equipes em grandes empresas' },
-            { key: 'section_subtitle_projects', label: 'Projetos', placeholder: 'Projetos de destaque que geraram impacto significativo' },
-            { key: 'section_subtitle_skills', label: 'Habilidades', placeholder: 'Especializado em observabilidade, product management e análise de dados' },
-            { key: 'section_subtitle_education', label: 'Educação', placeholder: 'Sólida formação acadêmica em tecnologia e marketing digital' },
-            { key: 'section_subtitle_contact', label: 'Contato', placeholder: 'Aberto a desafios em Product Management, dados e observabilidade' },
-            { key: 'section_subtitle_faq', label: 'FAQ', placeholder: 'O que recrutadores e clientes costumam perguntar' },
-          ].map(({ key, label, placeholder }) => (
-            <div key={key}>
-              <Label>{label}</Label>
-              <Input
-                value={local[key] || ''}
-                onChange={(e) => set(key, e.target.value)}
-                placeholder={placeholder}
-              />
+          <div className="border-t pt-3 space-y-3">
+            <Label className="font-semibold">Coluna esquerda</Label>
+            <div className="grid grid-cols-2 gap-3">
+              <TextField k="essay_label_current" label="Label — Atualmente" placeholder="Atualmente" />
+              <div />
+              <TextField k="essay_current_company" label="Empresa atual" placeholder="Icatu Seguros" />
+              <TextField k="essay_current_role" label="Cargo atual" placeholder="PM · Coordenador de TI" />
             </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      {/* Editorial — Direction C */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Type className="h-5 w-5" /> Design Editorial — Textos da Home
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label className="font-semibold">Cobertura (Cover)</Label>
-            <div className="space-y-3 pl-3 border-l-2 border-muted">
-              <div>
-                <Label>Headline principal</Label>
-                <Input
-                  value={local.hero_headline || ''}
-                  onChange={(e) => set('hero_headline', e.target.value)}
-                  placeholder="Lidero produtos digitais que entregam resultado mensurável."
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label>Anos de experiência</Label>
-                  <Input value={local.hero_years || ''} onChange={(e) => set('hero_years', e.target.value)} placeholder="15+" />
-                </div>
-                <div>
-                  <Label>Nº de companhias</Label>
-                  <Input value={local.hero_companies_count || ''} onChange={(e) => set('hero_companies_count', e.target.value)} placeholder="5" />
-                </div>
-              </div>
-              <div>
-                <Label>Localização</Label>
-                <Input value={local.hero_location || ''} onChange={(e) => set('hero_location', e.target.value)} placeholder="Rio de Janeiro, Brasil" />
-              </div>
+            <div className="grid grid-cols-4 gap-3">
+              <TextField k="essay_label_team" label="Label — Time" placeholder="Time" />
+              <TextField k="essay_team_direct" label="Diretos (nº)" placeholder="20" />
+              <TextField k="essay_team_direct_label" label="Label diretos" placeholder="diretos" />
+              <TextField k="essay_team_squads" label="Squads (nº)" placeholder="35" />
+            </div>
+            <TextField k="essay_team_squads_label" label="Label squads" placeholder="em squads" />
+            <div>
+              <Label>Setores ({local.essay_label_sectors || 'Setores'})</Label>
+              <TextField k="essay_label_sectors" label="Label" placeholder="Setores" />
+              <StringArrayEditor value={getJson('essay_sectors', ["Seguros & Serviços financeiros", "Telecom", "Mídia & Entretenimento"])} onChange={(v) => setJson('essay_sectors', v)} itemLabel="Setor" />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label className="font-semibold">Ensaio de abertura (Essay)</Label>
-            <div className="space-y-3 pl-3 border-l-2 border-muted">
-              <div>
-                <Label>Parágrafo de abertura (HTML permitido)</Label>
-                <Textarea
-                  value={local.essay_opening || ''}
-                  onChange={(e) => set('essay_opening', e.target.value)}
-                  placeholder="ei Girão começou a carreira escrevendo HTML..."
-                  rows={4}
-                />
-                <p className="text-xs text-muted-foreground mt-1">O "N" inicial com drop cap é adicionado automaticamente.</p>
-              </div>
-              <div>
-                <Label>Segundo parágrafo (HTML permitido)</Label>
-                <Textarea
-                  value={local.essay_second || ''}
-                  onChange={(e) => set('essay_second', e.target.value)}
-                  placeholder="Sua abordagem combina visão estratégica..."
-                  rows={3}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label>Empresa atual</Label>
-                  <Input value={local.essay_current_company || ''} onChange={(e) => set('essay_current_company', e.target.value)} placeholder="Icatu Seguros" />
-                </div>
-                <div>
-                  <Label>Cargo atual</Label>
-                  <Input value={local.essay_current_role || ''} onChange={(e) => set('essay_current_role', e.target.value)} placeholder="PM · Coordenador de TI" />
-                </div>
-                <div>
-                  <Label>Diretos no time</Label>
-                  <Input value={local.essay_team_direct || ''} onChange={(e) => set('essay_team_direct', e.target.value)} placeholder="20" />
-                </div>
-                <div>
-                  <Label>Pessoas em squads</Label>
-                  <Input value={local.essay_team_squads || ''} onChange={(e) => set('essay_team_squads', e.target.value)} placeholder="35" />
-                </div>
-              </div>
+          <div className="border-t pt-3 space-y-3">
+            <Label className="font-semibold">Coluna direita</Label>
+            <div>
+              <TextField k="essay_label_domains" label="Label — Domínios" placeholder="Domínios" />
+              <StringArrayEditor value={getJson('essay_domains', ["Ecommerce", "Produto Digital", "Dados", "Observabilidade"])} onChange={(v) => setJson('essay_domains', v)} itemLabel="Domínio" />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label className="font-semibold">Pull Quote</Label>
-            <div className="space-y-3 pl-3 border-l-2 border-muted">
-              <div>
-                <Label>Citação</Label>
-                <Textarea
-                  value={local.pull_quote || ''}
-                  onChange={(e) => set('pull_quote', e.target.value)}
-                  placeholder="Levei a nota do app de 1,5 para 4,5. Reduzi 40% dos custos..."
-                  rows={2}
-                />
-              </div>
-              <div>
-                <Label>Autor</Label>
-                <Input value={local.pull_quote_author || ''} onChange={(e) => set('pull_quote_author', e.target.value)} placeholder="Nei Girão" />
-              </div>
+            <div>
+              <TextField k="essay_label_location" label="Label — Reside" placeholder="Reside" />
+              <StringArrayEditor value={getJson('essay_location_lines', ["Rio de Janeiro", "Brasil"])} onChange={(v) => setJson('essay_location_lines', v)} itemLabel="Linha" />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label className="font-semibold">Seção de Contato</Label>
-            <div className="space-y-3 pl-3 border-l-2 border-muted">
-              <div>
-                <Label>Texto introdutório</Label>
-                <Textarea
-                  value={local.contact_pitch || ''}
-                  onChange={(e) => set('contact_pitch', e.target.value)}
-                  placeholder="Estou aberto a posições sênior de Product..."
-                  rows={2}
-                />
-              </div>
-              <div>
-                <Label>Email de contato</Label>
-                <Input value={local.contact_email || ''} onChange={(e) => set('contact_email', e.target.value)} placeholder="neigirao@gmail.com" />
-              </div>
-              <div>
-                <Label>URL LinkedIn</Label>
-                <Input value={local.contact_linkedin || ''} onChange={(e) => set('contact_linkedin', e.target.value)} placeholder="https://linkedin.com/in/neigirao" />
-              </div>
-              <div>
-                <Label>URL WhatsApp</Label>
-                <Input value={local.contact_whatsapp || ''} onChange={(e) => set('contact_whatsapp', e.target.value)} placeholder="https://wa.me/5521989921711" />
-              </div>
-              <div>
-                <Label>Telefone exibido no contato</Label>
-                <Input value={local.contact_phone || ''} onChange={(e) => set('contact_phone', e.target.value)} placeholder="+55 21 98992-1711" />
-              </div>
+            <div>
+              <TextField k="essay_label_languages" label="Label — Idiomas" placeholder="Idiomas" />
+              <StringArrayEditor value={getJson('essay_languages', ["PT · Nativo", "EN · Fluente"])} onChange={(v) => setJson('essay_languages', v)} itemLabel="Idioma" />
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Footer */}
+      {/* Pull quote */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <AlignLeft className="h-5 w-5" /> Footer
-          </CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><FileSignature className="h-5 w-5" /> Pull Quote</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div><Label>Citação</Label><Textarea value={local.pull_quote || ''} onChange={(e) => set('pull_quote', e.target.value)} rows={3} /></div>
+          <TextField k="pull_quote_author" label="Autor" placeholder="Nei Girão" />
+        </CardContent>
+      </Card>
+
+      {/* Cases */}
+      <Card>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Briefcase className="h-5 w-5" /> Cases (Nº 01)</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <TextField k="cases_section_num" label="Numeração + título da seção" placeholder="№ 01 — Cases selecionados" />
+          <TextField k="cases_title_html" label="Título grande (HTML — use <em>)" placeholder="Histórias <em>com</em> resultado." />
+          <TextField k="cases_lead" label="Lead (parágrafo abaixo do título)" rows={2} />
+          <TextField k="cases_result_label" label="Label do resultado por case" placeholder="Resultado" />
+        </CardContent>
+      </Card>
+
+      {/* Work */}
+      <Card>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Briefcase className="h-5 w-5" /> Trajetória (Nº 02)</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <TextField k="work_section_num" label="Numeração" placeholder="№ 02 — Onde estive" />
+          <TextField k="work_title_html" label="Título (HTML)" placeholder="A <em>trajetória</em>." />
+          <TextField k="work_lead" label="Lead" rows={2} />
+        </CardContent>
+      </Card>
+
+      {/* Projects */}
+      <Card>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Briefcase className="h-5 w-5" /> Projetos (Nº 03)</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <TextField k="projects_section_num" label="Numeração" placeholder="№ 03 — Produtos que entreguei" />
+          <TextField k="projects_title_html" label="Título (HTML)" placeholder="Produtos <em>vivos</em>." />
+          <TextField k="projects_lead" label="Lead" rows={2} />
+        </CardContent>
+      </Card>
+
+      {/* Stack */}
+      <Card>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Wrench className="h-5 w-5" /> Stack (Nº 04)</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <TextField k="stack_section_num" label="Numeração" placeholder="№ 04 — Ferramentas & métodos" />
+          <TextField k="stack_title_html" label="Título (HTML)" placeholder="O <em>ferramental</em>." />
+          <TextField k="stack_lead" label="Lead" rows={2} />
+          <div>
+            <Label>Labels das categorias de skills (chave técnica → texto exibido)</Label>
+            <KeyValueEditor value={getJson('stack_category_labels', { product: 'Produto', data: 'Dados', obs: 'Observabilidade', domains: 'Domínios' })} onChange={(v) => setJson('stack_category_labels', v)} />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Credentials */}
+      <Card>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><GraduationCap className="h-5 w-5" /> Credenciais (Nº 05)</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <TextField k="cred_section_num" label="Numeração" placeholder="№ 05 — Formação, cursos & certificações" />
+          <TextField k="cred_title_html" label="Título (HTML)" placeholder="<em>Credenciais</em>." />
+          <TextField k="cred_lead" label="Lead" rows={2} />
+          <div className="grid grid-cols-3 gap-3">
+            <TextField k="cred_label_education" label="Coluna 1" placeholder="Formação acadêmica" />
+            <TextField k="cred_label_certs" label="Coluna 2" placeholder="Certificações" />
+            <TextField k="cred_label_courses" label="Coluna 3" placeholder="Cursos" />
+          </div>
+          <div>
+            <Label>Lista de Cursos (manual)</Label>
+            <CoursesEditor value={getJson('cred_courses', [
+              { title: 'Curso de Google Analytics', meta: 'Google' },
+              { title: 'Scrum & Agile Foundations', meta: 'Prática contínua' },
+              { title: 'Design Thinking', meta: 'Prática contínua' },
+            ])} onChange={(v) => setJson('cred_courses', v)} />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Contact */}
+      <Card>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Mail className="h-5 w-5" /> Contato (Nº 06)</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <TextField k="contact_section_num" label="Numeração" placeholder="№ 06 — Contato" />
+          <TextField k="contact_title_html" label="Título (HTML)" placeholder="Vamos <em>conversar</em>." />
+          <div><Label>Texto introdutório (pitch)</Label><Textarea value={local.contact_pitch || ''} onChange={(e) => set('contact_pitch', e.target.value)} rows={3} /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <TextField k="contact_email" label="Email" placeholder="neigirao@gmail.com" />
+            <TextField k="contact_linkedin" label="URL LinkedIn" placeholder="https://linkedin.com/in/neigirao" />
+            <TextField k="contact_whatsapp" label="URL WhatsApp" placeholder="https://wa.me/..." />
+            <TextField k="contact_phone" label="Telefone exibido" placeholder="+55 21 98992-1711" />
+          </div>
+          <div className="grid grid-cols-2 gap-3 border-t pt-3">
+            <TextField k="contact_label_email" label="Card — label email" placeholder="Por email" />
+            <TextField k="contact_label_linkedin" label="Card — label LinkedIn" placeholder="LinkedIn" />
+            <TextField k="contact_label_whatsapp" label="Card — label WhatsApp" placeholder="No WhatsApp" />
+            <TextField k="contact_label_cv" label="Card — label CV" placeholder="Baixar CV (.pdf)" />
+            <TextField k="contact_linkedin_display" label="Card — texto LinkedIn exibido" placeholder="linkedin.com/in/neigirao" />
+            <TextField k="contact_cv_value" label="Card — texto CV exibido" placeholder="Nei Girão · CV · 2026" />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Footer editorial */}
+      <Card>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><AlignLeft className="h-5 w-5" /> Footer</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <TextField k="footer_ed_left" label="Texto esquerdo" placeholder="© Nei Girão · 2026" />
+            <TextField k="footer_ed_right" label="Texto direito" placeholder="Direction C · Editorial" />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* PageSpeed */}
+      <Card>
+        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><ExternalLink className="h-5 w-5" /> Performance</CardTitle></CardHeader>
         <CardContent>
-          <div>
-            <Label>Descrição do footer</Label>
-            <Textarea
-              value={local.footer_description || ''}
-              onChange={(e) => set('footer_description', e.target.value)}
-              placeholder="Product Manager especializado em Observabilidade e Produtos Digitais. Rio de Janeiro, Brasil."
-              rows={2}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* PageSpeed link */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <ExternalLink className="h-5 w-5" /> Performance
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <a
-            href="https://pagespeed.web.dev/analysis?url=https%3A%2F%2Fneigirao.lovable.app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button variant="outline" className="w-full">
-              <ExternalLink className="h-4 w-4 mr-2" />
-              Abrir PageSpeed Insights
-            </Button>
+          <a href="https://pagespeed.web.dev/analysis?url=https%3A%2F%2Fneigirao.lovable.app" target="_blank" rel="noopener noreferrer">
+            <Button variant="outline" className="w-full"><ExternalLink className="h-4 w-4 mr-2" /> Abrir PageSpeed Insights</Button>
           </a>
-          <p className="text-xs text-muted-foreground mt-2">Analise a performance do site publicado no Google PageSpeed Insights.</p>
         </CardContent>
       </Card>
     </div>
