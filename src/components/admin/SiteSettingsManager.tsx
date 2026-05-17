@@ -431,6 +431,137 @@ export function SiteSettingsManager() {
         </CardContent>
       </Card>
 
+      {/* Editorial — Direction C */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Type className="h-5 w-5" /> Design Editorial — Textos da Home
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <Label className="font-semibold">Cobertura (Cover)</Label>
+            <div className="space-y-3 pl-3 border-l-2 border-muted">
+              <div>
+                <Label>Headline principal</Label>
+                <Input
+                  value={local.hero_headline || ''}
+                  onChange={(e) => set('hero_headline', e.target.value)}
+                  placeholder="Lidero produtos digitais que entregam resultado mensurável."
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Anos de experiência</Label>
+                  <Input value={local.hero_years || ''} onChange={(e) => set('hero_years', e.target.value)} placeholder="15+" />
+                </div>
+                <div>
+                  <Label>Nº de companhias</Label>
+                  <Input value={local.hero_companies_count || ''} onChange={(e) => set('hero_companies_count', e.target.value)} placeholder="5" />
+                </div>
+              </div>
+              <div>
+                <Label>Localização</Label>
+                <Input value={local.hero_location || ''} onChange={(e) => set('hero_location', e.target.value)} placeholder="Rio de Janeiro, Brasil" />
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="font-semibold">Ensaio de abertura (Essay)</Label>
+            <div className="space-y-3 pl-3 border-l-2 border-muted">
+              <div>
+                <Label>Parágrafo de abertura (HTML permitido)</Label>
+                <Textarea
+                  value={local.essay_opening || ''}
+                  onChange={(e) => set('essay_opening', e.target.value)}
+                  placeholder="ei Girão começou a carreira escrevendo HTML..."
+                  rows={4}
+                />
+                <p className="text-xs text-muted-foreground mt-1">O "N" inicial com drop cap é adicionado automaticamente.</p>
+              </div>
+              <div>
+                <Label>Segundo parágrafo (HTML permitido)</Label>
+                <Textarea
+                  value={local.essay_second || ''}
+                  onChange={(e) => set('essay_second', e.target.value)}
+                  placeholder="Sua abordagem combina visão estratégica..."
+                  rows={3}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Empresa atual</Label>
+                  <Input value={local.essay_current_company || ''} onChange={(e) => set('essay_current_company', e.target.value)} placeholder="Icatu Seguros" />
+                </div>
+                <div>
+                  <Label>Cargo atual</Label>
+                  <Input value={local.essay_current_role || ''} onChange={(e) => set('essay_current_role', e.target.value)} placeholder="PM · Coordenador de TI" />
+                </div>
+                <div>
+                  <Label>Diretos no time</Label>
+                  <Input value={local.essay_team_direct || ''} onChange={(e) => set('essay_team_direct', e.target.value)} placeholder="20" />
+                </div>
+                <div>
+                  <Label>Pessoas em squads</Label>
+                  <Input value={local.essay_team_squads || ''} onChange={(e) => set('essay_team_squads', e.target.value)} placeholder="35" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="font-semibold">Pull Quote</Label>
+            <div className="space-y-3 pl-3 border-l-2 border-muted">
+              <div>
+                <Label>Citação</Label>
+                <Textarea
+                  value={local.pull_quote || ''}
+                  onChange={(e) => set('pull_quote', e.target.value)}
+                  placeholder="Levei a nota do app de 1,5 para 4,5. Reduzi 40% dos custos..."
+                  rows={2}
+                />
+              </div>
+              <div>
+                <Label>Autor</Label>
+                <Input value={local.pull_quote_author || ''} onChange={(e) => set('pull_quote_author', e.target.value)} placeholder="Nei Girão" />
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="font-semibold">Seção de Contato</Label>
+            <div className="space-y-3 pl-3 border-l-2 border-muted">
+              <div>
+                <Label>Texto introdutório</Label>
+                <Textarea
+                  value={local.contact_pitch || ''}
+                  onChange={(e) => set('contact_pitch', e.target.value)}
+                  placeholder="Estou aberto a posições sênior de Product..."
+                  rows={2}
+                />
+              </div>
+              <div>
+                <Label>Email de contato</Label>
+                <Input value={local.contact_email || ''} onChange={(e) => set('contact_email', e.target.value)} placeholder="neigirao@gmail.com" />
+              </div>
+              <div>
+                <Label>URL LinkedIn</Label>
+                <Input value={local.contact_linkedin || ''} onChange={(e) => set('contact_linkedin', e.target.value)} placeholder="https://linkedin.com/in/neigirao" />
+              </div>
+              <div>
+                <Label>URL WhatsApp</Label>
+                <Input value={local.contact_whatsapp || ''} onChange={(e) => set('contact_whatsapp', e.target.value)} placeholder="https://wa.me/5521989921711" />
+              </div>
+              <div>
+                <Label>Telefone exibido no contato</Label>
+                <Input value={local.contact_phone || ''} onChange={(e) => set('contact_phone', e.target.value)} placeholder="+55 21 98992-1711" />
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Footer */}
       <Card>
         <CardHeader>
