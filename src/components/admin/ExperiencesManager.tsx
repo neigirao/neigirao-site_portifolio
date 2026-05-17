@@ -82,6 +82,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       slug: formData.slug || null,
       is_case: formData.is_case,
       case_result: formData.case_result || null,
+      is_visible: true,
       order_index: editingId ? experiences.find(e => e.id === editingId)?.order_index || 0 : nextOrderIndex,
     };
 

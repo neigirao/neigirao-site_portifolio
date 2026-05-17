@@ -87,7 +87,7 @@ export function useExperiences() {
       const { data, error } = await supabase
         .from('experiences')
         .select('*')
-        .eq('is_visible', true)
+        .neq('is_visible', false)
         .order('order_index', { ascending: true });
 
       if (error) throw error;
