@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Upload, Save, FileText, ExternalLink, Newspaper, Star, FileSignature, Briefcase, Wrench, GraduationCap, Mail, AlignLeft, User as UserIcon, BookOpen } from 'lucide-react';
@@ -207,8 +208,7 @@ export function SiteSettingsManager() {
 
 
   return (
-    <div className={`flex gap-6 items-start ${previewOpen ? 'max-w-none' : ''}`}>
-      <div className="flex-1 min-w-0 space-y-6">
+    <div className="space-y-6">
       <div className="flex justify-between items-center sticky top-0 bg-background z-10 py-2">
         <h2 className="text-xl font-bold">Configurações do Site</h2>
         <div className="flex gap-2 items-center">
@@ -473,23 +473,20 @@ export function SiteSettingsManager() {
           </a>
         </CardContent>
       </Card>
-      </div>
 
-      {previewOpen && (
-        <div className="sticky top-4 w-[640px] shrink-0 border rounded-lg overflow-hidden" style={{ height: '80vh' }}>
-          <div className="flex items-center justify-between px-3 py-2 bg-muted border-b text-sm font-medium">
-            <span>Prévia da Home</span>
-            <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => setPreviewOpen(false)}>✕</Button>
-          </div>
+      <Sheet open={previewOpen} onOpenChange={setPreviewOpen}>
+        <SheetContent side="right" className="w-[90vw] sm:max-w-[700px] p-0 flex flex-col">
+          <SheetHeader className="px-4 py-3 border-b shrink-0">
+            <SheetTitle className="text-sm font-medium">Prévia da Home</SheetTitle>
+          </SheetHeader>
           <iframe
             ref={iframeRef}
             src="/"
-            className="w-full border-0"
-            style={{ height: 'calc(100% - 37px)' }}
+            className="flex-1 w-full border-0"
             title="Prévia da homepage"
           />
-        </div>
-      )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
