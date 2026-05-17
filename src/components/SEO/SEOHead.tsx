@@ -23,7 +23,7 @@ interface SEOHeadProps {
 }
 
 const defaultMeta = {
-  title: "Nei Girão | Product Leader em Transformação Digital, Observabilidade e Produtos Digitais",
+  title: "Nei Girão | Product Leader · Observabilidade",
   description: "Product Leader com experiência em transformação digital, produtos digitais e observabilidade em empresas como Icatu, TIM, Oi e Globo.",
   ogImage: "https://neigirao.lovable.app/og-image.png",
   author: "Nei Girão",
