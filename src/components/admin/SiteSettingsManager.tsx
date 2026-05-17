@@ -138,6 +138,26 @@ function CoursesEditor({ value, onChange }: { value: { title: string; meta: stri
   );
 }
 
+/* ---------- Text field (stable identity, must live outside) ---------- */
+interface TextFieldProps {
+  k: string;
+  label: string;
+  placeholder?: string;
+  rows?: number;
+  local: Record<string, string>;
+  set: (key: string, value: string) => void;
+}
+function TextField({ k, label, placeholder, rows, local, set }: TextFieldProps) {
+  return (
+    <div>
+      <Label>{label}</Label>
+      {rows && rows > 1
+        ? <Textarea value={local[k] || ''} onChange={(e) => set(k, e.target.value)} placeholder={placeholder} rows={rows} />
+        : <Input value={local[k] || ''} onChange={(e) => set(k, e.target.value)} placeholder={placeholder} />}
+    </div>
+  );
+}
+
 /* ---------- Main ---------- */
 export function SiteSettingsManager() {
   const { settings, isLoading, refetch } = useSiteSettings();
