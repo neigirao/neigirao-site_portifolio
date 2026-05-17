@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Pencil, Trash2, Eye, Copy, EyeOff } from 'lucide-react';
@@ -43,7 +44,7 @@ interface ExperiencesManagerProps {
 const emptyForm = {
   company: '', role: '', period: '', description: '', logo_url: '',
   meta_title: '', meta_description: '', slug: '',
-  is_case: false, case_result: '',
+  is_case: false, case_result: '', case_body: '',
 };
 
 export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
@@ -82,6 +83,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       slug: formData.slug || null,
       is_case: formData.is_case,
       case_result: formData.case_result || null,
+      case_body: formData.case_body || null,
       is_visible: true,
       order_index: editingId ? experiences.find(e => e.id === editingId)?.order_index || 0 : nextOrderIndex,
     };
@@ -105,7 +107,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       company: exp.company, role: exp.role, period: exp.period,
       description: exp.description, logo_url: exp.logo_url || '',
       meta_title: exp.meta_title || '', meta_description: exp.meta_description || '', slug: exp.slug || '',
-      is_case: exp.is_case || false, case_result: exp.case_result || '',
+      is_case: exp.is_case || false, case_result: exp.case_result || '', case_body: exp.case_body || '',
     });
   };
 
@@ -189,15 +191,27 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
                 </Label>
               </div>
               {formData.is_case && (
-                <div className="space-y-2">
-                  <Label htmlFor="case_result">Resultado / Outcome</Label>
-                  <Input
-                    id="case_result"
-                    value={formData.case_result}
-                    onChange={(e) => setFormData({ ...formData, case_result: e.target.value })}
-                    placeholder="+20% conversão · 6 produtos lançados · 35 pessoas em squads"
-                  />
-                  <p className="text-xs text-muted-foreground">Exibido na seção "Cases" da home editorial.</p>
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="case_body">Texto do case (exibido na seção Cases)</Label>
+                    <Textarea
+                      id="case_body"
+                      value={formData.case_body}
+                      onChange={(e) => setFormData({ ...formData, case_body: e.target.value })}
+                      rows={4}
+                      placeholder="Descreva o projeto, o desafio e o impacto de forma concisa para o visitante do site..."
+                    />
+                    <p className="text-xs text-muted-foreground">Este texto substitui a descrição geral na seção Cases da home. Se vazio, usa a descrição acima.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="case_result">Resultado / Outcome</Label>
+                    <Input
+                      id="case_result"
+                      value={formData.case_result}
+                      onChange={(e) => setFormData({ ...formData, case_result: e.target.value })}
+                      placeholder="+20% conversão · 6 produtos lançados · 35 pessoas em squads"
+                    />
+                  </div>
                 </div>
               )}
             </div>
