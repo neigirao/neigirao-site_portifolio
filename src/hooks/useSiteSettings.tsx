@@ -26,6 +26,7 @@ export function useSiteSettings() {
     queryKey: ['site_settings'],
     queryFn: fetchSiteSettings,
     staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 
   return {

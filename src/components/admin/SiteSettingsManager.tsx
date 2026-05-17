@@ -3,7 +3,7 @@
  * Every text on the home (`/`) can be edited here.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSiteSettings, useUpdateSiteSetting } from '@/hooks/useSiteSettings';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Button } from '@/components/ui/button';
@@ -164,6 +164,8 @@ export function SiteSettingsManager() {
   const updateSetting = useUpdateSiteSetting();
   const [local, setLocal] = useState<Record<string, string>>({});
   const [dirty, setDirty] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     if (settings && Object.keys(settings).length > 0) setLocal(settings);
@@ -188,6 +190,9 @@ export function SiteSettingsManager() {
       setDirty(false);
       toast.success('Configurações salvas!');
       refetch();
+      if (iframeRef.current) {
+        iframeRef.current.src = iframeRef.current.src;
+      }
     } catch { toast.error('Erro ao salvar configurações'); }
   };
 
@@ -195,13 +200,20 @@ export function SiteSettingsManager() {
 
 
   return (
-    <div className="space-y-6">
+    <div className={`flex gap-6 items-start ${previewOpen ? 'max-w-none' : ''}`}>
+      <div className="flex-1 min-w-0 space-y-6">
       <div className="flex justify-between items-center sticky top-0 bg-background z-10 py-2">
         <h2 className="text-xl font-bold">Configurações do Site</h2>
-        <Button onClick={saveAll} disabled={!dirty || updateSetting.isPending}>
-          <Save className="h-4 w-4 mr-2" />
-          {updateSetting.isPending ? 'Salvando...' : 'Salvar Alterações'}
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => setPreviewOpen(p => !p)}>
+            <ExternalLink className="h-4 w-4 mr-2" />
+            {previewOpen ? 'Fechar Prévia' : 'Ver Prévia'}
+          </Button>
+          <Button onClick={saveAll} disabled={!dirty || updateSetting.isPending}>
+            <Save className="h-4 w-4 mr-2" />
+            {updateSetting.isPending ? 'Salvando...' : 'Salvar Alterações'}
+          </Button>
+        </div>
       </div>
 
       {/* CV upload */}
@@ -448,6 +460,23 @@ export function SiteSettingsManager() {
           </a>
         </CardContent>
       </Card>
+      </div>
+
+      {previewOpen && (
+        <div className="sticky top-4 w-[640px] shrink-0 border rounded-lg overflow-hidden" style={{ height: '80vh' }}>
+          <div className="flex items-center justify-between px-3 py-2 bg-muted border-b text-sm font-medium">
+            <span>Prévia da Home</span>
+            <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => setPreviewOpen(false)}>✕</Button>
+          </div>
+          <iframe
+            ref={iframeRef}
+            src="/"
+            className="w-full border-0"
+            style={{ height: 'calc(100% - 37px)' }}
+            title="Prévia da homepage"
+          />
+        </div>
+      )}
     </div>
   );
 }
