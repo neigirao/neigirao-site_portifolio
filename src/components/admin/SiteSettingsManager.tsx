@@ -193,15 +193,6 @@ export function SiteSettingsManager() {
 
   if (isLoading) return <div className="space-y-4">{[1,2,3].map(i => <Skeleton key={i} className="h-32" />)}</div>;
 
-  // helpers for repeated text fields
-  const TextField = ({ k, label, placeholder, rows }: { k: string; label: string; placeholder?: string; rows?: number }) => (
-    <div>
-      <Label>{label}</Label>
-      {rows && rows > 1
-        ? <Textarea value={local[k] || ''} onChange={(e) => set(k, e.target.value)} placeholder={placeholder} rows={rows} />
-        : <Input value={local[k] || ''} onChange={(e) => set(k, e.target.value)} placeholder={placeholder} />}
-    </div>
-  );
 
   return (
     <div className="space-y-6">
@@ -242,8 +233,8 @@ export function SiteSettingsManager() {
       <Card>
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Newspaper className="h-5 w-5" /> Masthead (topo)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
-          <TextField k="masthead_brand" label="Marca" placeholder="Nei Girão" />
-          <TextField k="masthead_edition" label="Edição (subtítulo)" placeholder="Edição 2026 · Vol. XV" />
+          <TextField k="masthead_brand" label="Marca" placeholder="Nei Girão" local={local} set={set} />
+          <TextField k="masthead_edition" label="Edição (subtítulo)" placeholder="Edição 2026 · Vol. XV" local={local} set={set} />
           <div>
             <Label>Navegação</Label>
             <NavEditor value={getJson('masthead_nav', [
@@ -253,7 +244,7 @@ export function SiteSettingsManager() {
               { label: 'Contato', href: '#contact' },
             ])} onChange={(v) => setJson('masthead_nav', v)} />
           </div>
-          <TextField k="masthead_cta_label" label="Botão CTA (canto direito)" placeholder="Baixar CV" />
+          <TextField k="masthead_cta_label" label="Botão CTA (canto direito)" placeholder="Baixar CV" local={local} set={set} />
         </CardContent>
       </Card>
 
@@ -262,23 +253,23 @@ export function SiteSettingsManager() {
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Star className="h-5 w-5" /> Cover (capa)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-3 gap-3">
-            <TextField k="cover_issue_left" label="Edição (esq.)" placeholder="Perfil № 01" />
-            <TextField k="cover_issue_center" label="Edição (centro)" placeholder="— Um Product Leader..." />
-            <TextField k="hero_location" label="Localização (dir.)" placeholder="Rio de Janeiro, Brasil" />
+            <TextField k="cover_issue_left" label="Edição (esq.)" placeholder="Perfil № 01" local={local} set={set} />
+            <TextField k="cover_issue_center" label="Edição (centro)" placeholder="— Um Product Leader..." local={local} set={set} />
+            <TextField k="hero_location" label="Localização (dir.)" placeholder="Rio de Janeiro, Brasil" local={local} set={set} />
           </div>
-          <TextField k="cover_name" label="Nome em destaque" placeholder="Nei Girão" />
-          <TextField k="hero_headline" label="Headline (frase central)" placeholder="Lidero produtos digitais que entregam resultado mensurável." />
+          <TextField k="cover_name" label="Nome em destaque" placeholder="Nei Girão" local={local} set={set} />
+          <TextField k="hero_headline" label="Headline (frase central)" placeholder="Lidero produtos digitais que entregam resultado mensurável." local={local} set={set} />
           <div className="grid grid-cols-2 gap-3">
-            <TextField k="hero_years" label="Stat — anos" placeholder="15+" />
-            <TextField k="cover_stat_years_label" label="Stat — label (anos)" placeholder="anos" />
-            <TextField k="hero_companies_count" label="Stat — companhias" placeholder="5" />
-            <TextField k="cover_stat_companies_label" label="Stat — label (companhias)" placeholder="companhias" />
+            <TextField k="hero_years" label="Stat — anos" placeholder="15+" local={local} set={set} />
+            <TextField k="cover_stat_years_label" label="Stat — label (anos)" placeholder="anos" local={local} set={set} />
+            <TextField k="hero_companies_count" label="Stat — companhias" placeholder="5" local={local} set={set} />
+            <TextField k="cover_stat_companies_label" label="Stat — label (companhias)" placeholder="companhias" local={local} set={set} />
           </div>
-          <TextField k="cover_email_prefix" label='Frase de email (ex: "Para conversar, escreva para")' placeholder="Para conversar, escreva para" />
+          <TextField k="cover_email_prefix" label='Frase de email (ex: "Para conversar, escreva para")' placeholder="Para conversar, escreva para" local={local} set={set} />
           <div className="grid grid-cols-3 gap-3">
-            <TextField k="cover_btn_primary" label="Botão primário" placeholder="Falar comigo" />
-            <TextField k="cover_btn_secondary" label="Botão secundário" placeholder="Baixar CV (.pdf)" />
-            <TextField k="cover_btn_linkedin" label="Botão LinkedIn" placeholder="LinkedIn ↗" />
+            <TextField k="cover_btn_primary" label="Botão primário" placeholder="Falar comigo" local={local} set={set} />
+            <TextField k="cover_btn_secondary" label="Botão secundário" placeholder="Baixar CV (.pdf)" local={local} set={set} />
+            <TextField k="cover_btn_linkedin" label="Botão LinkedIn" placeholder="LinkedIn ↗" local={local} set={set} />
           </div>
         </CardContent>
       </Card>
@@ -299,21 +290,21 @@ export function SiteSettingsManager() {
           <div className="border-t pt-3 space-y-3">
             <Label className="font-semibold">Coluna esquerda</Label>
             <div className="grid grid-cols-2 gap-3">
-              <TextField k="essay_label_current" label="Label — Atualmente" placeholder="Atualmente" />
+              <TextField k="essay_label_current" label="Label — Atualmente" placeholder="Atualmente" local={local} set={set} />
               <div />
-              <TextField k="essay_current_company" label="Empresa atual" placeholder="Icatu Seguros" />
-              <TextField k="essay_current_role" label="Cargo atual" placeholder="PM · Coordenador de TI" />
+              <TextField k="essay_current_company" label="Empresa atual" placeholder="Icatu Seguros" local={local} set={set} />
+              <TextField k="essay_current_role" label="Cargo atual" placeholder="PM · Coordenador de TI" local={local} set={set} />
             </div>
             <div className="grid grid-cols-4 gap-3">
-              <TextField k="essay_label_team" label="Label — Time" placeholder="Time" />
-              <TextField k="essay_team_direct" label="Diretos (nº)" placeholder="20" />
-              <TextField k="essay_team_direct_label" label="Label diretos" placeholder="diretos" />
-              <TextField k="essay_team_squads" label="Squads (nº)" placeholder="35" />
+              <TextField k="essay_label_team" label="Label — Time" placeholder="Time" local={local} set={set} />
+              <TextField k="essay_team_direct" label="Diretos (nº)" placeholder="20" local={local} set={set} />
+              <TextField k="essay_team_direct_label" label="Label diretos" placeholder="diretos" local={local} set={set} />
+              <TextField k="essay_team_squads" label="Squads (nº)" placeholder="35" local={local} set={set} />
             </div>
-            <TextField k="essay_team_squads_label" label="Label squads" placeholder="em squads" />
+            <TextField k="essay_team_squads_label" label="Label squads" placeholder="em squads" local={local} set={set} />
             <div>
               <Label>Setores ({local.essay_label_sectors || 'Setores'})</Label>
-              <TextField k="essay_label_sectors" label="Label" placeholder="Setores" />
+              <TextField k="essay_label_sectors" label="Label" placeholder="Setores" local={local} set={set} />
               <StringArrayEditor value={getJson('essay_sectors', ["Seguros & Serviços financeiros", "Telecom", "Mídia & Entretenimento"])} onChange={(v) => setJson('essay_sectors', v)} itemLabel="Setor" />
             </div>
           </div>
@@ -321,15 +312,15 @@ export function SiteSettingsManager() {
           <div className="border-t pt-3 space-y-3">
             <Label className="font-semibold">Coluna direita</Label>
             <div>
-              <TextField k="essay_label_domains" label="Label — Domínios" placeholder="Domínios" />
+              <TextField k="essay_label_domains" label="Label — Domínios" placeholder="Domínios" local={local} set={set} />
               <StringArrayEditor value={getJson('essay_domains', ["Ecommerce", "Produto Digital", "Dados", "Observabilidade"])} onChange={(v) => setJson('essay_domains', v)} itemLabel="Domínio" />
             </div>
             <div>
-              <TextField k="essay_label_location" label="Label — Reside" placeholder="Reside" />
+              <TextField k="essay_label_location" label="Label — Reside" placeholder="Reside" local={local} set={set} />
               <StringArrayEditor value={getJson('essay_location_lines', ["Rio de Janeiro", "Brasil"])} onChange={(v) => setJson('essay_location_lines', v)} itemLabel="Linha" />
             </div>
             <div>
-              <TextField k="essay_label_languages" label="Label — Idiomas" placeholder="Idiomas" />
+              <TextField k="essay_label_languages" label="Label — Idiomas" placeholder="Idiomas" local={local} set={set} />
               <StringArrayEditor value={getJson('essay_languages', ["PT · Nativo", "EN · Fluente"])} onChange={(v) => setJson('essay_languages', v)} itemLabel="Idioma" />
             </div>
           </div>
@@ -341,7 +332,7 @@ export function SiteSettingsManager() {
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><FileSignature className="h-5 w-5" /> Pull Quote</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <div><Label>Citação</Label><Textarea value={local.pull_quote || ''} onChange={(e) => set('pull_quote', e.target.value)} rows={3} /></div>
-          <TextField k="pull_quote_author" label="Autor" placeholder="Nei Girão" />
+          <TextField k="pull_quote_author" label="Autor" placeholder="Nei Girão" local={local} set={set} />
         </CardContent>
       </Card>
 
@@ -349,10 +340,10 @@ export function SiteSettingsManager() {
       <Card>
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Briefcase className="h-5 w-5" /> Cases (Nº 01)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
-          <TextField k="cases_section_num" label="Numeração + título da seção" placeholder="№ 01 — Cases selecionados" />
+          <TextField k="cases_section_num" label="Numeração + título da seção" placeholder="№ 01 — Cases selecionados" local={local} set={set} />
           <TextField k="cases_title_html" label="Título grande (HTML — use <em>)" placeholder="Histórias <em>com</em> resultado." />
-          <TextField k="cases_lead" label="Lead (parágrafo abaixo do título)" rows={2} />
-          <TextField k="cases_result_label" label="Label do resultado por case" placeholder="Resultado" />
+          <TextField k="cases_lead" label="Lead (parágrafo abaixo do título)" rows={2} local={local} set={set} />
+          <TextField k="cases_result_label" label="Label do resultado por case" placeholder="Resultado" local={local} set={set} />
         </CardContent>
       </Card>
 
@@ -360,9 +351,9 @@ export function SiteSettingsManager() {
       <Card>
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Briefcase className="h-5 w-5" /> Trajetória (Nº 02)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
-          <TextField k="work_section_num" label="Numeração" placeholder="№ 02 — Onde estive" />
+          <TextField k="work_section_num" label="Numeração" placeholder="№ 02 — Onde estive" local={local} set={set} />
           <TextField k="work_title_html" label="Título (HTML)" placeholder="A <em>trajetória</em>." />
-          <TextField k="work_lead" label="Lead" rows={2} />
+          <TextField k="work_lead" label="Lead" rows={2} local={local} set={set} />
         </CardContent>
       </Card>
 
@@ -370,9 +361,9 @@ export function SiteSettingsManager() {
       <Card>
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Briefcase className="h-5 w-5" /> Projetos (Nº 03)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
-          <TextField k="projects_section_num" label="Numeração" placeholder="№ 03 — Produtos que entreguei" />
+          <TextField k="projects_section_num" label="Numeração" placeholder="№ 03 — Produtos que entreguei" local={local} set={set} />
           <TextField k="projects_title_html" label="Título (HTML)" placeholder="Produtos <em>vivos</em>." />
-          <TextField k="projects_lead" label="Lead" rows={2} />
+          <TextField k="projects_lead" label="Lead" rows={2} local={local} set={set} />
         </CardContent>
       </Card>
 
@@ -380,9 +371,9 @@ export function SiteSettingsManager() {
       <Card>
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Wrench className="h-5 w-5" /> Stack (Nº 04)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
-          <TextField k="stack_section_num" label="Numeração" placeholder="№ 04 — Ferramentas & métodos" />
+          <TextField k="stack_section_num" label="Numeração" placeholder="№ 04 — Ferramentas & métodos" local={local} set={set} />
           <TextField k="stack_title_html" label="Título (HTML)" placeholder="O <em>ferramental</em>." />
-          <TextField k="stack_lead" label="Lead" rows={2} />
+          <TextField k="stack_lead" label="Lead" rows={2} local={local} set={set} />
           <div>
             <Label>Labels das categorias de skills (chave técnica → texto exibido)</Label>
             <KeyValueEditor value={getJson('stack_category_labels', { product: 'Produto', data: 'Dados', obs: 'Observabilidade', domains: 'Domínios' })} onChange={(v) => setJson('stack_category_labels', v)} />
@@ -394,13 +385,13 @@ export function SiteSettingsManager() {
       <Card>
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><GraduationCap className="h-5 w-5" /> Credenciais (Nº 05)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
-          <TextField k="cred_section_num" label="Numeração" placeholder="№ 05 — Formação, cursos & certificações" />
+          <TextField k="cred_section_num" label="Numeração" placeholder="№ 05 — Formação, cursos & certificações" local={local} set={set} />
           <TextField k="cred_title_html" label="Título (HTML)" placeholder="<em>Credenciais</em>." />
-          <TextField k="cred_lead" label="Lead" rows={2} />
+          <TextField k="cred_lead" label="Lead" rows={2} local={local} set={set} />
           <div className="grid grid-cols-3 gap-3">
-            <TextField k="cred_label_education" label="Coluna 1" placeholder="Formação acadêmica" />
-            <TextField k="cred_label_certs" label="Coluna 2" placeholder="Certificações" />
-            <TextField k="cred_label_courses" label="Coluna 3" placeholder="Cursos" />
+            <TextField k="cred_label_education" label="Coluna 1" placeholder="Formação acadêmica" local={local} set={set} />
+            <TextField k="cred_label_certs" label="Coluna 2" placeholder="Certificações" local={local} set={set} />
+            <TextField k="cred_label_courses" label="Coluna 3" placeholder="Cursos" local={local} set={set} />
           </div>
           <div>
             <Label>Lista de Cursos (manual)</Label>
@@ -417,22 +408,22 @@ export function SiteSettingsManager() {
       <Card>
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Mail className="h-5 w-5" /> Contato (Nº 06)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
-          <TextField k="contact_section_num" label="Numeração" placeholder="№ 06 — Contato" />
+          <TextField k="contact_section_num" label="Numeração" placeholder="№ 06 — Contato" local={local} set={set} />
           <TextField k="contact_title_html" label="Título (HTML)" placeholder="Vamos <em>conversar</em>." />
           <div><Label>Texto introdutório (pitch)</Label><Textarea value={local.contact_pitch || ''} onChange={(e) => set('contact_pitch', e.target.value)} rows={3} /></div>
           <div className="grid grid-cols-2 gap-3">
-            <TextField k="contact_email" label="Email" placeholder="neigirao@gmail.com" />
+            <TextField k="contact_email" label="Email" placeholder="neigirao@gmail.com" local={local} set={set} />
             <TextField k="contact_linkedin" label="URL LinkedIn" placeholder="https://linkedin.com/in/neigirao" />
             <TextField k="contact_whatsapp" label="URL WhatsApp" placeholder="https://wa.me/..." />
-            <TextField k="contact_phone" label="Telefone exibido" placeholder="+55 21 98992-1711" />
+            <TextField k="contact_phone" label="Telefone exibido" placeholder="+55 21 98992-1711" local={local} set={set} />
           </div>
           <div className="grid grid-cols-2 gap-3 border-t pt-3">
-            <TextField k="contact_label_email" label="Card — label email" placeholder="Por email" />
-            <TextField k="contact_label_linkedin" label="Card — label LinkedIn" placeholder="LinkedIn" />
-            <TextField k="contact_label_whatsapp" label="Card — label WhatsApp" placeholder="No WhatsApp" />
-            <TextField k="contact_label_cv" label="Card — label CV" placeholder="Baixar CV (.pdf)" />
+            <TextField k="contact_label_email" label="Card — label email" placeholder="Por email" local={local} set={set} />
+            <TextField k="contact_label_linkedin" label="Card — label LinkedIn" placeholder="LinkedIn" local={local} set={set} />
+            <TextField k="contact_label_whatsapp" label="Card — label WhatsApp" placeholder="No WhatsApp" local={local} set={set} />
+            <TextField k="contact_label_cv" label="Card — label CV" placeholder="Baixar CV (.pdf)" local={local} set={set} />
             <TextField k="contact_linkedin_display" label="Card — texto LinkedIn exibido" placeholder="linkedin.com/in/neigirao" />
-            <TextField k="contact_cv_value" label="Card — texto CV exibido" placeholder="Nei Girão · CV · 2026" />
+            <TextField k="contact_cv_value" label="Card — texto CV exibido" placeholder="Nei Girão · CV · 2026" local={local} set={set} />
           </div>
         </CardContent>
       </Card>
@@ -442,8 +433,8 @@ export function SiteSettingsManager() {
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><AlignLeft className="h-5 w-5" /> Footer</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            <TextField k="footer_ed_left" label="Texto esquerdo" placeholder="© Nei Girão · 2026" />
-            <TextField k="footer_ed_right" label="Texto direito" placeholder="Direction C · Editorial" />
+            <TextField k="footer_ed_left" label="Texto esquerdo" placeholder="© Nei Girão · 2026" local={local} set={set} />
+            <TextField k="footer_ed_right" label="Texto direito" placeholder="Direction C · Editorial" local={local} set={set} />
           </div>
         </CardContent>
       </Card>
