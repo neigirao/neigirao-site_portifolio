@@ -341,7 +341,7 @@ export function SiteSettingsManager() {
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Briefcase className="h-5 w-5" /> Cases (Nº 01)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <TextField k="cases_section_num" label="Numeração + título da seção" placeholder="№ 01 — Cases selecionados" local={local} set={set} />
-          <TextField k="cases_title_html" label="Título grande (HTML — use <em>)" placeholder="Histórias <em>com</em> resultado." />
+          <TextField k="cases_title_html" label="Título grande (HTML — use <em>)" placeholder="Histórias <em>com</em> resultado." local={local} set={set} />
           <TextField k="cases_lead" label="Lead (parágrafo abaixo do título)" rows={2} local={local} set={set} />
           <TextField k="cases_result_label" label="Label do resultado por case" placeholder="Resultado" local={local} set={set} />
         </CardContent>
@@ -352,7 +352,7 @@ export function SiteSettingsManager() {
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Briefcase className="h-5 w-5" /> Trajetória (Nº 02)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <TextField k="work_section_num" label="Numeração" placeholder="№ 02 — Onde estive" local={local} set={set} />
-          <TextField k="work_title_html" label="Título (HTML)" placeholder="A <em>trajetória</em>." />
+          <TextField k="work_title_html" label="Título (HTML)" placeholder="A <em>trajetória</em>." local={local} set={set} />
           <TextField k="work_lead" label="Lead" rows={2} local={local} set={set} />
         </CardContent>
       </Card>
@@ -362,7 +362,7 @@ export function SiteSettingsManager() {
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Briefcase className="h-5 w-5" /> Projetos (Nº 03)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <TextField k="projects_section_num" label="Numeração" placeholder="№ 03 — Produtos que entreguei" local={local} set={set} />
-          <TextField k="projects_title_html" label="Título (HTML)" placeholder="Produtos <em>vivos</em>." />
+          <TextField k="projects_title_html" label="Título (HTML)" placeholder="Produtos <em>vivos</em>." local={local} set={set} />
           <TextField k="projects_lead" label="Lead" rows={2} local={local} set={set} />
         </CardContent>
       </Card>
@@ -372,7 +372,7 @@ export function SiteSettingsManager() {
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Wrench className="h-5 w-5" /> Stack (Nº 04)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <TextField k="stack_section_num" label="Numeração" placeholder="№ 04 — Ferramentas & métodos" local={local} set={set} />
-          <TextField k="stack_title_html" label="Título (HTML)" placeholder="O <em>ferramental</em>." />
+          <TextField k="stack_title_html" label="Título (HTML)" placeholder="O <em>ferramental</em>." local={local} set={set} />
           <TextField k="stack_lead" label="Lead" rows={2} local={local} set={set} />
           <div>
             <Label>Labels das categorias de skills (chave técnica → texto exibido)</Label>
@@ -386,7 +386,7 @@ export function SiteSettingsManager() {
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><GraduationCap className="h-5 w-5" /> Credenciais (Nº 05)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <TextField k="cred_section_num" label="Numeração" placeholder="№ 05 — Formação, cursos & certificações" local={local} set={set} />
-          <TextField k="cred_title_html" label="Título (HTML)" placeholder="<em>Credenciais</em>." />
+          <TextField k="cred_title_html" label="Título (HTML)" placeholder="<em>Credenciais</em>." local={local} set={set} />
           <TextField k="cred_lead" label="Lead" rows={2} local={local} set={set} />
           <div className="grid grid-cols-3 gap-3">
             <TextField k="cred_label_education" label="Coluna 1" placeholder="Formação acadêmica" local={local} set={set} />
@@ -409,7 +409,7 @@ export function SiteSettingsManager() {
         <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Mail className="h-5 w-5" /> Contato (Nº 06)</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <TextField k="contact_section_num" label="Numeração" placeholder="№ 06 — Contato" local={local} set={set} />
-          <TextField k="contact_title_html" label="Título (HTML)" placeholder="Vamos <em>conversar</em>." />
+          <TextField k="contact_title_html" label="Título (HTML)" placeholder="Vamos <em>conversar</em>." local={local} set={set} />
           <div><Label>Texto introdutório (pitch)</Label><Textarea value={local.contact_pitch || ''} onChange={(e) => set('contact_pitch', e.target.value)} rows={3} /></div>
           <div className="grid grid-cols-2 gap-3">
             <TextField k="contact_email" label="Email" placeholder="neigirao@gmail.com" local={local} set={set} />
