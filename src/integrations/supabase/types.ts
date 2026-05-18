@@ -138,6 +138,7 @@ export type Database = {
           id: string
           message: string
           name: string
+          read_at: string | null
         }
         Insert: {
           created_at?: string
@@ -145,6 +146,7 @@ export type Database = {
           id?: string
           message: string
           name: string
+          read_at?: string | null
         }
         Update: {
           created_at?: string
@@ -152,6 +154,7 @@ export type Database = {
           id?: string
           message?: string
           name?: string
+          read_at?: string | null
         }
         Relationships: []
       }
