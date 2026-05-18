@@ -1,0 +1,2 @@
+ALTER TABLE public.companies
+  ADD COLUMN IF NOT EXISTS is_visible BOOLEAN NOT NULL DEFAULT true;
