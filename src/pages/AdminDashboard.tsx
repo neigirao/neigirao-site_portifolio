@@ -93,8 +93,8 @@ export default function AdminDashboard() {
         supabase.from('certifications').select('*'),
         supabase.from('testimonials').select('*'),
         supabase.from('companies').select('*'),
-        supabase.from('metrics').select('*'),
-        supabase.from('faqs' as any).select('*'),
+        supabase.from('impact_metrics').select('*'),
+        supabase.from('faqs').select('*'),
       ]);
 
       const exportData = {

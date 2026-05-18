@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Pencil, Eye, Copy, FileText, Clock } from 'lucide-react';
+import { Pencil, Eye, Copy, FileText, Clock, Search, X } from 'lucide-react';
 import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
@@ -56,6 +56,8 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(emptyForm);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'draft' | 'published'>('all');
 
   const { status: autosaveStatus, clearDraft } = useAutosave({
     key: 'articles-form',
@@ -251,6 +253,7 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
               onMetaDescriptionChange={(v) => setFormData({ ...formData, meta_description: v })}
               onSlugChange={(v) => setFormData({ ...formData, slug: v })}
               titleSource={formData.title}
+              existingSlugs={articles.filter(a => a.id !== editingId && a.slug).map(a => a.slug!) }
             />
 
             {formData.content && (
@@ -269,13 +272,55 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
       </Card>
 
       <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Input
+              placeholder="Buscar por título, resumo ou tag..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          {searchQuery && (
+            <Button variant="ghost" size="sm" onClick={() => setSearchQuery('')} aria-label="Limpar busca">
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        <div className="flex gap-1.5 text-xs">
+          {(['all', 'draft', 'published'] as const).map(f => (
+            <button
+              key={f}
+              type="button"
+              onClick={() => setStatusFilter(f)}
+              className={`px-2.5 py-1 rounded-full border transition-colors ${statusFilter === f ? 'bg-foreground text-background border-foreground' : 'border-border text-muted-foreground hover:bg-muted'}`}
+            >
+              {f === 'all' ? 'Todos' : f === 'draft' ? 'Rascunhos' : 'Publicados'}
+            </button>
+          ))}
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {searchQuery || statusFilter !== 'all' ? 'Busca/filtro ativos — reordenação desabilitada' : 'Arraste os itens para reordenar'}
+        </p>
         {isLoading ? (
           <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
-        ) : articles.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8 text-sm">Nenhum artigo adicionado ainda. Crie o primeiro acima.</p>
-        ) : (
-        <SortableList items={articles} onReorder={handleReorder} renderItem={(article) => (
+        ) : (() => {
+          const q = searchQuery.toLowerCase();
+          const filtered = articles.filter(a => {
+            if (statusFilter !== 'all' && a.status !== statusFilter) return false;
+            if (!q) return true;
+            return a.title.toLowerCase().includes(q) ||
+                   (a.excerpt || '').toLowerCase().includes(q) ||
+                   (a.tags || []).some(t => t.toLowerCase().includes(q));
+          });
+          if (filtered.length === 0) return (
+            <p className="text-center text-muted-foreground py-8 text-sm">
+              {searchQuery || statusFilter !== 'all' ? 'Nenhum artigo encontrado.' : 'Nenhum artigo adicionado ainda. Crie o primeiro acima.'}
+            </p>
+          );
+          const isFiltered = !!searchQuery || statusFilter !== 'all';
+          const renderCard = (article: Article) => (
           <Card>
             <CardContent className="pt-4 pb-4">
               <div className="flex justify-between items-start">
@@ -334,8 +379,12 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
               </div>
             </CardContent>
           </Card>
-        )} />
-        )}
+          );
+          if (isFiltered) {
+            return <div className="space-y-2">{filtered.map(a => <div key={a.id}>{renderCard(a)}</div>)}</div>;
+          }
+          return <SortableList items={filtered} onReorder={handleReorder} renderItem={renderCard} />;
+        })()}
       </div>
     </div>
   );

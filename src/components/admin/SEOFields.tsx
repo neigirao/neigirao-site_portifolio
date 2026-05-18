@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, ChevronUp, Search, Wand2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, Search, Wand2, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SEOFieldsProps {
@@ -22,6 +22,7 @@ interface SEOFieldsProps {
   onMetaDescriptionChange: (value: string) => void;
   onSlugChange: (value: string) => void;
   titleSource?: string; // Used to auto-generate slug
+  existingSlugs?: string[]; // Slugs already taken by other records (for duplicate warning)
 }
 
 export function SEOFields({
@@ -32,6 +33,7 @@ export function SEOFields({
   onMetaDescriptionChange,
   onSlugChange,
   titleSource,
+  existingSlugs,
 }: SEOFieldsProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -155,6 +157,7 @@ export function SEOFields({
               value={slug}
               onChange={(e) => onSlugChange(generateSlug(e.target.value))}
               placeholder="url-amigavel"
+              aria-invalid={!!(slug && existingSlugs?.includes(slug))}
             />
             {titleSource && (
               <Button
@@ -168,6 +171,12 @@ export function SEOFields({
               </Button>
             )}
           </div>
+          {slug && existingSlugs?.includes(slug) && (
+            <p className="text-xs text-destructive flex items-center gap-1">
+              <AlertTriangle className="h-3 w-3" />
+              Este slug já está em uso por outro registro. Escolha um único.
+            </p>
+          )}
         </div>
       </CollapsibleContent>
     </Collapsible>

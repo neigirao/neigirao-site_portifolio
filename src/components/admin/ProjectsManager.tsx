@@ -308,6 +308,7 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
               onMetaDescriptionChange={(v) => updateForm({ meta_description: v })}
               onSlugChange={(v) => updateForm({ slug: v })}
               titleSource={formData.title}
+              existingSlugs={projects.filter(p => p.id !== editingId && p.slug).map(p => p.slug!) }
             />
             <div className="flex gap-2">
               <Button type="submit">{editingId ? 'Atualizar' : 'Criar'}</Button>

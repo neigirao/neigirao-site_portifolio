@@ -1,126 +1,125 @@
+# Plano de revisão e melhorias — Site + CMS
 
-# Home 100% editável pelo CMS + limpeza do admin
+Resultado de uma varredura na home editorial, páginas de detalhe, hooks de dados, autenticação e nos managers do admin. Abaixo, agrupei oportunidades por tema e priorizei em fases. Nada é aplicado ainda — é só para você aprovar/ajustar.
 
-## Objetivo
+---
 
-Permitir editar todos os textos da home editorial (`src/pages/Index.tsx`) pelo painel `/admin` e remover editores antigos do `SiteSettingsManager` que não impactam mais a home.
+## 1. Site público
 
-## Parte A — Tornar todos os textos editáveis
+### 1.1 Performance e Core Web Vitals
+- **Imagens**: padronizar uso do `OptimizedImage` (já existe) em todas as seções (`CasesSection`, `ProjectsEditorialSection`, `WorkSection`, `CredentialsSection`) com `width`/`height` explícitos e `loading="lazy"` exceto LCP.
+- **LCP**: garantir que a imagem/título do `CoverSection` use `fetchpriority="high"` e preload da fonte display.
+- **Prefetch de rotas**: pré-carregar `ProjectDetail` e `ExperienceDetail` ao passar o mouse nos cards (React Router `prefetch` via dynamic import).
+- **Bundle**: auditar `framer-motion`, `tiptap` e ícones lucide para tree-shaking; mover `RichTextEditor` para chunk separado (só admin).
 
-Adicionar leitura de `site_settings` (via `useSiteSettings`) e fallbacks em cada seção, e expor as chaves no `SiteSettingsManager` agrupadas por seção.
+### 1.2 SEO e descoberta
+- **Sitemap dinâmico**: confirmar que a edge function `generate-sitemap` inclui `projects`, `experiences (is_case)`, `articles published` e `skills` com `lastmod` correto.
+- **Schema.org**: adicionar `BreadcrumbList` em `ProjectDetail`/`ExperienceDetail` (componente já existe — só plugar) e `Article` schema em `ArticleDetail`.
+- **OG image dinâmica**: gerar OG por projeto/case usando `cover_image_url` ou fallback.
+- **H1/H2**: revisar `EssaySection` e `MastheadSection` para garantir um H1 único na home.
+- **Canonical**: validar canonical em `/projects/:slug`, `/experiences/:slug` e `/articles/:slug`.
 
-### Novas chaves em `site_settings`
+### 1.3 UX e acessibilidade
+- **Foco visível**: adicionar `:focus-visible` ring consistente em links da home editorial (hoje alguns somem).
+- **Navegação por teclado** no `WorkSection` (lista de experiências expandíveis).
+- **Reduced motion**: respeitar `prefers-reduced-motion` em transições do `EssaySection` e `PullQuoteSection`.
+- **Mobile (viewport 393px)**: revisar densidade tipográfica no `CoverSection` e wrap de tags em `ProjectsEditorialSection`.
+- **Empty states** para quando uma seção fica vazia (hoje sumimos a seção — ok — mas no admin precisa um aviso).
 
-**Masthead**
-- `masthead_brand` (default: "Nei Girão")
-- `masthead_edition` (default: "Edição 2026 · Vol. XV")
-- `masthead_nav` (JSON: `[{label, href}]` — Cases/Experiência/Projetos/Contato)
-- `masthead_cta_label` (default: "Baixar CV")
+### 1.4 Conteúdo e conversão
+- **CTA Contato**: o `ContactEditorialSection` poderia ter atalho direto para WhatsApp/Email com tracking GA.
+- **"See also" / Related**: o `useRelatedContent` está pronto — usar em `ArticleDetail` e `ExperienceDetail` (hoje só `ProjectDetail` usa de forma completa).
+- **Breadcrumbs visíveis** em páginas internas.
+- **Página 404**: enriquecer `NotFound` com links para projetos em destaque.
 
-**Cover**
-- `cover_issue_left` (default: "Perfil № 01")
-- `cover_issue_center` (default: "— Um Product Leader, em quinze anos —")
-- `cover_name` (default: "Nei Girão")
-- `cover_stat_years_label` (default: "anos")
-- `cover_stat_companies_label` (default: "companhias")
-- `cover_email_prefix` (default: "Para conversar, escreva para")
-- `cover_btn_primary` (default: "Falar comigo")
-- `cover_btn_secondary` (default: "Baixar CV (.pdf)")
-- `cover_btn_linkedin` (default: "LinkedIn ↗")
+---
 
-**Essay — sidebars**
-- `essay_team_direct_label` (default: "diretos")
-- `essay_team_squads_label` (default: "em squads")
-- `essay_sectors` (JSON array de strings — Seguros, Telecom, Mídia…)
-- `essay_domains` (JSON array — Ecommerce, Produto Digital, Dados, Observabilidade)
-- `essay_location_lines` (JSON array — "Rio de Janeiro", "Brasil")
-- `essay_languages` (JSON array — "PT · Nativo", "EN · Fluente")
-- `essay_label_current` / `essay_label_team` / `essay_label_sectors` / `essay_label_domains` / `essay_label_location` / `essay_label_languages` (labels das colunas)
+## 2. CMS / Admin
 
-**Cases (Nº 01)**
-- `cases_section_num` (default: "№ 01 — Cases selecionados")
-- `cases_title_html` (default: "Histórias <em>com</em> resultado.")
-- `cases_lead`
+### 2.1 Produtividade
+- **Busca + filtros** em listas longas (`ProjectsManager`, `ExperiencesManager`, `ArticlesManager`): filtro por visibilidade, brand/empresa, status.
+- **Bulk actions**: selecionar múltiplos itens para ocultar/mostrar/excluir.
+- **Duplicar com 1 clique** já existe em FAQs — replicar em Projects/Experiences/Articles.
+- **Preview lado a lado** (já há `PreviewModal`): expandir para Projects e Articles antes de salvar.
+- **Atalhos de teclado** (⌘S salvar, Esc cancelar) nos formulários.
 
-**Work (Nº 02)**
-- `work_section_num`, `work_title_html`, `work_lead`
+### 2.2 Qualidade de conteúdo
+- **Indicador de completude** (`CompletenessIndicator` existe) — exibir em cada item da lista (meta title, meta description, slug, imagem, alt text).
+- **Validação de SEO inline**: tamanho de `meta_title` (≤60), `meta_description` (≤160), aviso de duplicidade de slug.
+- **Alt text obrigatório** no `ImageUploader`.
+- **Rich text**: adicionar suporte a blocos de código e callouts no `RichTextEditor`; sanitização já está OK.
 
-**Projects (Nº 03)**
-- `projects_section_num`, `projects_title_html`, `projects_lead`
+### 2.3 Site Settings
+- **Agrupar por seção** (Cover, Essay, Contact, Footer, SEO global) no `SiteSettingsManager` — hoje é uma lista longa.
+- **Preview ao vivo** ao editar um campo (renderizar a seção correspondente).
+- **Reset para default** por campo.
 
-**Stack (Nº 04)**
-- `stack_section_num`, `stack_title_html`, `stack_lead`
-- `stack_category_labels` (JSON: `{product: "Produto", data: "Dados", ...}`)
+### 2.4 Mensagens de contato
+- **Marcar como lida / arquivar / responder** em `ContactMessagesManager` (hoje só lista + delete + CSV).
+- **Notificação por email** (edge function) quando chega nova mensagem.
+- **Anti-spam**: honeypot + rate limit por IP já existe; adicionar Turnstile/hCaptcha opcional.
 
-**Credentials (Nº 05)**
-- `cred_section_num`, `cred_title_html`, `cred_lead`
-- `cred_label_education` / `cred_label_certs` / `cred_label_courses`
-- `cred_courses` (JSON: `[{title, meta}]`) — substitui lista chumbada
+### 2.5 Dashboard
+- **DashboardStats**: incluir mensagens não lidas, projetos ocultos, artigos em rascunho, itens sem SEO/slug.
+- **Atividade recente** (últimas edições).
+- **Health checks**: links quebrados em projetos, imagens sem alt, slugs duplicados.
 
-**Contact (Nº 06)**
-- `contact_section_num` (default: "№ 06 — Contato")
-- `contact_title_html` (default: "Vamos <em>conversar</em>.")
-- `contact_label_email` / `contact_label_linkedin` / `contact_label_whatsapp` / `contact_label_cv`
-- `contact_linkedin_display` (default: "linkedin.com/in/neigirao")
-- `contact_cv_value` (default: "Nei Girão · CV · 2026")
+### 2.6 Operação
+- **Histórico/versionamento** simples (snapshot do registro antes de update) para reverter edições.
+- **Logs de auditoria** (quem editou o quê, quando) — tabela `audit_log` com `user_id`, `entity`, `action`, `diff`.
+- **Backup export**: botão "Exportar tudo" gerando JSON do conteúdo público.
 
-**Footer editorial**
-- `footer_ed_left` (default: "© Nei Girão · 2026")
-- `footer_ed_right` (default: "Direction C · Editorial")
+---
 
-### Sanitização
+## 3. Backend / Segurança
 
-Onde o valor permite HTML (sufixo `_html`), renderizar com `SafeHTML` (DOMPurify) — segue regra do projeto. Demais campos como texto puro.
+- **Rodar `security--run_security_scan`** para checar RLS e funções com `SECURITY DEFINER`.
+- **Profiles**: revisar policy "Users can view all profiles" — restringir a admins.
+- **Storage**: confirmar que bucket `portfolio-images` tem políticas de upload restritas a admin (hoje é público para leitura — ok).
+- **Edge functions**: adicionar logs estruturados e timeouts em `generate-*`.
+- **Rate limit global** em `contact_messages` (já existe por IP — validar janela).
 
-### Mudanças no `SiteSettingsManager.tsx`
+---
 
-Criar **um novo bloco "Home Editorial"** organizado em Cards, um por seção (Masthead, Cover, Essay, Cases, Work, Projects, Stack, Credentials, Contact, Footer). Inputs simples para texto, `Textarea` para leads, editor JSON (com botão + / ✕) para arrays (igual `hero_stats` já faz) — `essay_sectors`, `essay_domains`, `essay_languages`, `cred_courses`, `masthead_nav`, `stack_category_labels`.
+## 4. DX e manutenção
 
-## Parte B — Limpar editores obsoletos
+- **Storybook leve** ou playground para os managers (opcional).
+- **Testes**: smoke tests do CMS (criar, editar, deletar) com Vitest + Testing Library nos managers principais.
+- **Tipos**: substituir os `from('faqs' as any)` por tipos gerados — regenerar `types.ts` (Supabase faz automaticamente).
+- **Lint/CI**: adicionar regra para proibir cores hardcoded fora dos tokens.
 
-A home editorial atual **não usa** mais: `HeroSection`, `AboutSection`, `ImpactMetrics`, `FAQSection`, `SkillsSection` legada, etc. Os seguintes blocos do `SiteSettingsManager` viram lixo visual e serão **removidos**:
+---
 
-- "Foto do Hero" → **manter** (ainda usada se Hero antigo voltar; mas hoje não aparece na home → remover para reduzir confusão; manter se outra rota usa)
-- "Textos do Impacto Mensurável" → remover
-- "Textos da Seção Sobre" → **manter** (página `/sobre` usa)
-- "Hero Stats" → remover
-- "Methodology Cards" → **manter** (página `/sobre` pode usar — verificar)
-- "Hero Tags" → remover
-- "Hero Textos" (subtitle/description) → remover
-- "Subtítulos das Seções" (Experiência/Projetos/Skills/Education/Contato/FAQ) → remover
+## 5. Roadmap sugerido (3 fases)
 
-Antes de remover, faço grep para confirmar zero uso em rotas ativas (`/`, `/sobre`, `/contato`, `/artigos`). Se alguma chave ainda for usada em outra rota, mantenho.
+```text
+Fase 1 — Quick wins (1 sessão)
+  • Busca + filtros nos managers grandes
+  • CompletenessIndicator nas listas + validação SEO inline
+  • Alt text obrigatório no ImageUploader
+  • Agrupar SiteSettings por seção
+  • Marcar mensagem como lida + notificação por email
 
-## Detalhes técnicos
+Fase 2 — UX/SEO do site (1–2 sessões)
+  • Breadcrumb schema + Article schema
+  • OG image dinâmica por projeto
+  • Related content em Article/Experience detail
+  • Focus-visible + reduced-motion
+  • Prefetch de rotas internas
 
-- Nada de migração de schema: tudo cabe em `site_settings` (KV existente).
-- Não apago linhas antigas do banco (ficam órfãs inofensivas) — só removo os editores da UI.
-- Helpers: criar `src/lib/siteSettingsHelpers.ts` com `parseJsonSetting(value, fallback)` para evitar try/catch repetidos.
-- Acessibilidade: manter `<h2>`, `<h3>` semânticos; HTML só onde precisa (títulos com `<em>`).
+Fase 3 — Robustez (1–2 sessões)
+  • Audit log + histórico simples
+  • Dashboard de health checks
+  • Bulk actions e duplicação universal
+  • Security scan + ajustes de RLS
+  • Testes dos managers principais
+```
 
-## Arquivos afetados
+---
 
-- `src/components/sections/MastheadSection.tsx`
-- `src/components/sections/CoverSection.tsx`
-- `src/components/sections/EssaySection.tsx`
-- `src/components/sections/CasesSection.tsx`
-- `src/components/sections/WorkSection.tsx`
-- `src/components/sections/ProjectsEditorialSection.tsx`
-- `src/components/sections/StackSection.tsx`
-- `src/components/sections/CredentialsSection.tsx`
-- `src/components/sections/ContactEditorialSection.tsx`
-- `src/components/sections/FooterEditorialSection.tsx`
-- `src/components/admin/SiteSettingsManager.tsx` (grande refactor)
-- `src/lib/siteSettingsHelpers.ts` (novo)
+## Próximo passo
 
-## Fora do escopo
-
-- Não mexer em conteúdo gerenciado por tabelas próprias (experiences, projects, skills, education, certifications, articles).
-- Não alterar visual/CSS — só substituir strings literais por leitura do CMS.
-- Não criar migration nem alterar `site_settings` schema.
-
-## Validação
-
-1. Build sem erros TS.
-2. Home renderiza idêntica ao atual (fallbacks = textos atuais).
-3. Admin `/admin` → aba Configurações → editar uma chave de cada seção → salvar → home reflete.
+Me diga:
+1. Quer seguir nessa ordem (Fase 1 → 2 → 3) ou priorizar algo específico?
+2. Há algum item que devo remover ou que é prioridade absoluta?
+3. Posso já começar pela **Fase 1** depois da sua aprovação?

@@ -260,7 +260,7 @@ export function useFAQs() {
     queryKey: ['faqs'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('faqs' as any)
+        .from('faqs')
         .select('*')
         .eq('is_visible', true)
         .order('order_index', { ascending: true });

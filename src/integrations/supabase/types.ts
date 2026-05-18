@@ -109,6 +109,7 @@ export type Database = {
           abbr: string
           created_at: string
           id: string
+          is_visible: boolean
           logo_url: string | null
           name: string
           order_index: number
@@ -117,6 +118,7 @@ export type Database = {
           abbr: string
           created_at?: string
           id?: string
+          is_visible?: boolean
           logo_url?: string | null
           name: string
           order_index?: number
@@ -125,6 +127,7 @@ export type Database = {
           abbr?: string
           created_at?: string
           id?: string
+          is_visible?: boolean
           logo_url?: string | null
           name?: string
           order_index?: number
@@ -138,6 +141,7 @@ export type Database = {
           id: string
           message: string
           name: string
+          read_at: string | null
         }
         Insert: {
           created_at?: string
@@ -145,6 +149,7 @@ export type Database = {
           id?: string
           message: string
           name: string
+          read_at?: string | null
         }
         Update: {
           created_at?: string
@@ -152,6 +157,7 @@ export type Database = {
           id?: string
           message?: string
           name?: string
+          read_at?: string | null
         }
         Relationships: []
       }

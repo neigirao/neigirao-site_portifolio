@@ -2,7 +2,7 @@
  * ExperiencesManager Component
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Eye, Copy, EyeOff } from 'lucide-react';
+import { Pencil, Eye, Copy, EyeOff, Search, X } from 'lucide-react';
 import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
@@ -55,6 +55,8 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filter, setFilter] = useState<'all' | 'cases' | 'hidden'>('all');
 
   const { status: autosaveStatus, clearDraft } = useAutosave({
     key: 'experiences-form',
@@ -226,6 +228,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
               onMetaDescriptionChange={(value) => setFormData({ ...formData, meta_description: value })}
               onSlugChange={(value) => setFormData({ ...formData, slug: value })}
               titleSource={`${formData.role} - ${formData.company}`}
+              existingSlugs={experiences.filter(e => e.id !== editingId && e.slug).map(e => e.slug!) }
             />
             <div className="flex gap-2">
               <Button type="submit">{editingId ? 'Atualizar' : 'Criar'}</Button>
@@ -239,19 +242,63 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       </Card>
 
       <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Input
+              placeholder="Buscar por empresa, cargo ou período..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          {searchQuery && (
+            <Button variant="ghost" size="sm" onClick={() => setSearchQuery('')} aria-label="Limpar busca">
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        <div className="flex gap-1.5 text-xs">
+          {(['all', 'cases', 'hidden'] as const).map(f => (
+            <button
+              key={f}
+              type="button"
+              onClick={() => setFilter(f)}
+              className={`px-2.5 py-1 rounded-full border transition-colors ${filter === f ? 'bg-foreground text-background border-foreground' : 'border-border text-muted-foreground hover:bg-muted'}`}
+            >
+              {f === 'all' ? 'Todas' : f === 'cases' ? 'Cases' : 'Ocultas'}
+            </button>
+          ))}
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {searchQuery || filter !== 'all' ? 'Busca/filtro ativos — reordenação desabilitada' : 'Arraste os itens para reordenar'}
+        </p>
         {isLoading ? (
           <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
-        ) : experiences.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma experiência adicionada ainda.</p>
-        ) : (
-        <SortableList items={experiences} onReorder={handleReorder} renderItem={(exp) => (
+        ) : (() => {
+          const q = searchQuery.toLowerCase();
+          const filtered = experiences.filter(exp => {
+            if (filter === 'cases' && !exp.is_case) return false;
+            if (filter === 'hidden' && exp.is_visible) return false;
+            if (!q) return true;
+            return exp.company.toLowerCase().includes(q) ||
+                   exp.role.toLowerCase().includes(q) ||
+                   exp.period.toLowerCase().includes(q);
+          });
+          if (filtered.length === 0) return (
+            <p className="text-center text-muted-foreground py-8 text-sm">
+              {searchQuery || filter !== 'all' ? 'Nenhuma experiência encontrada.' : 'Nenhuma experiência adicionada ainda.'}
+            </p>
+          );
+          const isFiltered = !!searchQuery || filter !== 'all';
+          const renderCard = (exp: Experience) => (
           <Card className={!exp.is_visible ? 'opacity-50' : ''}>
             <CardContent className="pt-4 pb-4">
               <div className="flex justify-between items-start">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-lg truncate">{exp.role}</h3>
+                    {exp.is_case && <span className="text-[10px] uppercase tracking-wide bg-teal-accent/10 text-teal-accent px-1.5 py-0.5 rounded">Case</span>}
                     {!exp.is_visible && <EyeOff className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
                     <CompletenessIndicator hasSeo={!!(exp.meta_title && exp.meta_description)} hasImage={!!exp.logo_url} hasSlug={!!exp.slug} itemName={exp.role} />
                   </div>
@@ -271,8 +318,12 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
               </div>
             </CardContent>
           </Card>
-        )} />
-        )}
+          );
+          if (isFiltered) {
+            return <div className="space-y-2">{filtered.map(exp => <div key={exp.id}>{renderCard(exp)}</div>)}</div>;
+          }
+          return <SortableList items={filtered} onReorder={handleReorder} renderItem={renderCard} />;
+        })()}
       </div>
 
       <PreviewModal open={showPreview} onOpenChange={setShowPreview} type="experience" data={formData} />

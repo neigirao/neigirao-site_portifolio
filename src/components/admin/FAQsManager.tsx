@@ -48,9 +48,9 @@ export function FAQsManager({ onDirtyChange }: FAQsManagerProps) {
 
   const fetchItems = async () => {
     setIsLoading(true);
-    const { data, error } = await supabase.from('faqs' as any).select('*').order('order_index');
+    const { data, error } = await supabase.from('faqs').select('*').order('order_index');
     if (error) { toast.error('Erro ao carregar FAQs'); }
-    setItems((data || []) as FAQ[]);
+    setItems((data || []) as unknown as FAQ[]);
     setIsLoading(false);
   };
 
@@ -65,11 +65,11 @@ export function FAQsManager({ onDirtyChange }: FAQsManagerProps) {
     };
 
     if (editingId) {
-      const { error } = await supabase.from('faqs' as any).update(payload).eq('id', editingId);
+      const { error } = await supabase.from('faqs').update(payload).eq('id', editingId);
       if (error) { toast.error('Erro ao atualizar'); return; }
       toast.success('FAQ atualizada!');
     } else {
-      const { error } = await supabase.from('faqs' as any).insert([payload]);
+      const { error } = await supabase.from('faqs').insert([payload]);
       if (error) { toast.error('Erro ao criar'); return; }
       toast.success('FAQ criada!');
     }
@@ -83,7 +83,7 @@ export function FAQsManager({ onDirtyChange }: FAQsManagerProps) {
 
   const handleDuplicate = async (f: FAQ) => {
     const nextIdx = items.length > 0 ? Math.max(...items.map(i => i.order_index)) + 1 : 0;
-    const { error } = await supabase.from('faqs' as any).insert([{
+    const { error } = await supabase.from('faqs').insert([{
       question: f.question, answer: f.answer, is_visible: false, order_index: nextIdx,
     }]);
     if (error) { toast.error('Erro ao duplicar'); return; }
@@ -91,7 +91,7 @@ export function FAQsManager({ onDirtyChange }: FAQsManagerProps) {
   };
 
   const handleDelete = async (id: string) => {
-    const { error } = await supabase.from('faqs' as any).delete().eq('id', id);
+    const { error } = await supabase.from('faqs').delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir'); return; }
     toast.success('Excluída!'); fetchItems();
   };
@@ -100,14 +100,14 @@ export function FAQsManager({ onDirtyChange }: FAQsManagerProps) {
     setItems(reordered);
     await Promise.all(
       reordered.map((item, index) =>
-        supabase.from('faqs' as any).update({ order_index: index }).eq('id', item.id)
+        supabase.from('faqs').update({ order_index: index }).eq('id', item.id)
       )
     );
     toast.success('Ordem atualizada!');
   };
 
   const handleToggleVisible = async (f: FAQ) => {
-    const { error } = await supabase.from('faqs' as any).update({ is_visible: !f.is_visible }).eq('id', f.id);
+    const { error } = await supabase.from('faqs').update({ is_visible: !f.is_visible }).eq('id', f.id);
     if (error) { toast.error('Erro ao atualizar visibilidade'); return; }
     setItems(prev => prev.map(x => x.id === f.id ? { ...x, is_visible: !f.is_visible } : x));
   };
