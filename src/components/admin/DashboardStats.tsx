@@ -203,7 +203,12 @@ export function DashboardStats({
       {/* Supplementary counts */}
       <Card>
         <CardContent className="pt-4 pb-4">
-          <p className="text-sm font-semibold text-foreground mb-3">Conteúdo Complementar</p>
+          <p className="text-sm font-semibold text-foreground mb-3">
+            Conteúdo Complementar
+            <span className="ml-2 text-xs font-normal text-muted-foreground">
+              {testimonials.length + certifications.length + companies.length + metrics.length + faqs.length} itens
+            </span>
+          </p>
           <div className="flex flex-wrap gap-3">
             {supplementary.map(({ label, count, icon }) => (
               <div key={label} className="flex items-center gap-1.5 px-3 py-1.5 bg-muted rounded-lg text-sm">
