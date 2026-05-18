@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Pencil, Copy, Quote } from 'lucide-react';
+import { Pencil, Copy, Quote, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { SortableList } from './SortableList';
@@ -105,6 +105,12 @@ export function TestimonialsManager({ onDirtyChange }: TestimonialsManagerProps)
     toast.success('Duplicado!'); fetchItems();
   };
 
+  const handleToggleVisible = async (t: Testimonial) => {
+    const { error } = await supabase.from('testimonials').update({ is_visible: !t.is_visible }).eq('id', t.id);
+    if (error) { toast.error('Erro ao atualizar visibilidade'); return; }
+    setItems(prev => prev.map(x => x.id === t.id ? { ...x, is_visible: !t.is_visible } : x));
+  };
+
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from('testimonials').delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir'); return; }
@@ -191,6 +197,9 @@ export function TestimonialsManager({ onDirtyChange }: TestimonialsManagerProps)
                     </div>
                   </div>
                   <div className="flex gap-2 flex-shrink-0 ml-4">
+                    <Button size="icon" variant="ghost" onClick={() => handleToggleVisible(t)} aria-label={t.is_visible ? `Ocultar depoimento de ${t.author_name}` : `Mostrar depoimento de ${t.author_name}`}>
+                      {t.is_visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
+                    </Button>
                     <Button size="icon" variant="outline" onClick={() => handleDuplicate(t)} aria-label={`Duplicar depoimento de ${t.author_name}`}><Copy className="h-4 w-4" /></Button>
                     <Button size="icon" variant="outline" onClick={() => handleEdit(t)} aria-label={`Editar depoimento de ${t.author_name}`}><Pencil className="h-4 w-4" /></Button>
                     <DeleteConfirmButton itemName={t.author_name} onConfirm={() => handleDelete(t.id)} />

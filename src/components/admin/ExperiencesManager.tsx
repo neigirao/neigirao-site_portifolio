@@ -259,7 +259,9 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
                   <p className="text-sm text-muted-foreground">{exp.period}</p>
                 </div>
                 <div className="flex gap-2 items-center flex-shrink-0 ml-4">
-                  <Switch checked={exp.is_visible} onCheckedChange={() => handleToggleVisibility(exp)} aria-label={`Visibilidade de ${exp.role}`} />
+                  <Button size="icon" variant="ghost" onClick={() => handleToggleVisibility(exp)} aria-label={exp.is_visible ? `Ocultar ${exp.role}` : `Mostrar ${exp.role}`}>
+                    {exp.is_visible ? <Eye className="h-4 w-4" aria-hidden="true" /> : <EyeOff className="h-4 w-4 text-muted-foreground" aria-hidden="true" />}
+                  </Button>
                   <Button size="icon" variant="outline" onClick={() => handleDuplicate(exp)} aria-label={`Duplicar ${exp.role}`}>
                     <Copy className="h-4 w-4" aria-hidden="true" />
                   </Button>
