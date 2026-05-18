@@ -462,6 +462,17 @@ export function SiteSettingsManager() {
         </a>
       </SectionCard>
 
+      {dirty && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-card border shadow-lg rounded-full px-5 py-3">
+          <span className="text-sm text-muted-foreground">Alterações não salvas</span>
+          <Button variant="ghost" size="sm" onClick={discardChanges}>Descartar</Button>
+          <Button size="sm" onClick={saveAll} disabled={updateSetting.isPending}>
+            <Save className="h-4 w-4 mr-2" />
+            {updateSetting.isPending ? 'Salvando...' : 'Salvar'}
+          </Button>
+        </div>
+      )}
+
       <Sheet open={previewOpen} onOpenChange={setPreviewOpen}>
         <SheetContent side="right" className="w-[90vw] sm:max-w-[700px] p-0 flex flex-col">
           <SheetHeader className="px-4 py-3 border-b shrink-0">
