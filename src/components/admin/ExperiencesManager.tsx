@@ -10,7 +10,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2, Eye, Copy, EyeOff } from 'lucide-react';
+import { Pencil, Eye, Copy, EyeOff } from 'lucide-react';
+import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { RichTextEditor } from './RichTextEditor';
@@ -53,6 +54,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { status: autosaveStatus, clearDraft } = useAutosave({
     key: 'experiences-form',
@@ -69,9 +71,11 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
   useEffect(() => { fetchExperiences(); }, []);
 
   const fetchExperiences = async () => {
+    setIsLoading(true);
     const { data, error } = await supabase.from('experiences').select('*').order('order_index', { ascending: true });
-    if (error) { toast.error('Erro ao carregar experiências'); return; }
+    if (error) { toast.error('Erro ao carregar experiências'); }
     setExperiences(data || []);
+    setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -124,8 +128,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
     fetchExperiences();
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Excluir experiência "${name}"?`)) return;
+  const handleDelete = async (id: string) => {
     const { error } = await supabase.from('experiences').delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir experiência'); return; }
     toast.success('Experiência excluída!');
@@ -164,16 +167,16 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="company">Empresa</Label>
+                <Label htmlFor="company">Empresa <span className="text-destructive" aria-hidden="true">*</span></Label>
                 <Input id="company" value={formData.company} onChange={(e) => setFormData({ ...formData, company: e.target.value })} required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="role">Cargo</Label>
+                <Label htmlFor="role">Cargo <span className="text-destructive" aria-hidden="true">*</span></Label>
                 <Input id="role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} required />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="period">Período</Label>
+              <Label htmlFor="period">Período <span className="text-destructive" aria-hidden="true">*</span></Label>
               <Input id="period" value={formData.period} onChange={(e) => setFormData({ ...formData, period: e.target.value })} required />
             </div>
             <ImageUploader value={formData.logo_url} onChange={(url) => setFormData({ ...formData, logo_url: url })} label="Logo da Empresa" folder="experiences" />
@@ -237,9 +240,11 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
 
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
-        {experiences.length === 0 && (
+        {isLoading ? (
+          <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
+        ) : experiences.length === 0 ? (
           <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma experiência adicionada ainda.</p>
-        )}
+        ) : (
         <SortableList items={experiences} onReorder={handleReorder} renderItem={(exp) => (
           <Card className={!exp.is_visible ? 'opacity-50' : ''}>
             <CardContent className="pt-4 pb-4">
@@ -261,14 +266,13 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
                   <Button size="icon" variant="outline" onClick={() => handleEdit(exp)} aria-label={`Editar ${exp.role}`}>
                     <Pencil className="h-4 w-4" aria-hidden="true" />
                   </Button>
-                  <Button size="icon" variant="destructive" onClick={() => handleDelete(exp.id, exp.role)} aria-label={`Excluir ${exp.role}`}>
-                    <Trash2 className="h-4 w-4" aria-hidden="true" />
-                  </Button>
+                  <DeleteConfirmButton itemName={exp.role} onConfirm={() => handleDelete(exp.id)} />
                 </div>
               </div>
             </CardContent>
           </Card>
         )} />
+        )}
       </div>
 
       <PreviewModal open={showPreview} onOpenChange={setShowPreview} type="experience" data={formData} />

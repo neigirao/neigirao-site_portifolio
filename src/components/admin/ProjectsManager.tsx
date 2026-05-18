@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2, Eye, Copy, EyeOff } from 'lucide-react';
+import { Pencil, Eye, Copy, EyeOff } from 'lucide-react';
+import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { RichTextEditor } from './RichTextEditor';
@@ -86,7 +87,7 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
 
   const fetchProjects = async () => {
     const { data, error } = await supabase.from('projects').select('*').order('order_index', { ascending: true });
-    if (error) { toast.error('Erro ao carregar projetos'); return; }
+    if (error) { toast.error('Erro ao carregar projetos'); }
     setProjects(data || []);
   };
 
@@ -177,8 +178,7 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
     fetchProjects();
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Excluir projeto "${name}"?`)) return;
+  const handleDelete = async (id: string) => {
     const { error } = await supabase.from('projects').delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir projeto'); return; }
     toast.success('Projeto excluído!');
@@ -319,9 +319,9 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
 
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
-        {projects.length === 0 && (
+        {projects.length === 0 ? (
           <p className="text-center text-muted-foreground py-8 text-sm">Nenhum projeto adicionado ainda.</p>
-        )}
+        ) : (
         <SortableList items={projects} onReorder={handleReorder} renderItem={(project) => (
           <Card className={!project.is_visible ? 'opacity-60' : ''}>
             <CardContent className="pt-4 pb-4">
@@ -354,14 +354,13 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
                   <Button size="icon" variant="outline" onClick={() => handleEdit(project)} aria-label={`Editar ${project.title}`}>
                     <Pencil className="h-4 w-4" aria-hidden="true" />
                   </Button>
-                  <Button size="icon" variant="destructive" onClick={() => handleDelete(project.id, project.title)} aria-label={`Excluir ${project.title}`}>
-                    <Trash2 className="h-4 w-4" aria-hidden="true" />
-                  </Button>
+                  <DeleteConfirmButton itemName={project.title} onConfirm={() => handleDelete(project.id)} />
                 </div>
               </div>
             </CardContent>
           </Card>
         )} />
+        )}
       </div>
 
       <PreviewModal open={showPreview} onOpenChange={setShowPreview} type="project" data={{ ...formData, tags: tagList }} />

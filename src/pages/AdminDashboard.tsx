@@ -142,10 +142,10 @@ export default function AdminDashboard() {
             <ExperiencesManager onDirtyChange={setIsDirty} />
           </TabsContent>
           <TabsContent value="projects">
-            <ProjectsManager />
+            <ProjectsManager onDirtyChange={setIsDirty} />
           </TabsContent>
           <TabsContent value="articles">
-            <ArticlesManager />
+            <ArticlesManager onDirtyChange={setIsDirty} />
           </TabsContent>
           <TabsContent value="skills">
             <SkillsManager onDirtyChange={setIsDirty} />
@@ -154,19 +154,19 @@ export default function AdminDashboard() {
             <EducationManager onDirtyChange={setIsDirty} />
           </TabsContent>
           <TabsContent value="metrics">
-            <MetricsManager />
+            <MetricsManager onDirtyChange={setIsDirty} />
           </TabsContent>
           <TabsContent value="companies">
-            <CompaniesManager />
+            <CompaniesManager onDirtyChange={setIsDirty} />
           </TabsContent>
           <TabsContent value="certifications">
-            <CertificationsManager />
+            <CertificationsManager onDirtyChange={setIsDirty} />
           </TabsContent>
           <TabsContent value="testimonials">
-            <TestimonialsManager />
+            <TestimonialsManager onDirtyChange={setIsDirty} />
           </TabsContent>
           <TabsContent value="faqs">
-            <FAQsManager />
+            <FAQsManager onDirtyChange={setIsDirty} />
           </TabsContent>
           <TabsContent value="messages">
             <ContactMessagesManager />

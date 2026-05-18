@@ -10,7 +10,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2, Eye, Copy, EyeOff } from 'lucide-react';
+import { Pencil, Eye, Copy, EyeOff } from 'lucide-react';
+import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { toast } from 'sonner';
 import { SEOFields } from './SEOFields';
 import { SortableList } from './SortableList';
@@ -40,6 +41,7 @@ const emptyForm = { institution: '', degree: '', period: '', description: '', me
 
 export function EducationManager({ onDirtyChange }: EducationManagerProps) {
   const [education, setEducation] = useState<Education[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
@@ -58,9 +60,11 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
   useEffect(() => { fetchEducation(); }, []);
 
   const fetchEducation = async () => {
+    setIsLoading(true);
     const { data, error } = await supabase.from('education').select('*').order('order_index', { ascending: true });
-    if (error) { toast.error('Erro ao carregar educação'); return; }
+    if (error) { toast.error('Erro ao carregar educação'); }
     setEducation(data || []);
+    setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,8 +112,7 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
     fetchEducation();
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Excluir "${name}"?`)) return;
+  const handleDelete = async (id: string) => {
     const { error } = await supabase.from('education').delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir educação'); return; }
     toast.success('Educação excluída!');
@@ -148,16 +151,16 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="institution">Instituição</Label>
+                <Label htmlFor="institution">Instituição <span className="text-destructive" aria-hidden="true">*</span></Label>
                 <Input id="institution" value={formData.institution} onChange={(e) => setFormData({ ...formData, institution: e.target.value })} required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="degree">Curso/Grau</Label>
+                <Label htmlFor="degree">Curso/Grau <span className="text-destructive" aria-hidden="true">*</span></Label>
                 <Input id="degree" value={formData.degree} onChange={(e) => setFormData({ ...formData, degree: e.target.value })} required />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="period">Período</Label>
+              <Label htmlFor="period">Período <span className="text-destructive" aria-hidden="true">*</span></Label>
               <Input id="period" value={formData.period} onChange={(e) => setFormData({ ...formData, period: e.target.value })} required />
             </div>
             <div className="space-y-2">
@@ -182,9 +185,11 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
 
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
-        {education.length === 0 && (
+        {isLoading ? (
+          <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
+        ) : education.length === 0 ? (
           <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma educação adicionada ainda.</p>
-        )}
+        ) : (
         <SortableList items={education} onReorder={handleReorder} renderItem={(edu) => (
           <Card className={!edu.is_visible ? 'opacity-50' : ''}>
             <CardContent className="pt-4 pb-4">
@@ -206,14 +211,13 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
                   <Button size="icon" variant="outline" onClick={() => handleEdit(edu)} aria-label={`Editar ${edu.degree}`}>
                     <Pencil className="h-4 w-4" aria-hidden="true" />
                   </Button>
-                  <Button size="icon" variant="destructive" onClick={() => handleDelete(edu.id, edu.degree)} aria-label={`Excluir ${edu.degree}`}>
-                    <Trash2 className="h-4 w-4" aria-hidden="true" />
-                  </Button>
+                  <DeleteConfirmButton itemName={edu.degree} onConfirm={() => handleDelete(edu.id)} />
                 </div>
               </div>
             </CardContent>
           </Card>
         )} />
+        )}
       </div>
 
       <PreviewModal open={showPreview} onOpenChange={setShowPreview} type="education" data={formData} />
