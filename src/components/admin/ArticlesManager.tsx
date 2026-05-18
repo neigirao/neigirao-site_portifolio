@@ -253,6 +253,7 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
               onMetaDescriptionChange={(v) => setFormData({ ...formData, meta_description: v })}
               onSlugChange={(v) => setFormData({ ...formData, slug: v })}
               titleSource={formData.title}
+              existingSlugs={articles.filter(a => a.id !== editingId && a.slug).map(a => a.slug!) }
             />
 
             {formData.content && (
