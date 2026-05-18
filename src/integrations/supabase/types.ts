@@ -202,6 +202,7 @@ export type Database = {
       }
       experiences: {
         Row: {
+          case_body: string | null
           case_result: string | null
           company: string
           created_at: string
@@ -219,6 +220,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          case_body?: string | null
           case_result?: string | null
           company: string
           created_at?: string
@@ -236,6 +238,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          case_body?: string | null
           case_result?: string | null
           company?: string
           created_at?: string
