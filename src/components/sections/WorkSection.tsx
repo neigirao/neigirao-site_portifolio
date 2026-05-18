@@ -7,26 +7,8 @@ interface Props {
   isLoading: boolean;
 }
 
-interface CompanyGroup {
-  company: string;
-  range: string;
-  roles: DbExperience[];
-}
-
-function groupByCompany(experiences: DbExperience[]): CompanyGroup[] {
-  const map = new Map<string, CompanyGroup>();
-  for (const exp of experiences) {
-    if (!map.has(exp.company)) {
-      map.set(exp.company, { company: exp.company, range: exp.period, roles: [] });
-    }
-    map.get(exp.company)!.roles.push(exp);
-  }
-  return Array.from(map.values());
-}
-
 export function WorkSection({ experiences, isLoading }: Props) {
   const { settings } = useSiteSettings();
-  const groups = groupByCompany(experiences);
 
   const sectionNum = settings.work_section_num || "№ 02 — Onde estive";
   const titleHtml = settings.work_title_html || "A <em>trajetória</em>.";
@@ -54,19 +36,17 @@ export function WorkSection({ experiences, isLoading }: Props) {
         </div>
 
         <div className="ed-work">
-          {groups.map((g) => (
-            <div key={g.company} className="ed-work-row">
-              <div className="ed-work-co">{g.company}</div>
+          {experiences.map((exp) => (
+            <div key={exp.id} className="ed-work-row">
+              <div className="ed-work-co">{exp.company}</div>
               <div className="ed-work-roles">
-                {g.roles.map((r) => (
-                  <div key={r.id} className="r">
-                    <span className="title">{r.role}</span>
-                    <span className="meta">{r.period}</span>
-                    {r.description && <SafeHTML as="div" className="desc" html={r.description} />}
-                  </div>
-                ))}
+                <div className="r">
+                  <span className="title">{exp.role}</span>
+                  <span className="meta">{exp.period}</span>
+                  {exp.description && <SafeHTML as="div" className="desc" html={exp.description} />}
+                </div>
               </div>
-              <div className="ed-work-range">{g.range}</div>
+              <div className="ed-work-range">{exp.period}</div>
             </div>
           ))}
         </div>
