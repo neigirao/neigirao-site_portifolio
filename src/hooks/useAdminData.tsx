@@ -221,11 +221,11 @@ export function useAdminMetrics() {
     queryKey: ['admin-metrics'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('metrics')
+        .from('impact_metrics')
         .select('*')
         .order('order_index', { ascending: true });
       if (error) throw error;
-      return data as AdminMetric[];
+      return (data || []) as unknown as AdminMetric[];
     },
     ...queryOptions,
   });
@@ -236,11 +236,11 @@ export function useAdminFAQs() {
     queryKey: ['admin-faqs'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('faqs' as any)
+        .from('faqs')
         .select('*')
         .order('order_index', { ascending: true });
       if (error) throw error;
-      return (data || []) as AdminFAQ[];
+      return (data || []) as unknown as AdminFAQ[];
     },
     ...queryOptions,
   });

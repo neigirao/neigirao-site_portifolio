@@ -50,7 +50,7 @@ export function FAQsManager({ onDirtyChange }: FAQsManagerProps) {
     setIsLoading(true);
     const { data, error } = await supabase.from('faqs' as any).select('*').order('order_index');
     if (error) { toast.error('Erro ao carregar FAQs'); }
-    setItems((data || []) as FAQ[]);
+    setItems((data || []) as unknown as FAQ[]);
     setIsLoading(false);
   };
 
