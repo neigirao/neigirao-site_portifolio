@@ -1,0 +1,1 @@
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS is_visible BOOLEAN NOT NULL DEFAULT true;
