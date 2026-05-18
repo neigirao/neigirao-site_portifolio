@@ -360,6 +360,7 @@ export type Database = {
           highlight_metric: string | null
           id: string
           image_url: string | null
+          is_visible: boolean
           learnings: string | null
           link: string | null
           meta_description: string | null
@@ -382,6 +383,7 @@ export type Database = {
           highlight_metric?: string | null
           id?: string
           image_url?: string | null
+          is_visible?: boolean
           learnings?: string | null
           link?: string | null
           meta_description?: string | null
@@ -404,6 +406,7 @@ export type Database = {
           highlight_metric?: string | null
           id?: string
           image_url?: string | null
+          is_visible?: boolean
           learnings?: string | null
           link?: string | null
           meta_description?: string | null
