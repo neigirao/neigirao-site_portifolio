@@ -1,0 +1,1 @@
+ALTER TABLE public.experiences ADD COLUMN IF NOT EXISTS case_body TEXT;
