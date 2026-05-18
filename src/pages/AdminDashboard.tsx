@@ -21,8 +21,9 @@ import { useAdminDashboardData } from '@/hooks/useAdminData';
 import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { LogOut, RefreshCw, Home, ChevronDown, Briefcase, Wrench, Settings, Download } from 'lucide-react';
+import { LogOut, RefreshCw, Home, ChevronDown, Briefcase, LayoutList, Settings, Download } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const tabGroups = [
   {
@@ -38,7 +39,7 @@ const tabGroups = [
   },
   {
     label: 'Complementar',
-    icon: Wrench,
+    icon: LayoutList,
     tabs: [
       { value: 'metrics', label: 'Métricas' },
       { value: 'companies', label: 'Empresas' },
@@ -144,21 +145,35 @@ export default function AdminDashboard() {
             <p className="text-sm text-muted-foreground">Olá, {user?.email}</p>
           </div>
           <div className="flex items-center gap-2">
-            <BulkSlugGenerator onComplete={refetchAll} />
-            <Button onClick={handleExportJSON} variant="ghost" size="sm" disabled={isExporting} aria-label="Exportar backup JSON">
-              <Download className="h-4 w-4" aria-hidden="true" />
-              <span className="sr-only">Exportar JSON</span>
-            </Button>
-            <Button onClick={refetchAll} variant="ghost" size="sm" aria-label="Atualizar dados">
-              <RefreshCw className="h-4 w-4" aria-hidden="true" />
-              <span className="sr-only">Atualizar</span>
-            </Button>
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/" aria-label="Voltar ao site">
-                <Home className="h-4 w-4" aria-hidden="true" />
-                <span className="sr-only">Voltar ao site</span>
-              </Link>
-            </Button>
+            <TooltipProvider delayDuration={300}>
+              <BulkSlugGenerator onComplete={refetchAll} />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button onClick={handleExportJSON} variant="ghost" size="sm" disabled={isExporting} aria-label="Exportar backup JSON">
+                    <Download className="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Exportar backup JSON</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button onClick={refetchAll} variant="ghost" size="sm" aria-label="Atualizar dados">
+                    <RefreshCw className="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Atualizar dados</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link to="/" aria-label="Voltar ao site">
+                      <Home className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Voltar ao site</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <Button onClick={signOut} variant="outline" size="sm">
               <LogOut className="mr-2 h-4 w-4" aria-hidden="true" />
               Sair
@@ -187,11 +202,16 @@ export default function AdminDashboard() {
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <div className="mb-8 space-y-3">
-            {tabGroups.map((group) => (
+            {tabGroups.map((group) => {
+              const groupHasActiveTab = group.tabs.some(t => t.value === activeTab);
+              return (
               <Collapsible key={group.label} defaultOpen={group.label === 'Portfólio'}>
                 <CollapsibleTrigger className="flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors w-full">
                   <group.icon className="h-4 w-4" />
                   {group.label}
+                  {groupHasActiveTab && (
+                    <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" aria-hidden="true" />
+                  )}
                   <ChevronDown className="h-3 w-3 ml-auto transition-transform duration-200 [&[data-state=open]]:rotate-180" />
                 </CollapsibleTrigger>
                 <CollapsibleContent>
@@ -204,7 +224,8 @@ export default function AdminDashboard() {
                   </TabsList>
                 </CollapsibleContent>
               </Collapsible>
-            ))}
+              );
+            })}
           </div>
 
           <TabsContent value="experiences">

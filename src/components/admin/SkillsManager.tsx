@@ -204,7 +204,9 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
                       {skill.category && <p className="text-sm text-muted-foreground truncate">{skill.category}</p>}
                     </div>
                     <div className="flex gap-1 items-center flex-shrink-0">
-                      <Switch checked={skill.is_visible} onCheckedChange={() => handleToggleVisibility(skill)} aria-label={`Visibilidade de ${skill.name}`} />
+                      <Button size="icon" variant="ghost" onClick={() => handleToggleVisibility(skill)} aria-label={skill.is_visible ? `Ocultar ${skill.name}` : `Mostrar ${skill.name}`}>
+                        {skill.is_visible ? <Eye className="h-4 w-4" aria-hidden="true" /> : <EyeOff className="h-4 w-4 text-muted-foreground" aria-hidden="true" />}
+                      </Button>
                       <Button size="icon" variant="ghost" onClick={() => handleDuplicate(skill)} aria-label={`Duplicar ${skill.name}`}>
                         <Copy className="h-4 w-4" aria-hidden="true" />
                       </Button>
