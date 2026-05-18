@@ -19,7 +19,9 @@ import { ArticlesManager } from '@/components/admin/ArticlesManager';
 import { ContactMessagesManager } from '@/components/admin/ContactMessagesManager';
 import { useAdminDashboardData } from '@/hooks/useAdminData';
 import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
-import { LogOut, RefreshCw, Home, ChevronDown, Briefcase, Wrench, Settings, MessageSquare } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { LogOut, RefreshCw, Home, ChevronDown, Briefcase, Wrench, Settings, Download } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const tabGroups = [
@@ -57,9 +59,14 @@ const tabGroups = [
 
 export default function AdminDashboard() {
   const { user, signOut } = useAuth();
-  const { experiences, skills, education, projects, isLoading, refetchAll } = useAdminDashboardData();
+  const {
+    experiences, skills, education, projects, articles,
+    testimonials, certifications, companies, metrics, faqs,
+    isLoading, refetchAll,
+  } = useAdminDashboardData();
   const [activeTab, setActiveTab] = useState('experiences');
   const [isDirty, setIsDirty] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   const { confirmNavigation } = useUnsavedChanges({ hasChanges: isDirty });
 
@@ -74,10 +81,57 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleExportJSON = async () => {
+    setIsExporting(true);
+    try {
+      const [exp, proj, sk, edu, art, cert, test, comp, met, faq] = await Promise.all([
+        supabase.from('experiences').select('*'),
+        supabase.from('projects').select('*'),
+        supabase.from('skills').select('*'),
+        supabase.from('education').select('*'),
+        supabase.from('articles').select('*'),
+        supabase.from('certifications').select('*'),
+        supabase.from('testimonials').select('*'),
+        supabase.from('companies').select('*'),
+        supabase.from('metrics').select('*'),
+        supabase.from('faqs' as any).select('*'),
+      ]);
+
+      const exportData = {
+        exportedAt: new Date().toISOString(),
+        experiences: exp.data,
+        projects: proj.data,
+        skills: sk.data,
+        education: edu.data,
+        articles: art.data,
+        certifications: cert.data,
+        testimonials: test.data,
+        companies: comp.data,
+        metrics: met.data,
+        faqs: faq.data,
+      };
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `portfolio-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success('Backup exportado!');
+    } catch {
+      toast.error('Erro ao exportar dados');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <a 
-        href="#main-content" 
+      <a
+        href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md"
       >
         Pular para o conteúdo principal
@@ -91,6 +145,10 @@ export default function AdminDashboard() {
           </div>
           <div className="flex items-center gap-2">
             <BulkSlugGenerator onComplete={refetchAll} />
+            <Button onClick={handleExportJSON} variant="ghost" size="sm" disabled={isExporting} aria-label="Exportar backup JSON">
+              <Download className="h-4 w-4" aria-hidden="true" />
+              <span className="sr-only">Exportar JSON</span>
+            </Button>
             <Button onClick={refetchAll} variant="ghost" size="sm" aria-label="Atualizar dados">
               <RefreshCw className="h-4 w-4" aria-hidden="true" />
               <span className="sr-only">Atualizar</span>
@@ -112,11 +170,22 @@ export default function AdminDashboard() {
       <main id="main-content" className="container mx-auto px-4 py-8" role="main">
         <section aria-labelledby="dashboard-heading" className="mb-8">
           <h2 id="dashboard-heading" className="sr-only">Estatísticas do Dashboard</h2>
-          <DashboardStats experiences={experiences} skills={skills} education={education} projects={projects} isLoading={isLoading} />
+          <DashboardStats
+            experiences={experiences}
+            skills={skills}
+            education={education}
+            projects={projects}
+            articles={articles}
+            testimonials={testimonials}
+            certifications={certifications}
+            companies={companies}
+            metrics={metrics}
+            faqs={faqs}
+            isLoading={isLoading}
+          />
         </section>
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          {/* Grouped tabs navigation */}
           <div className="mb-8 space-y-3">
             {tabGroups.map((group) => (
               <Collapsible key={group.label} defaultOpen={group.label === 'Portfólio'}>
@@ -137,7 +206,7 @@ export default function AdminDashboard() {
               </Collapsible>
             ))}
           </div>
-          
+
           <TabsContent value="experiences">
             <ExperiencesManager onDirtyChange={setIsDirty} />
           </TabsContent>
