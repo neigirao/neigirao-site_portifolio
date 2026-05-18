@@ -417,6 +417,19 @@ All colors MUST be HSL.
   font-size: 14px; line-height: 1.65; color: var(--ed-muted);
   margin-top: 8px;
 }
+.ed-work-roles .desc--clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ed-work-roles .desc-toggle {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ed-accent); background: none; border: none;
+  cursor: pointer; padding: 4px 0; margin-top: 4px; display: block;
+}
+.ed-work-roles .desc-toggle:hover { text-decoration: underline; }
 .ed-work-range {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 12px; letter-spacing: 0.08em; color: var(--ed-accent); text-align: right;
