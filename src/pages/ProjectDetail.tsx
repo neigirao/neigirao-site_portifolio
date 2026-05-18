@@ -34,7 +34,7 @@ export default function ProjectDetail() {
   const relatedExperiences = useExperiencesForProject(project?.tags || null, project?.description || '');
   const seeAlsoItems = useSeeAlso([...relatedSkills, ...relatedExperiences], 5);
 
-  const hasCaseStudy = project && CASE_STUDY_SECTIONS.some(s => (project as any)[s.key]);
+  const hasCaseStudy = project && CASE_STUDY_SECTIONS.some(s => project[s.key]);
 
   if (isLoading) {
     return (
@@ -84,8 +84,8 @@ export default function ProjectDetail() {
         "description": project.meta_description || project.description.slice(0, 160),
         "url": `${BASE_URL}/projeto/${canonicalSlug}`,
         "author": { "@type": "Person", "name": "Nei Girão", "url": BASE_URL },
-        "datePublished": (project as any).created_at || undefined,
-        "dateModified": (project as any).updated_at || undefined,
+        "datePublished": undefined,
+        "dateModified": undefined,
         ...(project.image_url ? { "image": project.image_url } : {}),
         ...(project.link ? { "mainEntityOfPage": project.link } : {}),
         ...(project.tags ? { "keywords": project.tags.join(", ") } : {})
@@ -110,11 +110,11 @@ export default function ProjectDetail() {
 
             <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">{project.title}</h1>
 
-            {(project as any).highlight_metric && (
+            {project.highlight_metric && (
               <div className="mb-4">
                 <span className="inline-flex items-center gap-2 px-4 py-2 bg-teal-accent/20 backdrop-blur-sm rounded-full text-teal-accent font-semibold text-sm border border-teal-accent/30">
                   <BarChart3 className="w-4 h-4" />
-                  {(project as any).highlight_metric}
+                  {project.highlight_metric}
                 </span>
               </div>
             )}
@@ -159,7 +159,7 @@ export default function ProjectDetail() {
           {hasCaseStudy && (
             <div className="space-y-6 mb-12">
               {CASE_STUDY_SECTIONS.map(({ key, label, icon: Icon }) => {
-                const content = (project as any)[key];
+                const content = project[key];
                 if (!content) return null;
                 return (
                   <Card key={key} className="shadow-elegant border-2 border-border/50">
