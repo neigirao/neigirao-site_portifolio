@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2, Eye, Copy, EyeOff } from 'lucide-react';
+import { Pencil, Eye, Copy, EyeOff } from 'lucide-react';
+import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { SEOFields } from './SEOFields';
@@ -39,6 +40,7 @@ const emptyForm = { name: '', logo_url: '', category: '', meta_title: '', meta_d
 
 export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
@@ -57,9 +59,11 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
   useEffect(() => { fetchSkills(); }, []);
 
   const fetchSkills = async () => {
+    setIsLoading(true);
     const { data, error } = await supabase.from('skills').select('*').order('order_index', { ascending: true });
-    if (error) { toast.error('Erro ao carregar skills'); return; }
+    if (error) { toast.error('Erro ao carregar skills'); }
     setSkills(data || []);
+    setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -105,8 +109,7 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
     fetchSkills();
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Excluir skill "${name}"?`)) return;
+  const handleDelete = async (id: string) => {
     const { error } = await supabase.from('skills').delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir skill'); return; }
     toast.success('Skill excluída!');
@@ -145,7 +148,7 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nome</Label>
+                <Label htmlFor="name">Nome <span className="text-destructive" aria-hidden="true">*</span></Label>
                 <Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
               </div>
               <div className="space-y-2">
@@ -172,9 +175,11 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
 
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
-        {skills.length === 0 && (
+        {isLoading ? (
+          <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
+        ) : skills.length === 0 ? (
           <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma skill adicionada ainda.</p>
-        )}
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <SortableList items={skills} onReorder={handleReorder}
             strategy="grid"
@@ -206,9 +211,7 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
                       <Button size="icon" variant="ghost" onClick={() => handleEdit(skill)} aria-label={`Editar ${skill.name}`}>
                         <Pencil className="h-4 w-4" aria-hidden="true" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="text-destructive" onClick={() => handleDelete(skill.id, skill.name)} aria-label={`Excluir ${skill.name}`}>
-                        <Trash2 className="h-4 w-4" aria-hidden="true" />
-                      </Button>
+                      <DeleteConfirmButton itemName={skill.name} onConfirm={() => handleDelete(skill.id)} />
                     </div>
                   </div>
                 </CardContent>
@@ -216,6 +219,7 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
             )}
           />
         </div>
+        )}
       </div>
 
       <PreviewModal open={showPreview} onOpenChange={setShowPreview} type="skill" data={formData} />

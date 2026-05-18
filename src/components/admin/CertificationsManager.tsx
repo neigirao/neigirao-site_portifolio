@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2, Copy, Award } from 'lucide-react';
+import { Pencil, Copy, Award } from 'lucide-react';
+import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { SortableList } from './SortableList';
@@ -23,10 +24,15 @@ interface Certification {
 
 const emptyForm = { name: '', issuer: '', year: '', logo_url: '', credential_url: '' };
 
-export function CertificationsManager() {
+interface CertificationsManagerProps {
+  onDirtyChange?: (dirty: boolean) => void;
+}
+
+export function CertificationsManager({ onDirtyChange }: CertificationsManagerProps) {
   const [items, setItems] = useState<Certification[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(emptyForm);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { status: autosaveStatus, clearDraft } = useAutosave({
     key: 'certifications-form',
@@ -34,12 +40,19 @@ export function CertificationsManager() {
     onRecover: useCallback((data: typeof emptyForm) => { setFormData(data); }, []),
   });
 
+  useEffect(() => {
+    const hasContent = [formData.name, formData.issuer].some(v => v.trim().length > 0);
+    onDirtyChange?.(hasContent);
+  }, [formData, onDirtyChange]);
+
   useEffect(() => { fetchItems(); }, []);
 
   const fetchItems = async () => {
+    setIsLoading(true);
     const { data, error } = await supabase.from('certifications').select('*').order('order_index');
-    if (error) { toast.error('Erro ao carregar certificações'); return; }
+    if (error) { toast.error('Erro ao carregar certificações'); }
     setItems(data || []);
+    setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -78,8 +91,7 @@ export function CertificationsManager() {
     toast.success('Certificação duplicada!'); fetchItems();
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Excluir certificação "${name}"?`)) return;
+  const handleDelete = async (id: string) => {
     const { error } = await supabase.from('certifications').delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir certificação'); return; }
     toast.success('Certificação excluída!'); fetchItems();
@@ -95,7 +107,7 @@ export function CertificationsManager() {
     toast.success('Ordem atualizada!');
   };
 
-  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); };
+  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
   return (
     <div className="space-y-6">
@@ -110,11 +122,11 @@ export function CertificationsManager() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Nome</Label>
+                <Label>Nome <span className="text-destructive" aria-hidden="true">*</span></Label>
                 <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="CSM - Certified Scrum Master" required />
               </div>
               <div className="space-y-2">
-                <Label>Emissor</Label>
+                <Label>Emissor <span className="text-destructive" aria-hidden="true">*</span></Label>
                 <Input value={formData.issuer} onChange={e => setFormData({ ...formData, issuer: e.target.value })} placeholder="Scrum Alliance" required />
               </div>
             </div>
@@ -139,9 +151,11 @@ export function CertificationsManager() {
 
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
-        {items.length === 0 && (
-          <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma certificação adicionada ainda.</p>
-        )}
+        {isLoading ? (
+          <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
+        ) : items.length === 0 ? (
+          <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma certificação adicionada ainda. Adicione a primeira acima.</p>
+        ) : (
         <SortableList items={items} onReorder={handleReorder} renderItem={(c) => (
           <Card>
             <CardContent className="pt-4 pb-4">
@@ -156,12 +170,13 @@ export function CertificationsManager() {
                 <div className="flex gap-2 flex-shrink-0 ml-4">
                   <Button size="icon" variant="outline" onClick={() => handleDuplicate(c)} aria-label={`Duplicar ${c.name}`}><Copy className="h-4 w-4" /></Button>
                   <Button size="icon" variant="outline" onClick={() => handleEdit(c)} aria-label={`Editar ${c.name}`}><Pencil className="h-4 w-4" /></Button>
-                  <Button size="icon" variant="destructive" onClick={() => handleDelete(c.id, c.name)} aria-label={`Excluir ${c.name}`}><Trash2 className="h-4 w-4" /></Button>
+                  <DeleteConfirmButton itemName={c.name} onConfirm={() => handleDelete(c.id)} />
                 </div>
               </div>
             </CardContent>
           </Card>
         )} />
+        )}
       </div>
     </div>
   );

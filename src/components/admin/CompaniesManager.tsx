@@ -1,17 +1,16 @@
-/**
- * CompaniesManager - CMS para empresas do Hero
- */
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2, Copy } from 'lucide-react';
+import { Pencil, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { SortableList } from './SortableList';
+import { AutosaveIndicator } from './AutosaveIndicator';
+import { DeleteConfirmButton } from './DeleteConfirmButton';
+import { useAutosave } from '@/hooks/useAutosave';
 
 interface Company {
   id: string;
@@ -21,28 +20,45 @@ interface Company {
   order_index: number;
 }
 
+interface CompaniesManagerProps {
+  onDirtyChange?: (dirty: boolean) => void;
+}
+
 const emptyForm = { name: '', abbr: '', logo_url: '' };
 
-export function CompaniesManager() {
+export function CompaniesManager({ onDirtyChange }: CompaniesManagerProps) {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(emptyForm);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { status: autosaveStatus, clearDraft } = useAutosave({
+    key: 'companies-form',
+    data: formData,
+    onRecover: useCallback((data: typeof emptyForm) => { setFormData(data); }, []),
+  });
+
+  useEffect(() => {
+    const hasContent = [formData.name, formData.abbr].some(v => v.trim().length > 0);
+    onDirtyChange?.(hasContent);
+  }, [formData, onDirtyChange]);
 
   useEffect(() => { fetchCompanies(); }, []);
 
   const fetchCompanies = async () => {
+    setIsLoading(true);
     const { data, error } = await supabase
       .from('companies')
       .select('*')
       .order('order_index', { ascending: true });
-    if (error) { toast.error('Erro ao carregar empresas'); return; }
+    if (error) { toast.error('Erro ao carregar empresas'); }
     setCompanies(data || []);
+    setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const nextOrderIndex = companies.length > 0 ? Math.max(...companies.map(c => c.order_index)) + 1 : 0;
-
     const dataToSubmit = {
       name: formData.name,
       abbr: formData.abbr,
@@ -79,7 +95,6 @@ export function CompaniesManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Excluir esta empresa?')) return;
     const { error } = await supabase.from('companies').delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir'); return; }
     toast.success('Empresa excluída!');
@@ -88,29 +103,34 @@ export function CompaniesManager() {
 
   const handleReorder = async (reordered: Company[]) => {
     setCompanies(reordered);
-    for (let i = 0; i < reordered.length; i++) {
-      await supabase.from('companies').update({ order_index: i }).eq('id', reordered[i].id);
-    }
+    await Promise.all(
+      reordered.map((item, index) =>
+        supabase.from('companies').update({ order_index: index }).eq('id', item.id)
+      )
+    );
     toast.success('Ordem atualizada!');
   };
 
-  const resetForm = () => { setEditingId(null); setFormData(emptyForm); };
+  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>{editingId ? 'Editar' : 'Nova'} Empresa</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle>{editingId ? 'Editar' : 'Nova'} Empresa</CardTitle>
+            <AutosaveIndicator status={autosaveStatus} />
+          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="company-name">Nome Completo</Label>
+                <Label htmlFor="company-name">Nome Completo <span className="text-destructive" aria-hidden="true">*</span></Label>
                 <Input id="company-name" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="Icatu Seguros" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="company-abbr">Abreviação</Label>
+                <Label htmlFor="company-abbr">Abreviação <span className="text-destructive" aria-hidden="true">*</span></Label>
                 <Input id="company-abbr" value={formData.abbr} onChange={e => setFormData({ ...formData, abbr: e.target.value })} placeholder="Icatu" required />
               </div>
             </div>
@@ -124,35 +144,41 @@ export function CompaniesManager() {
       </Card>
 
       <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">Arraste para reordenar</p>
-        <SortableList
-          items={companies}
-          onReorder={handleReorder}
-          renderItem={(c) => (
-            <Card>
-              <CardContent className="pt-4 pb-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-3">
-                    {c.logo_url ? (
-                      <img src={c.logo_url} alt={c.name} className="w-8 h-8 object-contain" />
-                    ) : (
-                      <div className="w-8 h-8 bg-muted rounded flex items-center justify-center text-xs font-bold">{c.abbr[0]}</div>
-                    )}
-                    <div>
-                      <span className="font-semibold">{c.name}</span>
-                      <span className="ml-2 text-sm text-muted-foreground">({c.abbr})</span>
+        <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
+        {isLoading ? (
+          <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
+        ) : companies.length === 0 ? (
+          <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma empresa adicionada ainda. Adicione a primeira acima.</p>
+        ) : (
+          <SortableList
+            items={companies}
+            onReorder={handleReorder}
+            renderItem={(c) => (
+              <Card>
+                <CardContent className="pt-4 pb-4">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                      {c.logo_url ? (
+                        <img src={c.logo_url} alt={c.name} className="w-8 h-8 object-contain" />
+                      ) : (
+                        <div className="w-8 h-8 bg-muted rounded flex items-center justify-center text-xs font-bold">{c.abbr[0]}</div>
+                      )}
+                      <div>
+                        <span className="font-semibold">{c.name}</span>
+                        <span className="ml-2 text-sm text-muted-foreground">({c.abbr})</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0 ml-4">
+                      <Button size="icon" variant="outline" onClick={() => handleDuplicate(c)} aria-label={`Duplicar ${c.name}`}><Copy className="h-4 w-4" /></Button>
+                      <Button size="icon" variant="outline" onClick={() => handleEdit(c)} aria-label={`Editar ${c.name}`}><Pencil className="h-4 w-4" /></Button>
+                      <DeleteConfirmButton itemName={c.name} onConfirm={() => handleDelete(c.id)} />
                     </div>
                   </div>
-                  <div className="flex gap-2 flex-shrink-0 ml-4">
-                    <Button size="icon" variant="outline" onClick={() => handleDuplicate(c)}><Copy className="h-4 w-4" /></Button>
-                    <Button size="icon" variant="outline" onClick={() => handleEdit(c)}><Pencil className="h-4 w-4" /></Button>
-                    <Button size="icon" variant="destructive" onClick={() => handleDelete(c.id)}><Trash2 className="h-4 w-4" /></Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        />
+                </CardContent>
+              </Card>
+            )}
+          />
+        )}
       </div>
     </div>
   );

@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Pencil, Trash2, Eye, Copy, FileText, Clock } from 'lucide-react';
+import { Pencil, Eye, Copy, FileText, Clock } from 'lucide-react';
+import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { RichTextEditor } from './RichTextEditor';
@@ -46,10 +47,15 @@ const emptyForm = {
   meta_description: '',
 };
 
-export function ArticlesManager() {
+interface ArticlesManagerProps {
+  onDirtyChange?: (dirty: boolean) => void;
+}
+
+export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
   const [articles, setArticles] = useState<Article[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(emptyForm);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { status: autosaveStatus, clearDraft } = useAutosave({
     key: 'articles-form',
@@ -59,15 +65,22 @@ export function ArticlesManager() {
     }, []),
   });
 
+  useEffect(() => {
+    const hasContent = [formData.title, formData.excerpt, formData.content].some(v => v.trim().length > 0);
+    onDirtyChange?.(hasContent);
+  }, [formData, onDirtyChange]);
+
   useEffect(() => { fetchArticles(); }, []);
 
   const fetchArticles = async () => {
+    setIsLoading(true);
     const { data, error } = await supabase
       .from('articles')
       .select('*')
       .order('order_index', { ascending: true });
-    if (error) { toast.error('Erro ao carregar artigos'); return; }
+    if (error) { toast.error('Erro ao carregar artigos'); }
     setArticles(data || []);
+    setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -141,7 +154,6 @@ export function ArticlesManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Tem certeza que deseja excluir este artigo?')) return;
     const { error } = await supabase.from('articles').delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir artigo'); return; }
     toast.success('Artigo excluído!');
@@ -150,13 +162,15 @@ export function ArticlesManager() {
 
   const handleReorder = async (reorderedItems: Article[]) => {
     setArticles(reorderedItems);
-    for (const [index, item] of reorderedItems.entries()) {
-      await supabase.from('articles').update({ order_index: index }).eq('id', item.id);
-    }
+    await Promise.all(
+      reorderedItems.map((item, index) =>
+        supabase.from('articles').update({ order_index: index }).eq('id', item.id)
+      )
+    );
     toast.success('Ordem atualizada!');
   };
 
-  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); };
+  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
   return (
     <div className="space-y-6">
@@ -170,7 +184,7 @@ export function ArticlesManager() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="article-title">Título</Label>
+              <Label htmlFor="article-title">Título <span className="text-destructive" aria-hidden="true">*</span></Label>
               <Input
                 id="article-title"
                 value={formData.title}
@@ -256,6 +270,11 @@ export function ArticlesManager() {
 
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
+        {isLoading ? (
+          <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
+        ) : articles.length === 0 ? (
+          <p className="text-center text-muted-foreground py-8 text-sm">Nenhum artigo adicionado ainda. Crie o primeiro acima.</p>
+        ) : (
         <SortableList items={articles} onReorder={handleReorder} renderItem={(article) => (
           <Card>
             <CardContent className="pt-4 pb-4">
@@ -310,14 +329,13 @@ export function ArticlesManager() {
                   <Button size="icon" variant="outline" onClick={() => handleEdit(article)} aria-label={`Editar ${article.title}`}>
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  <Button size="icon" variant="destructive" onClick={() => handleDelete(article.id)} aria-label={`Excluir ${article.title}`}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <DeleteConfirmButton itemName={article.title} onConfirm={() => handleDelete(article.id)} />
                 </div>
               </div>
             </CardContent>
           </Card>
         )} />
+        )}
       </div>
     </div>
   );

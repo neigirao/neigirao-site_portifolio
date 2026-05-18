@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,9 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Pencil, Trash2, Copy, HelpCircle } from 'lucide-react';
+import { Pencil, Copy, HelpCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { SortableList } from './SortableList';
+import { AutosaveIndicator } from './AutosaveIndicator';
+import { DeleteConfirmButton } from './DeleteConfirmButton';
+import { useAutosave } from '@/hooks/useAutosave';
 
 interface FAQ {
   id: string;
@@ -18,19 +21,37 @@ interface FAQ {
   is_visible: boolean;
 }
 
+interface FAQsManagerProps {
+  onDirtyChange?: (dirty: boolean) => void;
+}
+
 const emptyForm = { question: '', answer: '', is_visible: true };
 
-export function FAQsManager() {
+export function FAQsManager({ onDirtyChange }: FAQsManagerProps) {
   const [items, setItems] = useState<FAQ[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(emptyForm);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { status: autosaveStatus, clearDraft } = useAutosave({
+    key: 'faqs-form',
+    data: formData,
+    onRecover: useCallback((data: typeof emptyForm) => { setFormData(data); }, []),
+  });
+
+  useEffect(() => {
+    const hasContent = [formData.question, formData.answer].some(v => v.trim().length > 0);
+    onDirtyChange?.(hasContent);
+  }, [formData, onDirtyChange]);
 
   useEffect(() => { fetchItems(); }, []);
 
   const fetchItems = async () => {
+    setIsLoading(true);
     const { data, error } = await supabase.from('faqs' as any).select('*').order('order_index');
-    if (error) { toast.error('Erro ao carregar FAQs'); return; }
-    setItems((data as any[]) || []);
+    if (error) { toast.error('Erro ao carregar FAQs'); }
+    setItems((data || []) as FAQ[]);
+    setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,11 +65,11 @@ export function FAQsManager() {
     };
 
     if (editingId) {
-      const { error } = await supabase.from('faqs' as any).update(payload as any).eq('id', editingId);
+      const { error } = await supabase.from('faqs' as any).update(payload).eq('id', editingId);
       if (error) { toast.error('Erro ao atualizar'); return; }
       toast.success('FAQ atualizada!');
     } else {
-      const { error } = await supabase.from('faqs' as any).insert([payload] as any);
+      const { error } = await supabase.from('faqs' as any).insert([payload]);
       if (error) { toast.error('Erro ao criar'); return; }
       toast.success('FAQ criada!');
     }
@@ -64,13 +85,12 @@ export function FAQsManager() {
     const nextIdx = items.length > 0 ? Math.max(...items.map(i => i.order_index)) + 1 : 0;
     const { error } = await supabase.from('faqs' as any).insert([{
       question: f.question, answer: f.answer, is_visible: false, order_index: nextIdx,
-    }] as any);
+    }]);
     if (error) { toast.error('Erro ao duplicar'); return; }
     toast.success('Duplicada!'); fetchItems();
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Excluir esta FAQ?')) return;
     const { error } = await supabase.from('faqs' as any).delete().eq('id', id);
     if (error) { toast.error('Erro ao excluir'); return; }
     toast.success('Excluída!'); fetchItems();
@@ -78,26 +98,33 @@ export function FAQsManager() {
 
   const handleReorder = async (reordered: FAQ[]) => {
     setItems(reordered);
-    for (let i = 0; i < reordered.length; i++) {
-      await supabase.from('faqs' as any).update({ order_index: i } as any).eq('id', reordered[i].id);
-    }
+    await Promise.all(
+      reordered.map((item, index) =>
+        supabase.from('faqs' as any).update({ order_index: index }).eq('id', item.id)
+      )
+    );
     toast.success('Ordem atualizada!');
   };
 
-  const resetForm = () => { setEditingId(null); setFormData(emptyForm); };
+  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader><CardTitle>{editingId ? 'Editar' : 'Nova'} FAQ</CardTitle></CardHeader>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>{editingId ? 'Editar' : 'Nova'} FAQ</CardTitle>
+            <AutosaveIndicator status={autosaveStatus} />
+          </div>
+        </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label>Pergunta</Label>
+              <Label>Pergunta <span className="text-destructive" aria-hidden="true">*</span></Label>
               <Input value={formData.question} onChange={e => setFormData({ ...formData, question: e.target.value })} placeholder="Ex: Você está disponível para novas oportunidades?" required />
             </div>
             <div className="space-y-2">
-              <Label>Resposta</Label>
+              <Label>Resposta <span className="text-destructive" aria-hidden="true">*</span></Label>
               <Textarea value={formData.answer} onChange={e => setFormData({ ...formData, answer: e.target.value })} placeholder="Resposta detalhada..." rows={4} required />
             </div>
             <div className="flex items-center gap-2">
@@ -113,27 +140,33 @@ export function FAQsManager() {
       </Card>
 
       <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">Arraste para reordenar</p>
-        <SortableList items={items} onReorder={handleReorder} renderItem={(f) => (
-          <Card className={!f.is_visible ? 'opacity-50' : ''}>
-            <CardContent className="pt-4 pb-4">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <HelpCircle className="w-5 h-5 text-secondary flex-shrink-0" />
-                  <div className="min-w-0">
-                    <span className="font-semibold">{f.question}</span>
-                    <p className="text-xs text-muted-foreground truncate max-w-md">{f.answer.slice(0, 80)}...</p>
+        <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
+        {isLoading ? (
+          <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
+        ) : items.length === 0 ? (
+          <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma FAQ adicionada ainda. Crie a primeira acima.</p>
+        ) : (
+          <SortableList items={items} onReorder={handleReorder} renderItem={(f) => (
+            <Card className={!f.is_visible ? 'opacity-50' : ''}>
+              <CardContent className="pt-4 pb-4">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <HelpCircle className="w-5 h-5 text-secondary flex-shrink-0" />
+                    <div className="min-w-0">
+                      <span className="font-semibold">{f.question}</span>
+                      <p className="text-xs text-muted-foreground truncate max-w-md">{f.answer.slice(0, 80)}{f.answer.length > 80 ? '...' : ''}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 flex-shrink-0 ml-4">
+                    <Button size="icon" variant="outline" onClick={() => handleDuplicate(f)} aria-label="Duplicar FAQ"><Copy className="h-4 w-4" /></Button>
+                    <Button size="icon" variant="outline" onClick={() => handleEdit(f)} aria-label="Editar FAQ"><Pencil className="h-4 w-4" /></Button>
+                    <DeleteConfirmButton itemName={f.question.slice(0, 60)} onConfirm={() => handleDelete(f.id)} />
                   </div>
                 </div>
-                <div className="flex gap-2 flex-shrink-0 ml-4">
-                  <Button size="icon" variant="outline" onClick={() => handleDuplicate(f)}><Copy className="h-4 w-4" /></Button>
-                  <Button size="icon" variant="outline" onClick={() => handleEdit(f)}><Pencil className="h-4 w-4" /></Button>
-                  <Button size="icon" variant="destructive" onClick={() => handleDelete(f.id)}><Trash2 className="h-4 w-4" /></Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )} />
+              </CardContent>
+            </Card>
+          )} />
+        )}
       </div>
     </div>
   );
