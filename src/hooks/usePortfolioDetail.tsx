@@ -36,6 +36,14 @@ interface Project {
   meta_title: string | null;
   meta_description: string | null;
   slug: string | null;
+  highlight_metric: string | null;
+  context: string | null;
+  challenge: string | null;
+  solution: string | null;
+  results: string | null;
+  learnings: string | null;
+  brand: string | null;
+  project_subtitle: string | null;
 }
 
 interface Skill {
