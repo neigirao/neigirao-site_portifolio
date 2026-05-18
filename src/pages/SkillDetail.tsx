@@ -200,7 +200,7 @@ export default function SkillDetail() {
                 {relatedExperiences.map((exp) => (
                   <Link
                     key={exp.id}
-                    to={`/experiencia/${exp.id}`}
+                    to={`/experiencia/${exp.slug || exp.id}`}
                     className="block"
                   >
                     <Card className="hover:shadow-glow transition-all hover:border-teal-accent/30">
@@ -229,7 +229,7 @@ export default function SkillDetail() {
                 {relatedProjects.map((proj) => (
                   <Link
                     key={proj.id}
-                    to={`/projeto/${proj.id}`}
+                    to={`/projeto/${proj.slug || proj.id}`}
                     className="block"
                   >
                     <Card className="h-full hover:shadow-glow transition-all hover:border-teal-accent/30">

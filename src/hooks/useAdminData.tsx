@@ -8,6 +8,7 @@ export interface AdminContentItem {
   slug: string | null;
   logo_url?: string | null;
   image_url?: string | null;
+  cover_image_url?: string | null;
   order_index: number;
   created_at: string;
   updated_at: string;
@@ -42,9 +43,56 @@ export interface AdminProject extends AdminContentItem {
   tags: string[] | null;
 }
 
+export interface AdminArticle extends AdminContentItem {
+  title: string;
+  status: string;
+  cover_image_url: string | null;
+  published_at: string | null;
+}
+
+export interface AdminCertification {
+  id: string;
+  name: string;
+  issuer: string;
+  logo_url: string | null;
+  order_index: number;
+}
+
+export interface AdminTestimonial {
+  id: string;
+  author_name: string;
+  author_role: string;
+  author_photo_url: string | null;
+  is_visible: boolean;
+  order_index: number;
+}
+
+export interface AdminCompany {
+  id: string;
+  name: string;
+  abbr: string;
+  logo_url: string | null;
+  order_index: number;
+}
+
+export interface AdminMetric {
+  id: string;
+  value: string;
+  label: string;
+  order_index: number;
+}
+
+export interface AdminFAQ {
+  id: string;
+  question: string;
+  answer: string;
+  is_visible: boolean;
+  order_index: number;
+}
+
 const queryOptions = {
-  staleTime: 1000 * 60 * 5, // 5 minutes
-  gcTime: 1000 * 60 * 30, // 30 minutes
+  staleTime: 1000 * 60 * 5,
+  gcTime: 1000 * 60 * 30,
   refetchOnWindowFocus: true,
 };
 
@@ -56,7 +104,6 @@ export function useAdminExperiences() {
         .from('experiences')
         .select('*')
         .order('order_index', { ascending: true });
-
       if (error) throw error;
       return data as AdminExperience[];
     },
@@ -72,7 +119,6 @@ export function useAdminSkills() {
         .from('skills')
         .select('*')
         .order('order_index', { ascending: true });
-
       if (error) throw error;
       return data as AdminSkill[];
     },
@@ -88,7 +134,6 @@ export function useAdminEducation() {
         .from('education')
         .select('*')
         .order('order_index', { ascending: true });
-
       if (error) throw error;
       return data as AdminEducation[];
     },
@@ -104,9 +149,98 @@ export function useAdminProjects() {
         .from('projects')
         .select('*')
         .order('order_index', { ascending: true });
-
       if (error) throw error;
       return data as AdminProject[];
+    },
+    ...queryOptions,
+  });
+}
+
+export function useAdminArticles() {
+  return useQuery({
+    queryKey: ['admin-articles'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .order('order_index', { ascending: true });
+      if (error) throw error;
+      return data as AdminArticle[];
+    },
+    ...queryOptions,
+  });
+}
+
+export function useAdminCertifications() {
+  return useQuery({
+    queryKey: ['admin-certifications'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('certifications')
+        .select('*')
+        .order('order_index', { ascending: true });
+      if (error) throw error;
+      return data as AdminCertification[];
+    },
+    ...queryOptions,
+  });
+}
+
+export function useAdminTestimonials() {
+  return useQuery({
+    queryKey: ['admin-testimonials'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('testimonials')
+        .select('*')
+        .order('order_index', { ascending: true });
+      if (error) throw error;
+      return data as AdminTestimonial[];
+    },
+    ...queryOptions,
+  });
+}
+
+export function useAdminCompanies() {
+  return useQuery({
+    queryKey: ['admin-companies'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('companies')
+        .select('*')
+        .order('order_index', { ascending: true });
+      if (error) throw error;
+      return data as AdminCompany[];
+    },
+    ...queryOptions,
+  });
+}
+
+export function useAdminMetrics() {
+  return useQuery({
+    queryKey: ['admin-metrics'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('metrics')
+        .select('*')
+        .order('order_index', { ascending: true });
+      if (error) throw error;
+      return data as AdminMetric[];
+    },
+    ...queryOptions,
+  });
+}
+
+export function useAdminFAQs() {
+  return useQuery({
+    queryKey: ['admin-faqs'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('faqs' as any)
+        .select('*')
+        .order('order_index', { ascending: true });
+      if (error) throw error;
+      return (data || []) as AdminFAQ[];
     },
     ...queryOptions,
   });
@@ -117,15 +251,32 @@ export function useAdminDashboardData() {
   const skills = useAdminSkills();
   const education = useAdminEducation();
   const projects = useAdminProjects();
+  const articles = useAdminArticles();
+  const certifications = useAdminCertifications();
+  const testimonials = useAdminTestimonials();
+  const companies = useAdminCompanies();
+  const metrics = useAdminMetrics();
+  const faqs = useAdminFAQs();
 
-  const isLoading = experiences.isLoading || skills.isLoading || education.isLoading || projects.isLoading;
-  const hasError = experiences.error || skills.error || education.error || projects.error;
+  const isLoading =
+    experiences.isLoading || skills.isLoading || education.isLoading ||
+    projects.isLoading || articles.isLoading;
+
+  const hasError =
+    experiences.error || skills.error || education.error ||
+    projects.error || articles.error;
 
   return {
     experiences: experiences.data || [],
     skills: skills.data || [],
     education: education.data || [],
     projects: projects.data || [],
+    articles: articles.data || [],
+    certifications: certifications.data || [],
+    testimonials: testimonials.data || [],
+    companies: companies.data || [],
+    metrics: metrics.data || [],
+    faqs: faqs.data || [],
     isLoading,
     hasError,
     refetchAll: () => {
@@ -133,6 +284,12 @@ export function useAdminDashboardData() {
       skills.refetch();
       education.refetch();
       projects.refetch();
+      articles.refetch();
+      certifications.refetch();
+      testimonials.refetch();
+      companies.refetch();
+      metrics.refetch();
+      faqs.refetch();
     },
   };
 }

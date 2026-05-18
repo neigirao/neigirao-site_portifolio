@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Eye, Copy, EyeOff } from 'lucide-react';
+import { Pencil, Eye, Copy, EyeOff, Search, X } from 'lucide-react';
 import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
@@ -69,6 +69,7 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
   const [tagInput, setTagInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { status: autosaveStatus, clearDraft } = useAutosave({
     key: 'projects-form',
@@ -318,49 +319,92 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
       </Card>
 
       <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
-        {projects.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8 text-sm">Nenhum projeto adicionado ainda.</p>
-        ) : (
-        <SortableList items={projects} onReorder={handleReorder} renderItem={(project) => (
-          <Card className={!project.is_visible ? 'opacity-60' : ''}>
-            <CardContent className="pt-4 pb-4">
-              <div className="flex justify-between items-start">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-lg truncate">{project.title}</h3>
-                    {!project.is_visible && (
-                      <span className="flex items-center gap-1 text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
-                        <EyeOff className="w-3 h-3" aria-hidden="true" />Oculto
-                      </span>
-                    )}
-                    {project.highlight_metric && (
-                      <span className="text-xs bg-teal-accent/10 text-teal-accent px-2 py-0.5 rounded-full font-medium">{project.highlight_metric}</span>
-                    )}
-                    <CompletenessIndicator hasSeo={!!(project.meta_title && project.meta_description)} hasImage={!!project.image_url} hasSlug={!!project.slug} itemName={project.title} />
-                  </div>
-                  {project.tags.length > 0 && (
-                    <div className="flex gap-2 mt-1 flex-wrap">
-                      {project.tags.slice(0, 3).map((tag, i) => (
-                        <span key={i} className="text-xs bg-muted px-2 py-1 rounded">{tag}</span>
-                      ))}
+        {/* Search / filter */}
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Input
+              placeholder="Buscar por título ou tag..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          {searchQuery && (
+            <Button variant="ghost" size="sm" onClick={() => setSearchQuery('')} aria-label="Limpar busca">
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {searchQuery ? 'Busca ativa — reordenação desabilitada' : 'Arraste os itens para reordenar'}
+        </p>
+
+        {(() => {
+          const filtered = searchQuery
+            ? projects.filter(p =>
+                p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                p.tags?.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
+              )
+            : projects;
+
+          if (filtered.length === 0) return (
+            <p className="text-center text-muted-foreground py-8 text-sm">
+              {searchQuery ? `Nenhum projeto encontrado para "${searchQuery}".` : 'Nenhum projeto adicionado ainda.'}
+            </p>
+          );
+
+          const ProjectCard = ({ project }: { project: Project }) => (
+            <Card className={!project.is_visible ? 'opacity-60' : ''}>
+              <CardContent className="pt-4 pb-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-lg truncate">{project.title}</h3>
+                      {!project.is_visible && (
+                        <span className="flex items-center gap-1 text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+                          <EyeOff className="w-3 h-3" aria-hidden="true" />Oculto
+                        </span>
+                      )}
+                      {project.highlight_metric && (
+                        <span className="text-xs bg-teal-accent/10 text-teal-accent px-2 py-0.5 rounded-full font-medium">{project.highlight_metric}</span>
+                      )}
+                      <CompletenessIndicator hasSeo={!!(project.meta_title && project.meta_description)} hasImage={!!project.image_url} hasSlug={!!project.slug} itemName={project.title} />
                     </div>
-                  )}
+                    {project.tags.length > 0 && (
+                      <div className="flex gap-2 mt-1 flex-wrap">
+                        {project.tags.slice(0, 3).map((tag, i) => (
+                          <span key={i} className="text-xs bg-muted px-2 py-1 rounded">{tag}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-2 flex-shrink-0 ml-4">
+                    <Button size="icon" variant="outline" onClick={() => handleDuplicate(project)} aria-label={`Duplicar ${project.title}`}>
+                      <Copy className="h-4 w-4" aria-hidden="true" />
+                    </Button>
+                    <Button size="icon" variant="outline" onClick={() => handleEdit(project)} aria-label={`Editar ${project.title}`}>
+                      <Pencil className="h-4 w-4" aria-hidden="true" />
+                    </Button>
+                    <DeleteConfirmButton itemName={project.title} onConfirm={() => handleDelete(project.id)} />
+                  </div>
                 </div>
-                <div className="flex gap-2 flex-shrink-0 ml-4">
-                  <Button size="icon" variant="outline" onClick={() => handleDuplicate(project)} aria-label={`Duplicar ${project.title}`}>
-                    <Copy className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                  <Button size="icon" variant="outline" onClick={() => handleEdit(project)} aria-label={`Editar ${project.title}`}>
-                    <Pencil className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                  <DeleteConfirmButton itemName={project.title} onConfirm={() => handleDelete(project.id)} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )} />
-        )}
+              </CardContent>
+            </Card>
+          );
+
+          if (searchQuery) return (
+            <div className="space-y-2">
+              {filtered.map(project => <ProjectCard key={project.id} project={project} />)}
+            </div>
+          );
+
+          return (
+            <SortableList items={filtered} onReorder={handleReorder} renderItem={(project) => (
+              <ProjectCard project={project} />
+            )} />
+          );
+        })()}
       </div>
 
       <PreviewModal open={showPreview} onOpenChange={setShowPreview} type="project" data={{ ...formData, tags: tagList }} />
