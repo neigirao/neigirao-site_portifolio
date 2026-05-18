@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Copy } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Pencil, Copy, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { SortableList } from './SortableList';
@@ -18,13 +19,14 @@ interface Company {
   abbr: string;
   logo_url: string | null;
   order_index: number;
+  is_visible: boolean;
 }
 
 interface CompaniesManagerProps {
   onDirtyChange?: (dirty: boolean) => void;
 }
 
-const emptyForm = { name: '', abbr: '', logo_url: '' };
+const emptyForm = { name: '', abbr: '', logo_url: '', is_visible: true };
 
 export function CompaniesManager({ onDirtyChange }: CompaniesManagerProps) {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -63,6 +65,7 @@ export function CompaniesManager({ onDirtyChange }: CompaniesManagerProps) {
       name: formData.name,
       abbr: formData.abbr,
       logo_url: formData.logo_url || null,
+      is_visible: formData.is_visible,
       order_index: editingId ? companies.find(c => c.id === editingId)?.order_index || 0 : nextOrderIndex,
     };
 
@@ -81,13 +84,19 @@ export function CompaniesManager({ onDirtyChange }: CompaniesManagerProps) {
 
   const handleEdit = (c: Company) => {
     setEditingId(c.id);
-    setFormData({ name: c.name, abbr: c.abbr, logo_url: c.logo_url || '' });
+    setFormData({ name: c.name, abbr: c.abbr, logo_url: c.logo_url || '', is_visible: c.is_visible });
+  };
+
+  const handleToggleVisible = async (c: Company) => {
+    const { error } = await supabase.from('companies').update({ is_visible: !c.is_visible }).eq('id', c.id);
+    if (error) { toast.error('Erro ao atualizar visibilidade'); return; }
+    setCompanies(prev => prev.map(x => x.id === c.id ? { ...x, is_visible: !c.is_visible } : x));
   };
 
   const handleDuplicate = async (c: Company) => {
     const nextOrderIndex = companies.length > 0 ? Math.max(...companies.map(x => x.order_index)) + 1 : 0;
     const { error } = await supabase.from('companies').insert([{
-      name: c.name, abbr: `${c.abbr} (cópia)`, logo_url: c.logo_url, order_index: nextOrderIndex,
+      name: c.name, abbr: `${c.abbr} (cópia)`, logo_url: c.logo_url, is_visible: c.is_visible, order_index: nextOrderIndex,
     }]);
     if (error) { toast.error('Erro ao duplicar'); return; }
     toast.success('Empresa duplicada!');
@@ -135,6 +144,10 @@ export function CompaniesManager({ onDirtyChange }: CompaniesManagerProps) {
               </div>
             </div>
             <ImageUploader value={formData.logo_url} onChange={(url) => setFormData({ ...formData, logo_url: url })} label="Logo da Empresa" folder="companies" />
+            <div className="flex items-center gap-2">
+              <Switch checked={formData.is_visible} onCheckedChange={(v) => setFormData({ ...formData, is_visible: v })} />
+              <Label>Visível no site</Label>
+            </div>
             <div className="flex gap-2">
               <Button type="submit">{editingId ? 'Atualizar' : 'Criar'}</Button>
               {editingId && <Button type="button" variant="outline" onClick={resetForm}>Cancelar</Button>}
@@ -154,7 +167,7 @@ export function CompaniesManager({ onDirtyChange }: CompaniesManagerProps) {
             items={companies}
             onReorder={handleReorder}
             renderItem={(c) => (
-              <Card>
+              <Card className={!c.is_visible ? 'opacity-50' : ''}>
                 <CardContent className="pt-4 pb-4">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
@@ -169,6 +182,9 @@ export function CompaniesManager({ onDirtyChange }: CompaniesManagerProps) {
                       </div>
                     </div>
                     <div className="flex gap-2 flex-shrink-0 ml-4">
+                      <Button size="icon" variant="ghost" onClick={() => handleToggleVisible(c)} aria-label={c.is_visible ? `Ocultar ${c.name}` : `Mostrar ${c.name}`}>
+                        {c.is_visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
+                      </Button>
                       <Button size="icon" variant="outline" onClick={() => handleDuplicate(c)} aria-label={`Duplicar ${c.name}`}><Copy className="h-4 w-4" /></Button>
                       <Button size="icon" variant="outline" onClick={() => handleEdit(c)} aria-label={`Editar ${c.name}`}><Pencil className="h-4 w-4" /></Button>
                       <DeleteConfirmButton itemName={c.name} onConfirm={() => handleDelete(c.id)} />

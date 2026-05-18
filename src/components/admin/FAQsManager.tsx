@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Pencil, Copy, HelpCircle } from 'lucide-react';
+import { Pencil, Copy, HelpCircle, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { SortableList } from './SortableList';
 import { AutosaveIndicator } from './AutosaveIndicator';
@@ -106,6 +106,12 @@ export function FAQsManager({ onDirtyChange }: FAQsManagerProps) {
     toast.success('Ordem atualizada!');
   };
 
+  const handleToggleVisible = async (f: FAQ) => {
+    const { error } = await supabase.from('faqs' as any).update({ is_visible: !f.is_visible }).eq('id', f.id);
+    if (error) { toast.error('Erro ao atualizar visibilidade'); return; }
+    setItems(prev => prev.map(x => x.id === f.id ? { ...x, is_visible: !f.is_visible } : x));
+  };
+
   const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
   return (
@@ -158,6 +164,9 @@ export function FAQsManager({ onDirtyChange }: FAQsManagerProps) {
                     </div>
                   </div>
                   <div className="flex gap-2 flex-shrink-0 ml-4">
+                    <Button size="icon" variant="ghost" onClick={() => handleToggleVisible(f)} aria-label={f.is_visible ? 'Ocultar FAQ' : 'Mostrar FAQ'}>
+                      {f.is_visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
+                    </Button>
                     <Button size="icon" variant="outline" onClick={() => handleDuplicate(f)} aria-label="Duplicar FAQ"><Copy className="h-4 w-4" /></Button>
                     <Button size="icon" variant="outline" onClick={() => handleEdit(f)} aria-label="Editar FAQ"><Pencil className="h-4 w-4" /></Button>
                     <DeleteConfirmButton itemName={f.question.slice(0, 60)} onConfirm={() => handleDelete(f.id)} />
