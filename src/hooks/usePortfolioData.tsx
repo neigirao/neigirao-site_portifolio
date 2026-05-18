@@ -48,6 +48,7 @@ export interface DbProject {
   highlight_metric: string | null;
   brand?: string | null;
   project_subtitle?: string | null;
+  is_visible?: boolean;
 }
 
 export interface DbCertification {
@@ -158,6 +159,7 @@ export function useProjects() {
       const { data, error } = await supabase
         .from('projects')
         .select('*')
+        .neq('is_visible', false)
         .order('order_index', { ascending: true });
 
       if (error) throw error;
