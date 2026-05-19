@@ -1,12 +1,14 @@
+/**
+ * ProjectsManager Component
+ */
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Eye, Copy, EyeOff, Search, X } from 'lucide-react';
-import { DeleteConfirmButton } from './DeleteConfirmButton';
+import { Pencil, Trash2, Eye, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { RichTextEditor } from './RichTextEditor';
@@ -36,11 +38,6 @@ interface Project {
   learnings: string | null;
   brand: string | null;
   project_subtitle: string | null;
-  is_visible: boolean;
-}
-
-interface ProjectsManagerProps {
-  onDirtyChange?: (dirty: boolean) => void;
 }
 
 const emptyForm = {
@@ -60,16 +57,13 @@ const emptyForm = {
   learnings: '',
   brand: '',
   project_subtitle: '',
-  is_visible: true,
 };
 
-export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
+export function ProjectsManager() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
-  const [tagInput, setTagInput] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
 
   const { status: autosaveStatus, clearDraft } = useAutosave({
     key: 'projects-form',
@@ -79,32 +73,12 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
     }, []),
   });
 
-  const updateForm = (patch: Partial<typeof emptyForm>) => {
-    setFormData(prev => ({ ...prev, ...patch }));
-    onDirtyChange?.(true);
-  };
-
   useEffect(() => { fetchProjects(); }, []);
 
   const fetchProjects = async () => {
     const { data, error } = await supabase.from('projects').select('*').order('order_index', { ascending: true });
-    if (error) { toast.error('Erro ao carregar projetos'); }
+    if (error) { toast.error('Erro ao carregar projetos'); return; }
     setProjects(data || []);
-  };
-
-  // Tag chip helpers
-  const tagList = formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
-
-  const addTag = (raw: string) => {
-    const tag = raw.trim();
-    if (tag && !tagList.includes(tag)) {
-      updateForm({ tags: [...tagList, tag].join(', ') });
-    }
-    setTagInput('');
-  };
-
-  const removeTag = (tag: string) => {
-    updateForm({ tags: tagList.filter(t => t !== tag).join(', ') });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -113,7 +87,7 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
     const dataToSubmit = {
       title: formData.title, description: formData.description,
       image_url: formData.image_url || null, link: formData.link || null,
-      tags: tagList,
+      tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
       meta_title: formData.meta_title || null, meta_description: formData.meta_description || null,
       slug: formData.slug || null,
       highlight_metric: formData.highlight_metric || null,
@@ -124,17 +98,26 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
       learnings: formData.learnings || null,
       brand: formData.brand || null,
       project_subtitle: formData.project_subtitle || null,
-      is_visible: formData.is_visible,
       order_index: editingId ? projects.find(p => p.id === editingId)?.order_index || 0 : nextOrderIndex,
     };
 
+    if (formData.slug) {
+      let slugQuery = supabase.from('projects').select('id').eq('slug', formData.slug);
+      if (editingId) slugQuery = slugQuery.neq('id', editingId);
+      const { data: existing } = await slugQuery.maybeSingle();
+      if (existing) {
+        toast.error('Este slug já está em uso. Escolha outro.');
+        return;
+      }
+    }
+
     if (editingId) {
       const { error } = await supabase.from('projects').update(dataToSubmit).eq('id', editingId);
-      if (error) { toast.error('Erro ao atualizar projeto'); return; }
+      if (error) { toast.error(`Erro ao atualizar projeto: ${error.message}`); return; }
       toast.success('Projeto atualizado!');
     } else {
       const { error } = await supabase.from('projects').insert([dataToSubmit]);
-      if (error) { toast.error('Erro ao criar projeto'); return; }
+      if (error) { toast.error(`Erro ao criar projeto: ${error.message}`); return; }
       toast.success('Projeto criado!');
     }
     resetForm();
@@ -157,9 +140,7 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
       learnings: project.learnings || '',
       brand: project.brand || '',
       project_subtitle: project.project_subtitle || '',
-      is_visible: project.is_visible ?? true,
     });
-    onDirtyChange?.(false);
   };
 
   const handleDuplicate = async (project: Project) => {
@@ -171,38 +152,51 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
       highlight_metric: project.highlight_metric,
       context: project.context, challenge: project.challenge,
       solution: project.solution, results: project.results, learnings: project.learnings,
-      is_visible: project.is_visible,
       order_index: nextOrderIndex,
     }]);
-    if (error) { toast.error('Erro ao duplicar'); return; }
+    if (error) { toast.error(`Erro ao duplicar: ${error.message}`); return; }
     toast.success('Projeto duplicado!');
     fetchProjects();
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, name: string) => {
+    const deletedItem = projects.find(i => i.id === id);
     const { error } = await supabase.from('projects').delete().eq('id', id);
-    if (error) { toast.error('Erro ao excluir projeto'); return; }
-    toast.success('Projeto excluído!');
+    if (error) { toast.error(`Erro ao excluir: ${error.message}`); return; }
     fetchProjects();
+    if (deletedItem) {
+      const { id: _id, ...itemWithoutId } = deletedItem;
+      toast.success('Excluído!', {
+        action: {
+          label: 'Desfazer',
+          onClick: async () => {
+            await supabase.from('projects').insert([itemWithoutId]);
+            fetchProjects();
+          },
+        },
+      });
+    } else {
+      toast.success('Excluído!');
+    }
   };
 
   const handleReorder = async (reorderedItems: Project[]) => {
+    const previousItems = projects;
     setProjects(reorderedItems);
-    await Promise.all(
+    const results = await Promise.all(
       reorderedItems.map((item, index) =>
         supabase.from('projects').update({ order_index: index }).eq('id', item.id)
       )
     );
+    if (results.some(r => r.error)) {
+      setProjects(previousItems);
+      toast.error('Erro ao salvar ordem. Revertendo.');
+      return;
+    }
     toast.success('Ordem atualizada!');
   };
 
-  const resetForm = () => {
-    setEditingId(null);
-    setFormData(emptyForm);
-    setTagInput('');
-    clearDraft();
-    onDirtyChange?.(false);
-  };
+  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); };
 
   return (
     <div className="space-y-6">
@@ -217,61 +211,24 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">Título</Label>
-              <Input id="title" value={formData.title} onChange={(e) => updateForm({ title: e.target.value })} required />
+              <Input id="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
             </div>
-            <RichTextEditor value={formData.description} onChange={(value) => updateForm({ description: value })} label="Descrição" />
-            <ImageUploader value={formData.image_url} onChange={(url) => updateForm({ image_url: url })} label="Imagem do Projeto" folder="projects" />
+            <RichTextEditor value={formData.description} onChange={(value) => setFormData({ ...formData, description: value })} label="Descrição" />
+            <ImageUploader value={formData.image_url} onChange={(url) => setFormData({ ...formData, image_url: url })} label="Imagem do Projeto" folder="projects" />
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="link">Link do Projeto</Label>
-                <Input id="link" value={formData.link} onChange={(e) => updateForm({ link: e.target.value })} placeholder="https://..." />
+                <Input id="link" value={formData.link} onChange={(e) => setFormData({ ...formData, link: e.target.value })} placeholder="https://..." />
               </div>
               <div className="space-y-2">
-                <Label>Tags</Label>
-                <div className="flex flex-wrap gap-1.5 p-2 border rounded-md min-h-[40px] bg-background focus-within:ring-1 focus-within:ring-ring">
-                  {tagList.map(tag => (
-                    <span key={tag} className="flex items-center gap-1 px-2 py-0.5 bg-muted rounded text-sm">
-                      {tag}
-                      <button
-                        type="button"
-                        onClick={() => removeTag(tag)}
-                        className="text-muted-foreground hover:text-foreground leading-none"
-                        aria-label={`Remover tag ${tag}`}
-                      >×</button>
-                    </span>
-                  ))}
-                  <input
-                    className="flex-1 min-w-[120px] outline-none bg-transparent text-sm placeholder:text-muted-foreground"
-                    placeholder={tagList.length === 0 ? 'Enter ou vírgula para adicionar' : ''}
-                    value={tagInput}
-                    onChange={e => setTagInput(e.target.value)}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(tagInput); }
-                      if (e.key === 'Backspace' && !tagInput && tagList.length > 0) removeTag(tagList[tagList.length - 1]);
-                    }}
-                    onBlur={() => { if (tagInput.trim()) addTag(tagInput); }}
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground">Enter ou vírgula para adicionar · Backspace remove a última</p>
+                <Label htmlFor="tags">Tags (separadas por vírgula)</Label>
+                <Input id="tags" value={formData.tags} onChange={(e) => setFormData({ ...formData, tags: e.target.value })} placeholder="React, TypeScript, Node.js" />
               </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="highlight_metric">Métrica de Destaque</Label>
-              <Input id="highlight_metric" value={formData.highlight_metric} onChange={(e) => updateForm({ highlight_metric: e.target.value })} placeholder="Ex: +15% conversão" />
+              <Input id="highlight_metric" value={formData.highlight_metric} onChange={(e) => setFormData({ ...formData, highlight_metric: e.target.value })} placeholder="Ex: 40% redução MTTR" />
               <p className="text-xs text-muted-foreground">Métrica-chave exibida em destaque no card e na página do projeto</p>
-            </div>
-
-            {/* Visibilidade */}
-            <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30">
-              <Switch
-                id="is_visible"
-                checked={formData.is_visible}
-                onCheckedChange={(v) => updateForm({ is_visible: v })}
-              />
-              <div>
-                <Label htmlFor="is_visible" className="font-medium cursor-pointer">Projeto visível no site</Label>
-                <p className="text-xs text-muted-foreground">Desligado → projeto oculto para visitantes, mantido no CMS</p>
-              </div>
             </div>
 
             {/* Campos para design editorial */}
@@ -280,135 +237,87 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
                   <Label htmlFor="brand">Marca/Empresa (ex: ICATU, OI, TIM)</Label>
-                  <Input id="brand" value={formData.brand} onChange={(e) => updateForm({ brand: e.target.value })} placeholder="ICATU" />
+                  <Input id="brand" value={formData.brand} onChange={(e) => setFormData({ ...formData, brand: e.target.value })} placeholder="ICATU" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="project_subtitle">Subtítulo do projeto</Label>
-                  <Input id="project_subtitle" value={formData.project_subtitle} onChange={(e) => updateForm({ project_subtitle: e.target.value })} placeholder="Conversão online +15%" />
+                  <Input id="project_subtitle" value={formData.project_subtitle} onChange={(e) => setFormData({ ...formData, project_subtitle: e.target.value })} placeholder="Conversão online +15%" />
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground">Exibidos no grid de projetos da home editorial.</p>
+              <p className="text-xs text-muted-foreground">Exibidos no grid de projetos da home editorial (Direction C).</p>
             </div>
 
             {/* Case Study Fields */}
             <div className="border-t border-border pt-4 mt-4">
               <h3 className="text-sm font-semibold text-foreground mb-3">📋 Case Study (opcional)</h3>
               <div className="space-y-4">
-                <RichTextEditor value={formData.context} onChange={(value) => updateForm({ context: value })} label="Contexto" />
-                <RichTextEditor value={formData.challenge} onChange={(value) => updateForm({ challenge: value })} label="Desafio" />
-                <RichTextEditor value={formData.solution} onChange={(value) => updateForm({ solution: value })} label="Solução" />
-                <RichTextEditor value={formData.results} onChange={(value) => updateForm({ results: value })} label="Resultados" />
-                <RichTextEditor value={formData.learnings} onChange={(value) => updateForm({ learnings: value })} label="Aprendizados" />
+                <RichTextEditor value={formData.context} onChange={(value) => setFormData({ ...formData, context: value })} label="Contexto" />
+                <RichTextEditor value={formData.challenge} onChange={(value) => setFormData({ ...formData, challenge: value })} label="Desafio" />
+                <RichTextEditor value={formData.solution} onChange={(value) => setFormData({ ...formData, solution: value })} label="Solução" />
+                <RichTextEditor value={formData.results} onChange={(value) => setFormData({ ...formData, results: value })} label="Resultados" />
+                <RichTextEditor value={formData.learnings} onChange={(value) => setFormData({ ...formData, learnings: value })} label="Aprendizados" />
               </div>
             </div>
 
             <SEOFields
               metaTitle={formData.meta_title} metaDescription={formData.meta_description} slug={formData.slug}
-              onMetaTitleChange={(v) => updateForm({ meta_title: v })}
-              onMetaDescriptionChange={(v) => updateForm({ meta_description: v })}
-              onSlugChange={(v) => updateForm({ slug: v })}
+              onMetaTitleChange={(v) => setFormData({ ...formData, meta_title: v })}
+              onMetaDescriptionChange={(v) => setFormData({ ...formData, meta_description: v })}
+              onSlugChange={(v) => setFormData({ ...formData, slug: v })}
               titleSource={formData.title}
-              existingSlugs={projects.filter(p => p.id !== editingId && p.slug).map(p => p.slug!) }
             />
             <div className="flex gap-2">
               <Button type="submit">{editingId ? 'Atualizar' : 'Criar'}</Button>
               <Button type="button" variant="outline" onClick={() => setShowPreview(true)}><Eye className="h-4 w-4 mr-2" />Visualizar</Button>
-              {editingId && <Button type="button" variant="outline" onClick={resetForm}>Descartar</Button>}
+              {editingId && <Button type="button" variant="outline" onClick={resetForm}>Cancelar</Button>}
             </div>
           </form>
         </CardContent>
       </Card>
 
       <div className="space-y-2">
-        {/* Search / filter */}
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
-            <Input
-              placeholder="Buscar por título ou tag..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-          {searchQuery && (
-            <Button variant="ghost" size="sm" onClick={() => setSearchQuery('')} aria-label="Limpar busca">
-              <X className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-        <p className="text-sm text-muted-foreground">
-          {searchQuery ? 'Busca ativa — reordenação desabilitada' : 'Arraste os itens para reordenar'}
-        </p>
-
-        {(() => {
-          const filtered = searchQuery
-            ? projects.filter(p =>
-                p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                p.tags?.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
-              )
-            : projects;
-
-          if (filtered.length === 0) return (
-            <p className="text-center text-muted-foreground py-8 text-sm">
-              {searchQuery ? `Nenhum projeto encontrado para "${searchQuery}".` : 'Nenhum projeto adicionado ainda.'}
-            </p>
-          );
-
-          const ProjectCard = ({ project }: { project: Project }) => (
-            <Card className={!project.is_visible ? 'opacity-60' : ''}>
-              <CardContent className="pt-4 pb-4">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-lg truncate">{project.title}</h3>
-                      {!project.is_visible && (
-                        <span className="flex items-center gap-1 text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
-                          <EyeOff className="w-3 h-3" aria-hidden="true" />Oculto
-                        </span>
-                      )}
-                      {project.highlight_metric && (
-                        <span className="text-xs bg-teal-accent/10 text-teal-accent px-2 py-0.5 rounded-full font-medium">{project.highlight_metric}</span>
-                      )}
-                      <CompletenessIndicator hasSeo={!!(project.meta_title && project.meta_description)} hasImage={!!project.image_url} hasSlug={!!project.slug} itemName={project.title} />
-                    </div>
-                    {project.tags.length > 0 && (
-                      <div className="flex gap-2 mt-1 flex-wrap">
-                        {project.tags.slice(0, 3).map((tag, i) => (
-                          <span key={i} className="text-xs bg-muted px-2 py-1 rounded">{tag}</span>
-                        ))}
-                      </div>
+        <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
+        {projects.length === 0 && (
+          <p className="text-center text-muted-foreground py-8 text-sm">Nenhum projeto adicionado ainda.</p>
+        )}
+        <SortableList items={projects} onReorder={handleReorder} renderItem={(project) => (
+          <Card>
+            <CardContent className="pt-4 pb-4">
+              <div className="flex justify-between items-start">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold text-lg truncate">{project.title}</h3>
+                    {project.highlight_metric && (
+                      <span className="text-xs bg-teal-accent/10 text-teal-accent px-2 py-0.5 rounded-full font-medium">{project.highlight_metric}</span>
                     )}
+                    <CompletenessIndicator hasSeo={!!(project.meta_title && project.meta_description)} hasImage={!!project.image_url} hasSlug={!!project.slug} itemName={project.title} />
                   </div>
-                  <div className="flex gap-2 flex-shrink-0 ml-4">
-                    <Button size="icon" variant="outline" onClick={() => handleDuplicate(project)} aria-label={`Duplicar ${project.title}`}>
-                      <Copy className="h-4 w-4" aria-hidden="true" />
-                    </Button>
-                    <Button size="icon" variant="outline" onClick={() => handleEdit(project)} aria-label={`Editar ${project.title}`}>
-                      <Pencil className="h-4 w-4" aria-hidden="true" />
-                    </Button>
-                    <DeleteConfirmButton itemName={project.title} onConfirm={() => handleDelete(project.id)} />
-                  </div>
+                  {project.tags.length > 0 && (
+                    <div className="flex gap-2 mt-1 flex-wrap">
+                      {project.tags.slice(0, 3).map((tag, i) => (
+                        <span key={i} className="text-xs bg-muted px-2 py-1 rounded">{tag}</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          );
-
-          if (searchQuery) return (
-            <div className="space-y-2">
-              {filtered.map(project => <ProjectCard key={project.id} project={project} />)}
-            </div>
-          );
-
-          return (
-            <SortableList items={filtered} onReorder={handleReorder} renderItem={(project) => (
-              <ProjectCard project={project} />
-            )} />
-          );
-        })()}
+                <div className="flex gap-2 flex-shrink-0 ml-4">
+                  <Button size="icon" variant="outline" onClick={() => handleDuplicate(project)} aria-label={`Duplicar ${project.title}`}>
+                    <Copy className="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                  <Button size="icon" variant="outline" onClick={() => handleEdit(project)} aria-label={`Editar ${project.title}`}>
+                    <Pencil className="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                  <Button size="icon" variant="destructive" onClick={() => handleDelete(project.id, project.title)} aria-label={`Excluir ${project.title}`}>
+                    <Trash2 className="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )} />
       </div>
 
-      <PreviewModal open={showPreview} onOpenChange={setShowPreview} type="project" data={{ ...formData, tags: tagList }} />
+      <PreviewModal open={showPreview} onOpenChange={setShowPreview} type="project" data={{ ...formData, tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean) }} />
     </div>
   );
 }
