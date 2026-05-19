@@ -175,6 +175,7 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
               onMetaDescriptionChange={(v) => setFormData({ ...formData, meta_description: v })}
               onSlugChange={(v) => setFormData({ ...formData, slug: v })}
               titleSource={`${formData.degree} - ${formData.institution}`}
+              existingSlugs={education.filter(e => e.id !== editingId && e.slug).map(e => e.slug!)}
             />
             <div className="flex gap-2">
               <Button type="submit">{editingId ? 'Atualizar' : 'Criar'}</Button>
