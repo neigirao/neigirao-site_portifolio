@@ -4,19 +4,22 @@ import { CheckCircle, AlertCircle, XCircle } from 'lucide-react';
 
 interface CompletenessIndicatorProps {
   hasSeo: boolean;
-  hasImage: boolean;
+  /** Pass `undefined` when the entity has no image field (skips the check). */
+  hasImage?: boolean;
   hasSlug: boolean;
   itemName: string;
 }
 
 export function CompletenessIndicator({ hasSeo, hasImage, hasSlug, itemName }: CompletenessIndicatorProps) {
-  const isComplete = hasSeo && hasImage && hasSlug;
-  const isPartial = (hasSeo || hasImage || hasSlug) && !isComplete;
+  const checks = [hasSeo, hasSlug];
+  if (hasImage !== undefined) checks.push(hasImage);
+  const isComplete = checks.every(Boolean);
+  const isPartial = checks.some(Boolean) && !isComplete;
 
   const missingItems: string[] = [];
   if (!hasSeo) missingItems.push('SEO (título e descrição)');
   if (!hasSlug) missingItems.push('Slug');
-  if (!hasImage) missingItems.push('Imagem');
+  if (hasImage === false) missingItems.push('Imagem');
 
   if (isComplete) {
     return (
