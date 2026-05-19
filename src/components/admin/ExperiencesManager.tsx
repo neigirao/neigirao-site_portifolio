@@ -83,6 +83,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const nextOrderIndex = experiences.length > 0 ? Math.max(...experiences.map(exp => exp.order_index)) + 1 : 0;
+    const existing = editingId ? experiences.find(e => e.id === editingId) : null;
     const dataToSubmit = {
       company: formData.company, role: formData.role, period: formData.period,
       description: formData.description, logo_url: formData.logo_url || null,
@@ -91,8 +92,9 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       is_case: formData.is_case,
       case_result: formData.case_result || null,
       case_body: formData.case_body || null,
-      is_visible: true,
-      order_index: editingId ? experiences.find(e => e.id === editingId)?.order_index || 0 : nextOrderIndex,
+      // Preserve current visibility on update; default true on create
+      is_visible: existing ? existing.is_visible : true,
+      order_index: existing ? existing.order_index : nextOrderIndex,
     };
 
     if (formData.slug) {
@@ -295,6 +297,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
               onMetaDescriptionChange={(value) => setFormData({ ...formData, meta_description: value })}
               onSlugChange={(value) => setFormData({ ...formData, slug: value })}
               titleSource={`${formData.role} - ${formData.company}`}
+              existingSlugs={experiences.filter(e => e.id !== editingId && e.slug).map(e => e.slug!)}
             />
             <div className="flex gap-2">
               <Button type="submit">{editingId ? 'Atualizar' : 'Criar'}</Button>

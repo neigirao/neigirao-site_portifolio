@@ -166,6 +166,7 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
               onMetaDescriptionChange={(v) => setFormData({ ...formData, meta_description: v })}
               onSlugChange={(v) => setFormData({ ...formData, slug: v })}
               titleSource={formData.name}
+              existingSlugs={skills.filter(s => s.id !== editingId && s.slug).map(s => s.slug!)}
             />
             <div className="flex gap-2">
               <Button type="submit">{editingId ? 'Atualizar' : 'Criar'}</Button>
