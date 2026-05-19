@@ -205,7 +205,7 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-lg truncate">{edu.degree}</h3>
                     {!edu.is_visible && <EyeOff className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
-                    <CompletenessIndicator hasSeo={!!(edu.meta_title && edu.meta_description)} hasImage={false} hasSlug={!!edu.slug} itemName={edu.degree} />
+                    <CompletenessIndicator hasSeo={!!(edu.meta_title && edu.meta_description)} hasSlug={!!edu.slug} itemName={edu.degree} />
                   </div>
                   <p className="text-muted-foreground truncate">{edu.institution}</p>
                   <p className="text-sm text-muted-foreground">{edu.period}</p>
