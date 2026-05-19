@@ -1,125 +1,152 @@
-# Plano de revisão e melhorias — Site + CMS
+# Revisão do CMS — melhorias por categoria
 
-Resultado de uma varredura na home editorial, páginas de detalhe, hooks de dados, autenticação e nos managers do admin. Abaixo, agrupei oportunidades por tema e priorizei em fases. Nada é aplicado ainda — é só para você aprovar/ajustar.
-
----
-
-## 1. Site público
-
-### 1.1 Performance e Core Web Vitals
-- **Imagens**: padronizar uso do `OptimizedImage` (já existe) em todas as seções (`CasesSection`, `ProjectsEditorialSection`, `WorkSection`, `CredentialsSection`) com `width`/`height` explícitos e `loading="lazy"` exceto LCP.
-- **LCP**: garantir que a imagem/título do `CoverSection` use `fetchpriority="high"` e preload da fonte display.
-- **Prefetch de rotas**: pré-carregar `ProjectDetail` e `ExperienceDetail` ao passar o mouse nos cards (React Router `prefetch` via dynamic import).
-- **Bundle**: auditar `framer-motion`, `tiptap` e ícones lucide para tree-shaking; mover `RichTextEditor` para chunk separado (só admin).
-
-### 1.2 SEO e descoberta
-- **Sitemap dinâmico**: confirmar que a edge function `generate-sitemap` inclui `projects`, `experiences (is_case)`, `articles published` e `skills` com `lastmod` correto.
-- **Schema.org**: adicionar `BreadcrumbList` em `ProjectDetail`/`ExperienceDetail` (componente já existe — só plugar) e `Article` schema em `ArticleDetail`.
-- **OG image dinâmica**: gerar OG por projeto/case usando `cover_image_url` ou fallback.
-- **H1/H2**: revisar `EssaySection` e `MastheadSection` para garantir um H1 único na home.
-- **Canonical**: validar canonical em `/projects/:slug`, `/experiences/:slug` e `/articles/:slug`.
-
-### 1.3 UX e acessibilidade
-- **Foco visível**: adicionar `:focus-visible` ring consistente em links da home editorial (hoje alguns somem).
-- **Navegação por teclado** no `WorkSection` (lista de experiências expandíveis).
-- **Reduced motion**: respeitar `prefers-reduced-motion` em transições do `EssaySection` e `PullQuoteSection`.
-- **Mobile (viewport 393px)**: revisar densidade tipográfica no `CoverSection` e wrap de tags em `ProjectsEditorialSection`.
-- **Empty states** para quando uma seção fica vazia (hoje sumimos a seção — ok — mas no admin precisa um aviso).
-
-### 1.4 Conteúdo e conversão
-- **CTA Contato**: o `ContactEditorialSection` poderia ter atalho direto para WhatsApp/Email com tracking GA.
-- **"See also" / Related**: o `useRelatedContent` está pronto — usar em `ArticleDetail` e `ExperienceDetail` (hoje só `ProjectDetail` usa de forma completa).
-- **Breadcrumbs visíveis** em páginas internas.
-- **Página 404**: enriquecer `NotFound` com links para projetos em destaque.
+Análise dos 23 managers do admin + dashboard + hooks. Agrupei oportunidades por categoria/manager e marquei prioridade (🔴 alta, 🟡 média, 🟢 baixa).
 
 ---
 
-## 2. CMS / Admin
+## 0. Melhorias transversais (afetam todos os managers)
 
-### 2.1 Produtividade
-- **Busca + filtros** em listas longas (`ProjectsManager`, `ExperiencesManager`, `ArticlesManager`): filtro por visibilidade, brand/empresa, status.
-- **Bulk actions**: selecionar múltiplos itens para ocultar/mostrar/excluir.
-- **Duplicar com 1 clique** já existe em FAQs — replicar em Projects/Experiences/Articles.
-- **Preview lado a lado** (já há `PreviewModal`): expandir para Projects e Articles antes de salvar.
-- **Atalhos de teclado** (⌘S salvar, Esc cancelar) nos formulários.
-
-### 2.2 Qualidade de conteúdo
-- **Indicador de completude** (`CompletenessIndicator` existe) — exibir em cada item da lista (meta title, meta description, slug, imagem, alt text).
-- **Validação de SEO inline**: tamanho de `meta_title` (≤60), `meta_description` (≤160), aviso de duplicidade de slug.
-- **Alt text obrigatório** no `ImageUploader`.
-- **Rich text**: adicionar suporte a blocos de código e callouts no `RichTextEditor`; sanitização já está OK.
-
-### 2.3 Site Settings
-- **Agrupar por seção** (Cover, Essay, Contact, Footer, SEO global) no `SiteSettingsManager` — hoje é uma lista longa.
-- **Preview ao vivo** ao editar um campo (renderizar a seção correspondente).
-- **Reset para default** por campo.
-
-### 2.4 Mensagens de contato
-- **Marcar como lida / arquivar / responder** em `ContactMessagesManager` (hoje só lista + delete + CSV).
-- **Notificação por email** (edge function) quando chega nova mensagem.
-- **Anti-spam**: honeypot + rate limit por IP já existe; adicionar Turnstile/hCaptcha opcional.
-
-### 2.5 Dashboard
-- **DashboardStats**: incluir mensagens não lidas, projetos ocultos, artigos em rascunho, itens sem SEO/slug.
-- **Atividade recente** (últimas edições).
-- **Health checks**: links quebrados em projetos, imagens sem alt, slugs duplicados.
-
-### 2.6 Operação
-- **Histórico/versionamento** simples (snapshot do registro antes de update) para reverter edições.
-- **Logs de auditoria** (quem editou o quê, quando) — tabela `audit_log` com `user_id`, `entity`, `action`, `diff`.
-- **Backup export**: botão "Exportar tudo" gerando JSON do conteúdo público.
+🔴 **Padronizar `is_visible` em todas as listas**: hoje só alguns managers mostram badge/opacity quando oculto. Padronizar visual + toggle rápido (olhinho) em todas as listas.
+🔴 **Indicador de completude por item** (`CompletenessIndicator` já existe): mostrar barra/percentual em cada card de lista (meta_title, meta_description, slug, imagem, alt text).
+🔴 **Alt text obrigatório** no `ImageUploader` quando a imagem aparece no site público (logos de empresa/certificação podem ficar opcionais).
+🔴 **Validação SEO inline universal**: `meta_title` ≤60, `meta_description` ≤160, slug duplicado entre registros da mesma tabela (já feito em Experiences, replicar em Projects, Articles, Skills, Education).
+🟡 **Atalhos de teclado**: ⌘S salva, Esc cancela edição, `/` foca busca. Hook `useFormShortcuts` reaproveitável.
+🟡 **Duplicar 1-clique universal**: hoje só Companies/FAQs têm. Adicionar em Projects, Experiences, Articles, Skills, Education, Testimonials, Certifications.
+🟡 **Bulk actions**: checkbox de seleção + ocultar/mostrar/excluir em lote nas listas grandes (Projects, Experiences, Articles, Skills).
+🟡 **Busca + filtros consistentes**: padrão já em Projects/Experiences/Articles → estender a Skills, Education, Testimonials, Certifications, Companies.
+🟢 **PreviewModal** lado-a-lado em Projects e Articles antes de salvar (hoje só Experiences/FAQs usam).
+🟢 **Skeleton states** consistentes (alguns managers só mostram "Carregando...").
 
 ---
 
-## 3. Backend / Segurança
+## 1. Experiences Manager
 
-- **Rodar `security--run_security_scan`** para checar RLS e funções com `SECURITY DEFINER`.
-- **Profiles**: revisar policy "Users can view all profiles" — restringir a admins.
-- **Storage**: confirmar que bucket `portfolio-images` tem políticas de upload restritas a admin (hoje é público para leitura — ok).
-- **Edge functions**: adicionar logs estruturados e timeouts em `generate-*`.
-- **Rate limit global** em `contact_messages` (já existe por IP — validar janela).
+🔴 Validar `is_case = true` exige `case_body` e `case_result` (hoje pode salvar case vazio).
+🔴 Slug auto-gerado a partir de `role + company` quando vazio (BulkSlugGenerator já existe, plugar no submit).
+🟡 Mostrar contagem "X de Y são cases" no topo da lista.
+🟡 Botão "Ver no site" abrindo `/experiencia/:slug` em nova aba quando `is_case && is_visible`.
+
+## 2. Projects Manager
+
+🔴 Campos longos (`challenge`, `solution`, `results`, `learnings`, `context`) — usar RichTextEditor em vez de textarea (consistente com Articles).
+🔴 `highlight_metric` ganha placeholder com exemplo e contador de chars (aparece no card da home).
+🟡 Preview do card editorial (como aparece no site) ao lado do form.
+🟡 Validar `tags` ≥1 e ≤5 (UX dos chips fica melhor).
+🟡 Brand: select com lista das companies cadastradas + opção custom.
+
+## 3. Articles Manager
+
+🔴 Estado de publicação claro: `draft` / `published` com ação "Publicar" separada do botão Salvar.
+🔴 Auto-calcular `reading_time_minutes` a partir do `content` (palavras/200).
+🟡 Tags como combobox com sugestões das tags já usadas.
+🟡 Agendar publicação (`published_at` futuro + filtro "Agendados").
+🟢 Contador de palavras/caracteres no editor.
+
+## 4. Skills Manager
+
+🔴 Filtro por `category` + agrupamento visual por categoria na lista.
+🔴 Slug + meta automáticos quando vazios.
+🟡 Bulk import via CSV (nome, categoria, logo URL).
+
+## 5. Education Manager
+
+🟡 Validar formato de `period` (regex `YYYY – YYYY` ou "Atual").
+🟡 Ordenar por data automaticamente (período mais recente primeiro).
+🟢 Campo opcional `credential_url` (igual certifications).
+
+## 6. Companies Manager
+
+🟡 Detectar logos duplicados pelo hash da URL.
+🟡 Mostrar quantos `experiences` usam cada `company` (com link para filtrar).
+🟢 Sugerir `abbr` automaticamente a partir do `name`.
+
+## 7. Certifications Manager
+
+🟡 Validar `year` (4 dígitos, ≤ ano atual).
+🟡 Adicionar `is_visible` (hoje não tem — sempre aparece).
+🟢 Agrupar por `issuer` na lista.
+
+## 8. Testimonials Manager
+
+🔴 Limite de caracteres no `quote` (ideal 240–400) com contador.
+🟡 Preview do card como aparece no site.
+🟡 Validar `linkedin_url` (regex linkedin.com).
+
+## 9. Metrics (Impact) Manager
+
+🟡 Preview do ícone Lucide ao escolher (já é dropdown? validar live preview).
+🟡 Validar `value` (aceita `+50%`, `1.5k`, etc. — mostrar formato).
+🟢 Color picker com tokens do design system em vez de string Tailwind.
+
+## 10. FAQs Manager
+
+🟢 Já tem boa UX (duplicate, sortable, visible). Falta só: busca por texto da pergunta + preview do accordion.
+
+## 11. Site Settings Manager (491 linhas — maior arquivo)
+
+🔴 **Agrupar por seção** (Cover, Masthead, Essay, Contact, Footer, SEO global, Social, Analytics) com Accordion/Tabs.
+🔴 Preview ao vivo da seção correspondente ao editar (split view).
+🔴 Botão "Resetar para default" por campo (mantém um JSON de defaults).
+🟡 Detectar tipo do valor (texto curto/longo/JSON/URL/cor) e renderizar input apropriado em vez de tudo textarea.
+🟡 Histórico das últimas 5 edições por chave (snapshot em tabela `site_settings_history`).
+🟢 Busca por chave/valor.
+
+## 12. Contact Messages Manager
+
+✅ Recém-refatorado (read/unread, CSV, mailto).
+🔴 **Edge function de notificação por email** quando entra nova mensagem (Resend via Lovable AI / connector).
+🟡 Arquivar (campo `archived_at`) + filtro Ativas/Arquivadas.
+🟡 Tag/categorizar (`tag` ENUM: lead, spam, parceria, outro).
+🟢 Resposta inline com template (mailto pré-preenchido).
+
+## 13. Dashboard / Stats
+
+🔴 **Health checks**: cards com "X projetos sem slug", "Y itens sem meta_description", "Z imagens sem alt", "W slugs duplicados", "V mensagens não lidas".
+🔴 Atividade recente (últimos 10 `updated_at` cross-table).
+🟡 Quick actions: "+ Novo projeto", "+ Novo artigo" direto do dashboard.
+🟢 Mini-gráfico de mensagens recebidas por semana.
+
+## 14. Infra do admin
+
+🔴 **Audit log** (tabela `audit_log`: `user_id`, `entity`, `entity_id`, `action`, `diff_json`, `created_at`) + trigger genérico nas tabelas-chave.
+🔴 **Histórico/versionamento simples**: snapshot do registro antes de UPDATE em `<entity>_history` (mín. Projects, Experiences, Articles, SiteSettings).
+🟡 **Role-based UI**: hoje tudo é admin. Preparar para `editor` (sem deletar) usando `has_role`.
+🟡 **Comando ⌘K** (Command palette) para navegar entre managers + criar item rápido.
+🟢 Storybook leve dos managers para QA visual.
 
 ---
 
-## 4. DX e manutenção
-
-- **Storybook leve** ou playground para os managers (opcional).
-- **Testes**: smoke tests do CMS (criar, editar, deletar) com Vitest + Testing Library nos managers principais.
-- **Tipos**: substituir os `from('faqs' as any)` por tipos gerados — regenerar `types.ts` (Supabase faz automaticamente).
-- **Lint/CI**: adicionar regra para proibir cores hardcoded fora dos tokens.
-
----
-
-## 5. Roadmap sugerido (3 fases)
+## Roadmap sugerido
 
 ```text
-Fase 1 — Quick wins (1 sessão)
-  • Busca + filtros nos managers grandes
-  • CompletenessIndicator nas listas + validação SEO inline
+Sprint A — Consistência (1 sessão)
+  • Transversal 0: is_visible padronizado + CompletenessIndicator nas listas
+  • Validação SEO inline universal (Projects, Articles, Skills, Education)
   • Alt text obrigatório no ImageUploader
-  • Agrupar SiteSettings por seção
-  • Marcar mensagem como lida + notificação por email
+  • Duplicar 1-clique nos managers que faltam
 
-Fase 2 — UX/SEO do site (1–2 sessões)
-  • Breadcrumb schema + Article schema
-  • OG image dinâmica por projeto
-  • Related content em Article/Experience detail
-  • Focus-visible + reduced-motion
-  • Prefetch de rotas internas
+Sprint B — Site Settings + Dashboard (1 sessão)
+  • Agrupar SiteSettings por seção + tipo de input apropriado
+  • Reset para default por campo
+  • Health checks no DashboardStats + atividade recente
 
-Fase 3 — Robustez (1–2 sessões)
-  • Audit log + histórico simples
-  • Dashboard de health checks
-  • Bulk actions e duplicação universal
-  • Security scan + ajustes de RLS
-  • Testes dos managers principais
+Sprint C — Conteúdo (1 sessão)
+  • Projects: RichTextEditor nos campos longos + preview do card
+  • Articles: estado de publicação + reading_time auto + agendar
+  • Testimonials: limite de caracteres + preview
+
+Sprint D — Operação (1–2 sessões)
+  • Audit log + histórico simples (Projects/Experiences/Articles/SiteSettings)
+  • Edge function de notificação de mensagem por email
+  • Bulk actions nas listas grandes
+  • Command palette ⌘K
 ```
 
 ---
 
 ## Próximo passo
 
-Me diga:
-1. Quer seguir nessa ordem (Fase 1 → 2 → 3) ou priorizar algo específico?
-2. Há algum item que devo remover ou que é prioridade absoluta?
-3. Posso já começar pela **Fase 1** depois da sua aprovação?
+Me confirma:
+1. Quer seguir A → B → C → D ou priorizar um sprint específico?
+2. Algum item para remover, ou prioridade absoluta (ex.: notificação por email da Sprint D)?
+3. Posso começar pelo **Sprint A** assim que aprovar?
