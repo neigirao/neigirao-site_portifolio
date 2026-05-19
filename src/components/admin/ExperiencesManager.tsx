@@ -2,7 +2,7 @@
  * ExperiencesManager Component
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,8 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Eye, Copy, EyeOff, Search, X } from 'lucide-react';
-import { DeleteConfirmButton } from './DeleteConfirmButton';
+import { Pencil, Trash2, Eye, Copy, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { RichTextEditor } from './RichTextEditor';
@@ -54,9 +53,6 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filter, setFilter] = useState<'all' | 'cases' | 'hidden'>('all');
 
   const { status: autosaveStatus, clearDraft } = useAutosave({
     key: 'experiences-form',
@@ -73,11 +69,9 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
   useEffect(() => { fetchExperiences(); }, []);
 
   const fetchExperiences = async () => {
-    setIsLoading(true);
     const { data, error } = await supabase.from('experiences').select('*').order('order_index', { ascending: true });
-    if (error) { toast.error('Erro ao carregar experiências'); }
+    if (error) { toast.error('Erro ao carregar experiências'); return; }
     setExperiences(data || []);
-    setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,13 +89,23 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       order_index: editingId ? experiences.find(e => e.id === editingId)?.order_index || 0 : nextOrderIndex,
     };
 
+    if (formData.slug) {
+      let slugQuery = supabase.from('experiences').select('id').eq('slug', formData.slug);
+      if (editingId) slugQuery = slugQuery.neq('id', editingId);
+      const { data: existing } = await slugQuery.maybeSingle();
+      if (existing) {
+        toast.error('Este slug já está em uso. Escolha outro.');
+        return;
+      }
+    }
+
     if (editingId) {
       const { error } = await supabase.from('experiences').update(dataToSubmit).eq('id', editingId);
-      if (error) { toast.error('Erro ao atualizar experiência'); return; }
+      if (error) { toast.error(`Erro ao atualizar experiência: ${error.message}`); return; }
       toast.success('Experiência atualizada!');
     } else {
       const { error } = await supabase.from('experiences').insert([dataToSubmit]);
-      if (error) { toast.error('Erro ao criar experiência'); return; }
+      if (error) { toast.error(`Erro ao criar experiência: ${error.message}`); return; }
       toast.success('Experiência criada!');
     }
     resetForm();
@@ -125,16 +129,30 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       description: exp.description, logo_url: exp.logo_url,
       meta_title: null, meta_description: null, slug: null, order_index: nextOrderIndex,
     }]);
-    if (error) { toast.error('Erro ao duplicar'); return; }
+    if (error) { toast.error(`Erro ao duplicar: ${error.message}`); return; }
     toast.success('Experiência duplicada!');
     fetchExperiences();
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, name: string) => {
+    const deletedItem = experiences.find(i => i.id === id);
     const { error } = await supabase.from('experiences').delete().eq('id', id);
-    if (error) { toast.error('Erro ao excluir experiência'); return; }
-    toast.success('Experiência excluída!');
+    if (error) { toast.error(`Erro ao excluir: ${error.message}`); return; }
     fetchExperiences();
+    if (deletedItem) {
+      const { id: _id, ...itemWithoutId } = deletedItem;
+      toast.success('Excluído!', {
+        action: {
+          label: 'Desfazer',
+          onClick: async () => {
+            await supabase.from('experiences').insert([itemWithoutId]);
+            fetchExperiences();
+          },
+        },
+      });
+    } else {
+      toast.success('Excluído!');
+    }
   };
 
   const handleToggleVisibility = async (exp: Experience) => {
@@ -145,12 +163,18 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
   };
 
   const handleReorder = async (reorderedItems: Experience[]) => {
+    const previousItems = experiences;
     setExperiences(reorderedItems);
-    await Promise.all(
+    const results = await Promise.all(
       reorderedItems.map((item, index) =>
         supabase.from('experiences').update({ order_index: index }).eq('id', item.id)
       )
     );
+    if (results.some(r => r.error)) {
+      setExperiences(previousItems);
+      toast.error('Erro ao salvar ordem. Revertendo.');
+      return;
+    }
     toast.success('Ordem atualizada!');
   };
 
@@ -169,16 +193,16 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="company">Empresa <span className="text-destructive" aria-hidden="true">*</span></Label>
+                <Label htmlFor="company">Empresa</Label>
                 <Input id="company" value={formData.company} onChange={(e) => setFormData({ ...formData, company: e.target.value })} required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="role">Cargo <span className="text-destructive" aria-hidden="true">*</span></Label>
+                <Label htmlFor="role">Cargo</Label>
                 <Input id="role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} required />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="period">Período <span className="text-destructive" aria-hidden="true">*</span></Label>
+              <Label htmlFor="period">Período</Label>
               <Input id="period" value={formData.period} onChange={(e) => setFormData({ ...formData, period: e.target.value })} required />
             </div>
             <ImageUploader value={formData.logo_url} onChange={(url) => setFormData({ ...formData, logo_url: url })} label="Logo da Empresa" folder="experiences" />
@@ -228,7 +252,6 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
               onMetaDescriptionChange={(value) => setFormData({ ...formData, meta_description: value })}
               onSlugChange={(value) => setFormData({ ...formData, slug: value })}
               titleSource={`${formData.role} - ${formData.company}`}
-              existingSlugs={experiences.filter(e => e.id !== editingId && e.slug).map(e => e.slug!) }
             />
             <div className="flex gap-2">
               <Button type="submit">{editingId ? 'Atualizar' : 'Criar'}</Button>
@@ -242,63 +265,17 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       </Card>
 
       <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
-            <Input
-              placeholder="Buscar por empresa, cargo ou período..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-          {searchQuery && (
-            <Button variant="ghost" size="sm" onClick={() => setSearchQuery('')} aria-label="Limpar busca">
-              <X className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-        <div className="flex gap-1.5 text-xs">
-          {(['all', 'cases', 'hidden'] as const).map(f => (
-            <button
-              key={f}
-              type="button"
-              onClick={() => setFilter(f)}
-              className={`px-2.5 py-1 rounded-full border transition-colors ${filter === f ? 'bg-foreground text-background border-foreground' : 'border-border text-muted-foreground hover:bg-muted'}`}
-            >
-              {f === 'all' ? 'Todas' : f === 'cases' ? 'Cases' : 'Ocultas'}
-            </button>
-          ))}
-        </div>
-        <p className="text-sm text-muted-foreground">
-          {searchQuery || filter !== 'all' ? 'Busca/filtro ativos — reordenação desabilitada' : 'Arraste os itens para reordenar'}
-        </p>
-        {isLoading ? (
-          <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
-        ) : (() => {
-          const q = searchQuery.toLowerCase();
-          const filtered = experiences.filter(exp => {
-            if (filter === 'cases' && !exp.is_case) return false;
-            if (filter === 'hidden' && exp.is_visible) return false;
-            if (!q) return true;
-            return exp.company.toLowerCase().includes(q) ||
-                   exp.role.toLowerCase().includes(q) ||
-                   exp.period.toLowerCase().includes(q);
-          });
-          if (filtered.length === 0) return (
-            <p className="text-center text-muted-foreground py-8 text-sm">
-              {searchQuery || filter !== 'all' ? 'Nenhuma experiência encontrada.' : 'Nenhuma experiência adicionada ainda.'}
-            </p>
-          );
-          const isFiltered = !!searchQuery || filter !== 'all';
-          const renderCard = (exp: Experience) => (
+        <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
+        {experiences.length === 0 && (
+          <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma experiência adicionada ainda.</p>
+        )}
+        <SortableList items={experiences} onReorder={handleReorder} renderItem={(exp) => (
           <Card className={!exp.is_visible ? 'opacity-50' : ''}>
             <CardContent className="pt-4 pb-4">
               <div className="flex justify-between items-start">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-lg truncate">{exp.role}</h3>
-                    {exp.is_case && <span className="text-[10px] uppercase tracking-wide bg-teal-accent/10 text-teal-accent px-1.5 py-0.5 rounded">Case</span>}
                     {!exp.is_visible && <EyeOff className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
                     <CompletenessIndicator hasSeo={!!(exp.meta_title && exp.meta_description)} hasImage={!!exp.logo_url} hasSlug={!!exp.slug} itemName={exp.role} />
                   </div>
@@ -306,26 +283,21 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
                   <p className="text-sm text-muted-foreground">{exp.period}</p>
                 </div>
                 <div className="flex gap-2 items-center flex-shrink-0 ml-4">
-                  <Button size="icon" variant="ghost" onClick={() => handleToggleVisibility(exp)} aria-label={exp.is_visible ? `Ocultar ${exp.role}` : `Mostrar ${exp.role}`}>
-                    {exp.is_visible ? <Eye className="h-4 w-4" aria-hidden="true" /> : <EyeOff className="h-4 w-4 text-muted-foreground" aria-hidden="true" />}
-                  </Button>
+                  <Switch checked={exp.is_visible} onCheckedChange={() => handleToggleVisibility(exp)} aria-label={`Visibilidade de ${exp.role}`} />
                   <Button size="icon" variant="outline" onClick={() => handleDuplicate(exp)} aria-label={`Duplicar ${exp.role}`}>
                     <Copy className="h-4 w-4" aria-hidden="true" />
                   </Button>
                   <Button size="icon" variant="outline" onClick={() => handleEdit(exp)} aria-label={`Editar ${exp.role}`}>
                     <Pencil className="h-4 w-4" aria-hidden="true" />
                   </Button>
-                  <DeleteConfirmButton itemName={exp.role} onConfirm={() => handleDelete(exp.id)} />
+                  <Button size="icon" variant="destructive" onClick={() => handleDelete(exp.id, exp.role)} aria-label={`Excluir ${exp.role}`}>
+                    <Trash2 className="h-4 w-4" aria-hidden="true" />
+                  </Button>
                 </div>
               </div>
             </CardContent>
           </Card>
-          );
-          if (isFiltered) {
-            return <div className="space-y-2">{filtered.map(exp => <div key={exp.id}>{renderCard(exp)}</div>)}</div>;
-          }
-          return <SortableList items={filtered} onReorder={handleReorder} renderItem={renderCard} />;
-        })()}
+        )} />
       </div>
 
       <PreviewModal open={showPreview} onOpenChange={setShowPreview} type="experience" data={formData} />

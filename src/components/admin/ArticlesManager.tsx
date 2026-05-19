@@ -7,8 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Pencil, Eye, Copy, FileText, Clock, Search, X } from 'lucide-react';
-import { DeleteConfirmButton } from './DeleteConfirmButton';
+import { Pencil, Trash2, Eye, Copy, FileText, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { RichTextEditor } from './RichTextEditor';
@@ -47,17 +46,10 @@ const emptyForm = {
   meta_description: '',
 };
 
-interface ArticlesManagerProps {
-  onDirtyChange?: (dirty: boolean) => void;
-}
-
-export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
+export function ArticlesManager() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(emptyForm);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'draft' | 'published'>('all');
 
   const { status: autosaveStatus, clearDraft } = useAutosave({
     key: 'articles-form',
@@ -67,22 +59,15 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
     }, []),
   });
 
-  useEffect(() => {
-    const hasContent = [formData.title, formData.excerpt, formData.content].some(v => v.trim().length > 0);
-    onDirtyChange?.(hasContent);
-  }, [formData, onDirtyChange]);
-
   useEffect(() => { fetchArticles(); }, []);
 
   const fetchArticles = async () => {
-    setIsLoading(true);
     const { data, error } = await supabase
       .from('articles')
       .select('*')
       .order('order_index', { ascending: true });
-    if (error) { toast.error('Erro ao carregar artigos'); }
+    if (error) { toast.error('Erro ao carregar artigos'); return; }
     setArticles(data || []);
-    setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -105,18 +90,28 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
       order_index: editingId ? articles.find(a => a.id === editingId)?.order_index || 0 : nextOrderIndex,
     };
 
+    if (formData.slug) {
+      let slugQuery = supabase.from('articles').select('id').eq('slug', formData.slug);
+      if (editingId) slugQuery = slugQuery.neq('id', editingId);
+      const { data: existing } = await slugQuery.maybeSingle();
+      if (existing) {
+        toast.error('Este slug já está em uso. Escolha outro.');
+        return;
+      }
+    }
+
     if (editingId) {
       // Preserve original published_at if already published
-      const existing = articles.find(a => a.id === editingId);
-      if (existing?.published_at && formData.status === 'published') {
-        dataToSubmit.published_at = existing.published_at;
+      const existingArticle = articles.find(a => a.id === editingId);
+      if (existingArticle?.published_at && formData.status === 'published') {
+        dataToSubmit.published_at = existingArticle.published_at;
       }
       const { error } = await supabase.from('articles').update(dataToSubmit).eq('id', editingId);
-      if (error) { toast.error('Erro ao atualizar artigo'); return; }
+      if (error) { toast.error(`Erro ao atualizar artigo: ${error.message}`); return; }
       toast.success('Artigo atualizado!');
     } else {
       const { error } = await supabase.from('articles').insert([dataToSubmit]);
-      if (error) { toast.error('Erro ao criar artigo'); return; }
+      if (error) { toast.error(`Erro ao criar artigo: ${error.message}`); return; }
       toast.success('Artigo criado!');
     }
     resetForm();
@@ -150,29 +145,49 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
       reading_time_minutes: article.reading_time_minutes,
       order_index: nextOrderIndex,
     }]);
-    if (error) { toast.error('Erro ao duplicar'); return; }
+    if (error) { toast.error(`Erro ao duplicar: ${error.message}`); return; }
     toast.success('Artigo duplicado como rascunho!');
     fetchArticles();
   };
 
   const handleDelete = async (id: string) => {
+    const deletedItem = articles.find(i => i.id === id);
     const { error } = await supabase.from('articles').delete().eq('id', id);
-    if (error) { toast.error('Erro ao excluir artigo'); return; }
-    toast.success('Artigo excluído!');
+    if (error) { toast.error(`Erro ao excluir: ${error.message}`); return; }
     fetchArticles();
+    if (deletedItem) {
+      const { id: _id, ...itemWithoutId } = deletedItem;
+      toast.success('Excluído!', {
+        action: {
+          label: 'Desfazer',
+          onClick: async () => {
+            await supabase.from('articles').insert([itemWithoutId]);
+            fetchArticles();
+          },
+        },
+      });
+    } else {
+      toast.success('Excluído!');
+    }
   };
 
   const handleReorder = async (reorderedItems: Article[]) => {
+    const previousItems = articles;
     setArticles(reorderedItems);
-    await Promise.all(
+    const results = await Promise.all(
       reorderedItems.map((item, index) =>
         supabase.from('articles').update({ order_index: index }).eq('id', item.id)
       )
     );
+    if (results.some(r => r.error)) {
+      setArticles(previousItems);
+      toast.error('Erro ao salvar ordem. Revertendo.');
+      return;
+    }
     toast.success('Ordem atualizada!');
   };
 
-  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
+  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); };
 
   return (
     <div className="space-y-6">
@@ -186,7 +201,7 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="article-title">Título <span className="text-destructive" aria-hidden="true">*</span></Label>
+              <Label htmlFor="article-title">Título</Label>
               <Input
                 id="article-title"
                 value={formData.title}
@@ -253,7 +268,6 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
               onMetaDescriptionChange={(v) => setFormData({ ...formData, meta_description: v })}
               onSlugChange={(v) => setFormData({ ...formData, slug: v })}
               titleSource={formData.title}
-              existingSlugs={articles.filter(a => a.id !== editingId && a.slug).map(a => a.slug!) }
             />
 
             {formData.content && (
@@ -272,55 +286,8 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
       </Card>
 
       <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
-            <Input
-              placeholder="Buscar por título, resumo ou tag..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-          {searchQuery && (
-            <Button variant="ghost" size="sm" onClick={() => setSearchQuery('')} aria-label="Limpar busca">
-              <X className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-        <div className="flex gap-1.5 text-xs">
-          {(['all', 'draft', 'published'] as const).map(f => (
-            <button
-              key={f}
-              type="button"
-              onClick={() => setStatusFilter(f)}
-              className={`px-2.5 py-1 rounded-full border transition-colors ${statusFilter === f ? 'bg-foreground text-background border-foreground' : 'border-border text-muted-foreground hover:bg-muted'}`}
-            >
-              {f === 'all' ? 'Todos' : f === 'draft' ? 'Rascunhos' : 'Publicados'}
-            </button>
-          ))}
-        </div>
-        <p className="text-sm text-muted-foreground">
-          {searchQuery || statusFilter !== 'all' ? 'Busca/filtro ativos — reordenação desabilitada' : 'Arraste os itens para reordenar'}
-        </p>
-        {isLoading ? (
-          <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
-        ) : (() => {
-          const q = searchQuery.toLowerCase();
-          const filtered = articles.filter(a => {
-            if (statusFilter !== 'all' && a.status !== statusFilter) return false;
-            if (!q) return true;
-            return a.title.toLowerCase().includes(q) ||
-                   (a.excerpt || '').toLowerCase().includes(q) ||
-                   (a.tags || []).some(t => t.toLowerCase().includes(q));
-          });
-          if (filtered.length === 0) return (
-            <p className="text-center text-muted-foreground py-8 text-sm">
-              {searchQuery || statusFilter !== 'all' ? 'Nenhum artigo encontrado.' : 'Nenhum artigo adicionado ainda. Crie o primeiro acima.'}
-            </p>
-          );
-          const isFiltered = !!searchQuery || statusFilter !== 'all';
-          const renderCard = (article: Article) => (
+        <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
+        <SortableList items={articles} onReorder={handleReorder} renderItem={(article) => (
           <Card>
             <CardContent className="pt-4 pb-4">
               <div className="flex justify-between items-start">
@@ -374,17 +341,14 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
                   <Button size="icon" variant="outline" onClick={() => handleEdit(article)} aria-label={`Editar ${article.title}`}>
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  <DeleteConfirmButton itemName={article.title} onConfirm={() => handleDelete(article.id)} />
+                  <Button size="icon" variant="destructive" onClick={() => handleDelete(article.id)} aria-label={`Excluir ${article.title}`}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             </CardContent>
           </Card>
-          );
-          if (isFiltered) {
-            return <div className="space-y-2">{filtered.map(a => <div key={a.id}>{renderCard(a)}</div>)}</div>;
-          }
-          return <SortableList items={filtered} onReorder={handleReorder} renderItem={renderCard} />;
-        })()}
+        )} />
       </div>
     </div>
   );

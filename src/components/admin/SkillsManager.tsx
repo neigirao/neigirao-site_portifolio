@@ -9,8 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Eye, Copy, EyeOff } from 'lucide-react';
-import { DeleteConfirmButton } from './DeleteConfirmButton';
+import { Pencil, Trash2, Eye, Copy, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { SEOFields } from './SEOFields';
@@ -40,7 +39,6 @@ const emptyForm = { name: '', logo_url: '', category: '', meta_title: '', meta_d
 
 export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
   const [skills, setSkills] = useState<Skill[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
@@ -59,11 +57,9 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
   useEffect(() => { fetchSkills(); }, []);
 
   const fetchSkills = async () => {
-    setIsLoading(true);
     const { data, error } = await supabase.from('skills').select('*').order('order_index', { ascending: true });
-    if (error) { toast.error('Erro ao carregar skills'); }
+    if (error) { toast.error('Erro ao carregar skills'); return; }
     setSkills(data || []);
-    setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -77,13 +73,33 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
       order_index: editingId ? skills.find(s => s.id === editingId)?.order_index || 0 : nextOrderIndex,
     };
 
+    if (formData.slug) {
+      let slugQuery = supabase.from('skills').select('id').eq('slug', formData.slug);
+      if (editingId) slugQuery = slugQuery.neq('id', editingId);
+      const { data: existing } = await slugQuery.maybeSingle();
+      if (existing) {
+        toast.error('Este slug já está em uso. Escolha outro.');
+        return;
+      }
+    }
+
+    if (formData.slug) {
+      let slugQuery = supabase.from('skills').select('id').eq('slug', formData.slug);
+      if (editingId) slugQuery = slugQuery.neq('id', editingId);
+      const { data: existing } = await slugQuery.maybeSingle();
+      if (existing) {
+        toast.error('Este slug já está em uso. Escolha outro.');
+        return;
+      }
+    }
+
     if (editingId) {
       const { error } = await supabase.from('skills').update(dataToSubmit).eq('id', editingId);
-      if (error) { toast.error('Erro ao atualizar skill'); return; }
+      if (error) { toast.error(`Erro ao atualizar skill: ${error.message}`); return; }
       toast.success('Skill atualizada!');
     } else {
       const { error } = await supabase.from('skills').insert([dataToSubmit]);
-      if (error) { toast.error('Erro ao criar skill'); return; }
+      if (error) { toast.error(`Erro ao criar skill: ${error.message}`); return; }
       toast.success('Skill criada!');
     }
     resetForm();
@@ -104,16 +120,30 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
       name: `${skill.name} (cópia)`, logo_url: skill.logo_url, category: skill.category,
       meta_title: null, meta_description: null, slug: null, order_index: nextOrderIndex,
     }]);
-    if (error) { toast.error('Erro ao duplicar'); return; }
+    if (error) { toast.error(`Erro ao duplicar: ${error.message}`); return; }
     toast.success('Skill duplicada!');
     fetchSkills();
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, name: string) => {
+    const deletedItem = skills.find(i => i.id === id);
     const { error } = await supabase.from('skills').delete().eq('id', id);
-    if (error) { toast.error('Erro ao excluir skill'); return; }
-    toast.success('Skill excluída!');
+    if (error) { toast.error(`Erro ao excluir: ${error.message}`); return; }
     fetchSkills();
+    if (deletedItem) {
+      const { id: _id, ...itemWithoutId } = deletedItem;
+      toast.success('Excluído!', {
+        action: {
+          label: 'Desfazer',
+          onClick: async () => {
+            await supabase.from('skills').insert([itemWithoutId]);
+            fetchSkills();
+          },
+        },
+      });
+    } else {
+      toast.success('Excluído!');
+    }
   };
 
   const handleToggleVisibility = async (skill: Skill) => {
@@ -124,12 +154,18 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
   };
 
   const handleReorder = async (reorderedItems: Skill[]) => {
+    const previousItems = skills;
     setSkills(reorderedItems);
-    await Promise.all(
+    const results = await Promise.all(
       reorderedItems.map((item, index) =>
         supabase.from('skills').update({ order_index: index }).eq('id', item.id)
       )
     );
+    if (results.some(r => r.error)) {
+      setSkills(previousItems);
+      toast.error('Erro ao salvar ordem. Revertendo.');
+      return;
+    }
     toast.success('Ordem atualizada!');
   };
 
@@ -148,7 +184,7 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nome <span className="text-destructive" aria-hidden="true">*</span></Label>
+                <Label htmlFor="name">Nome</Label>
                 <Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
               </div>
               <div className="space-y-2">
@@ -175,11 +211,9 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
 
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
-        {isLoading ? (
-          <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
-        ) : skills.length === 0 ? (
+        {skills.length === 0 && (
           <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma skill adicionada ainda.</p>
-        ) : (
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <SortableList items={skills} onReorder={handleReorder}
             strategy="grid"
@@ -204,16 +238,16 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
                       {skill.category && <p className="text-sm text-muted-foreground truncate">{skill.category}</p>}
                     </div>
                     <div className="flex gap-1 items-center flex-shrink-0">
-                      <Button size="icon" variant="ghost" onClick={() => handleToggleVisibility(skill)} aria-label={skill.is_visible ? `Ocultar ${skill.name}` : `Mostrar ${skill.name}`}>
-                        {skill.is_visible ? <Eye className="h-4 w-4" aria-hidden="true" /> : <EyeOff className="h-4 w-4 text-muted-foreground" aria-hidden="true" />}
-                      </Button>
+                      <Switch checked={skill.is_visible} onCheckedChange={() => handleToggleVisibility(skill)} aria-label={`Visibilidade de ${skill.name}`} />
                       <Button size="icon" variant="ghost" onClick={() => handleDuplicate(skill)} aria-label={`Duplicar ${skill.name}`}>
                         <Copy className="h-4 w-4" aria-hidden="true" />
                       </Button>
                       <Button size="icon" variant="ghost" onClick={() => handleEdit(skill)} aria-label={`Editar ${skill.name}`}>
                         <Pencil className="h-4 w-4" aria-hidden="true" />
                       </Button>
-                      <DeleteConfirmButton itemName={skill.name} onConfirm={() => handleDelete(skill.id)} />
+                      <Button size="icon" variant="ghost" className="text-destructive" onClick={() => handleDelete(skill.id, skill.name)} aria-label={`Excluir ${skill.name}`}>
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -221,7 +255,6 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
             )}
           />
         </div>
-        )}
       </div>
 
       <PreviewModal open={showPreview} onOpenChange={setShowPreview} type="skill" data={formData} />
