@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2, Eye, Copy, EyeOff } from 'lucide-react';
+import { Pencil, Trash2, Eye, Copy, EyeOff, Search, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { RichTextEditor } from './RichTextEditor';
@@ -53,6 +53,9 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { status: autosaveStatus, clearDraft } = useAutosave({
     key: 'experiences-form',
@@ -69,9 +72,12 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
   useEffect(() => { fetchExperiences(); }, []);
 
   const fetchExperiences = async () => {
+    setIsLoading(true);
+    setFetchError(false);
     const { data, error } = await supabase.from('experiences').select('*').order('order_index', { ascending: true });
-    if (error) { toast.error('Erro ao carregar experiências'); return; }
+    if (error) { toast.error('Erro ao carregar experiências'); setFetchError(true); }
     setExperiences(data || []);
+    setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -180,6 +186,43 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
 
   const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
+  const filteredExperiences = searchQuery
+    ? experiences.filter(exp =>
+        exp.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        exp.company.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : experiences;
+
+  const ExperienceCard = ({ exp }: { exp: Experience }) => (
+    <Card className={`${editingId === exp.id ? 'ring-2 ring-primary' : ''} ${!exp.is_visible ? 'opacity-50' : ''}`}>
+      <CardContent className="pt-4 pb-4">
+        <div className="flex justify-between items-start">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-semibold text-lg truncate">{exp.role}</h3>
+              {!exp.is_visible && <EyeOff className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
+              <CompletenessIndicator hasSeo={!!(exp.meta_title && exp.meta_description)} hasImage={!!exp.logo_url} hasSlug={!!exp.slug} itemName={exp.role} />
+            </div>
+            <p className="text-muted-foreground truncate">{exp.company}</p>
+            <p className="text-sm text-muted-foreground">{exp.period}</p>
+          </div>
+          <div className="flex gap-2 items-center flex-shrink-0 ml-4">
+            <Switch checked={exp.is_visible} onCheckedChange={() => handleToggleVisibility(exp)} aria-label={`Visibilidade de ${exp.role}`} />
+            <Button size="icon" variant="outline" onClick={() => handleDuplicate(exp)} aria-label={`Duplicar ${exp.role}`}>
+              <Copy className="h-4 w-4" aria-hidden="true" />
+            </Button>
+            <Button size="icon" variant="outline" onClick={() => handleEdit(exp)} aria-label={`Editar ${exp.role}`}>
+              <Pencil className="h-4 w-4" aria-hidden="true" />
+            </Button>
+            <Button size="icon" variant="destructive" onClick={() => handleDelete(exp.id, exp.role)} aria-label={`Excluir ${exp.role}`}>
+              <Trash2 className="h-4 w-4" aria-hidden="true" />
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <div className="space-y-6">
       <Card>
@@ -265,39 +308,45 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       </Card>
 
       <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
-        {experiences.length === 0 && (
-          <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma experiência adicionada ainda.</p>
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Input
+              placeholder="Buscar por cargo ou empresa..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          {searchQuery && (
+            <Button variant="ghost" size="sm" onClick={() => setSearchQuery('')} aria-label="Limpar busca">
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {searchQuery ? 'Busca ativa — reordenação desabilitada' : 'Arraste os itens para reordenar'}
+        </p>
+        {isLoading ? (
+          <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
+        ) : fetchError ? (
+          <div className="py-8 text-center space-y-3">
+            <p className="text-sm text-muted-foreground">Erro ao carregar os dados.</p>
+            <Button variant="outline" size="sm" onClick={fetchExperiences}>Tentar novamente</Button>
+          </div>
+        ) : filteredExperiences.length === 0 ? (
+          <p className="text-center text-muted-foreground py-8 text-sm">
+            {searchQuery ? 'Nenhuma experiência encontrada para esta busca.' : 'Nenhuma experiência adicionada ainda.'}
+          </p>
+        ) : searchQuery ? (
+          <div className="space-y-2">
+            {filteredExperiences.map(exp => <ExperienceCard key={exp.id} exp={exp} />)}
+          </div>
+        ) : (
+          <SortableList items={experiences} onReorder={handleReorder} renderItem={(exp) => (
+            <ExperienceCard exp={exp} />
+          )} />
         )}
-        <SortableList items={experiences} onReorder={handleReorder} renderItem={(exp) => (
-          <Card className={!exp.is_visible ? 'opacity-50' : ''}>
-            <CardContent className="pt-4 pb-4">
-              <div className="flex justify-between items-start">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-lg truncate">{exp.role}</h3>
-                    {!exp.is_visible && <EyeOff className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
-                    <CompletenessIndicator hasSeo={!!(exp.meta_title && exp.meta_description)} hasImage={!!exp.logo_url} hasSlug={!!exp.slug} itemName={exp.role} />
-                  </div>
-                  <p className="text-muted-foreground truncate">{exp.company}</p>
-                  <p className="text-sm text-muted-foreground">{exp.period}</p>
-                </div>
-                <div className="flex gap-2 items-center flex-shrink-0 ml-4">
-                  <Switch checked={exp.is_visible} onCheckedChange={() => handleToggleVisibility(exp)} aria-label={`Visibilidade de ${exp.role}`} />
-                  <Button size="icon" variant="outline" onClick={() => handleDuplicate(exp)} aria-label={`Duplicar ${exp.role}`}>
-                    <Copy className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                  <Button size="icon" variant="outline" onClick={() => handleEdit(exp)} aria-label={`Editar ${exp.role}`}>
-                    <Pencil className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                  <Button size="icon" variant="destructive" onClick={() => handleDelete(exp.id, exp.role)} aria-label={`Excluir ${exp.role}`}>
-                    <Trash2 className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )} />
       </div>
 
       <PreviewModal open={showPreview} onOpenChange={setShowPreview} type="experience" data={formData} />

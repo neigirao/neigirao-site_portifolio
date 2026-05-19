@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { ExperiencesManager } from '@/components/admin/ExperiencesManager';
 import { ProjectsManager } from '@/components/admin/ProjectsManager';
 import { SkillsManager } from '@/components/admin/SkillsManager';
@@ -68,15 +69,13 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('experiences');
   const [isDirty, setIsDirty] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [pendingTab, setPendingTab] = useState<string | null>(null);
 
-  const { confirmNavigation } = useUnsavedChanges({ hasChanges: isDirty });
+  useUnsavedChanges({ hasChanges: isDirty });
 
   const handleTabChange = (value: string) => {
     if (isDirty) {
-      confirmNavigation(() => {
-        setIsDirty(false);
-        setActiveTab(value);
-      });
+      setPendingTab(value);
     } else {
       setActiveTab(value);
     }
@@ -266,6 +265,29 @@ export default function AdminDashboard() {
           </TabsContent>
         </Tabs>
       </main>
+
+      <AlertDialog open={pendingTab !== null} onOpenChange={(open) => { if (!open) setPendingTab(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Alterações não salvas</AlertDialogTitle>
+            <AlertDialogDescription>
+              Você tem alterações não salvas nesta seção. Se continuar, elas serão perdidas.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPendingTab(null)}>Ficar aqui</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              if (pendingTab) {
+                setIsDirty(false);
+                setActiveTab(pendingTab);
+                setPendingTab(null);
+              }
+            }}>
+              Continuar mesmo assim
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2, Eye, Copy } from 'lucide-react';
+import { Pencil, Trash2, Eye, Copy, Search, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { RichTextEditor } from './RichTextEditor';
@@ -40,6 +40,10 @@ interface Project {
   project_subtitle: string | null;
 }
 
+interface ProjectsManagerProps {
+  onDirtyChange?: (dirty: boolean) => void;
+}
+
 const emptyForm = {
   title: '',
   description: '',
@@ -59,11 +63,58 @@ const emptyForm = {
   project_subtitle: '',
 };
 
-export function ProjectsManager() {
+interface ProjectCardProps {
+  project: Project;
+  editingId: string | null;
+  onEdit: (project: Project) => void;
+  onDuplicate: (project: Project) => void;
+  onDelete: (id: string, name: string) => void;
+}
+
+const ProjectCard = ({ project, editingId, onEdit, onDuplicate, onDelete }: ProjectCardProps) => (
+  <Card className={`${editingId === project.id ? 'ring-2 ring-primary' : ''}`}>
+    <CardContent className="pt-4 pb-4">
+      <div className="flex justify-between items-start">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="font-semibold text-lg truncate">{project.title}</h3>
+            {project.highlight_metric && (
+              <span className="text-xs bg-teal-accent/10 text-teal-accent px-2 py-0.5 rounded-full font-medium">{project.highlight_metric}</span>
+            )}
+            <CompletenessIndicator hasSeo={!!(project.meta_title && project.meta_description)} hasImage={!!project.image_url} hasSlug={!!project.slug} itemName={project.title} />
+          </div>
+          {project.tags.length > 0 && (
+            <div className="flex gap-2 mt-1 flex-wrap">
+              {project.tags.slice(0, 3).map((tag, i) => (
+                <span key={i} className="text-xs bg-muted px-2 py-1 rounded">{tag}</span>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="flex gap-2 flex-shrink-0 ml-4">
+          <Button size="icon" variant="outline" onClick={() => onDuplicate(project)} aria-label={`Duplicar ${project.title}`}>
+            <Copy className="h-4 w-4" aria-hidden="true" />
+          </Button>
+          <Button size="icon" variant="outline" onClick={() => onEdit(project)} aria-label={`Editar ${project.title}`}>
+            <Pencil className="h-4 w-4" aria-hidden="true" />
+          </Button>
+          <Button size="icon" variant="destructive" onClick={() => onDelete(project.id, project.title)} aria-label={`Excluir ${project.title}`}>
+            <Trash2 className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
+
+export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { status: autosaveStatus, clearDraft } = useAutosave({
     key: 'projects-form',
@@ -73,12 +124,21 @@ export function ProjectsManager() {
     }, []),
   });
 
+  // Track dirty state
+  useEffect(() => {
+    const hasContent = Object.values(formData).some(v => typeof v === 'string' && v.trim().length > 0);
+    onDirtyChange?.(hasContent);
+  }, [formData, onDirtyChange]);
+
   useEffect(() => { fetchProjects(); }, []);
 
   const fetchProjects = async () => {
+    setIsLoading(true);
+    setFetchError(false);
     const { data, error } = await supabase.from('projects').select('*').order('order_index', { ascending: true });
-    if (error) { toast.error('Erro ao carregar projetos'); return; }
+    if (error) { toast.error('Erro ao carregar projetos'); setFetchError(true); }
     setProjects(data || []);
+    setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -196,7 +256,14 @@ export function ProjectsManager() {
     toast.success('Ordem atualizada!');
   };
 
-  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); };
+  const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
+
+  const filteredProjects = searchQuery
+    ? projects.filter(p =>
+        p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (p.tags || []).some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
+    : projects;
 
   return (
     <div className="space-y-6">
@@ -276,45 +343,60 @@ export function ProjectsManager() {
       </Card>
 
       <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">Arraste os itens para reordenar</p>
-        {projects.length === 0 && (
-          <p className="text-center text-muted-foreground py-8 text-sm">Nenhum projeto adicionado ainda.</p>
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Input
+              placeholder="Buscar por título ou tag..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          {searchQuery && (
+            <Button variant="ghost" size="sm" onClick={() => setSearchQuery('')} aria-label="Limpar busca">
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {searchQuery ? 'Busca ativa — reordenação desabilitada' : 'Arraste os itens para reordenar'}
+        </p>
+        {isLoading ? (
+          <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
+        ) : fetchError ? (
+          <div className="py-8 text-center space-y-3">
+            <p className="text-sm text-muted-foreground">Erro ao carregar os dados.</p>
+            <Button variant="outline" size="sm" onClick={fetchProjects}>Tentar novamente</Button>
+          </div>
+        ) : filteredProjects.length === 0 ? (
+          <p className="text-center text-muted-foreground py-8 text-sm">
+            {searchQuery ? 'Nenhum projeto encontrado para esta busca.' : 'Nenhum projeto adicionado ainda.'}
+          </p>
+        ) : searchQuery ? (
+          <div className="space-y-2">
+            {filteredProjects.map(project => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                editingId={editingId}
+                onEdit={handleEdit}
+                onDuplicate={handleDuplicate}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+        ) : (
+          <SortableList items={projects} onReorder={handleReorder} renderItem={(project) => (
+            <ProjectCard
+              project={project}
+              editingId={editingId}
+              onEdit={handleEdit}
+              onDuplicate={handleDuplicate}
+              onDelete={handleDelete}
+            />
+          )} />
         )}
-        <SortableList items={projects} onReorder={handleReorder} renderItem={(project) => (
-          <Card>
-            <CardContent className="pt-4 pb-4">
-              <div className="flex justify-between items-start">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-lg truncate">{project.title}</h3>
-                    {project.highlight_metric && (
-                      <span className="text-xs bg-teal-accent/10 text-teal-accent px-2 py-0.5 rounded-full font-medium">{project.highlight_metric}</span>
-                    )}
-                    <CompletenessIndicator hasSeo={!!(project.meta_title && project.meta_description)} hasImage={!!project.image_url} hasSlug={!!project.slug} itemName={project.title} />
-                  </div>
-                  {project.tags.length > 0 && (
-                    <div className="flex gap-2 mt-1 flex-wrap">
-                      {project.tags.slice(0, 3).map((tag, i) => (
-                        <span key={i} className="text-xs bg-muted px-2 py-1 rounded">{tag}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div className="flex gap-2 flex-shrink-0 ml-4">
-                  <Button size="icon" variant="outline" onClick={() => handleDuplicate(project)} aria-label={`Duplicar ${project.title}`}>
-                    <Copy className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                  <Button size="icon" variant="outline" onClick={() => handleEdit(project)} aria-label={`Editar ${project.title}`}>
-                    <Pencil className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                  <Button size="icon" variant="destructive" onClick={() => handleDelete(project.id, project.title)} aria-label={`Excluir ${project.title}`}>
-                    <Trash2 className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )} />
       </div>
 
       <PreviewModal open={showPreview} onOpenChange={setShowPreview} type="project" data={{ ...formData, tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean) }} />
