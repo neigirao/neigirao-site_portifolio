@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { Clock, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { prefetchRoute } from '@/utils/prefetch';
 import { useNavigate } from 'react-router-dom';
 import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
 
@@ -55,7 +56,7 @@ export default function ArticlesListing() {
                   : null;
 
                 return (
-                  <Link key={article.id} to={`/artigo/${article.slug}`} className="block group">
+                  <Link key={article.id} to={`/artigo/${article.slug}`} className="block group" onMouseEnter={() => prefetchRoute('/artigo/')}>
                     <Card className="overflow-hidden hover:shadow-glow transition-all hover:border-accent/30">
                       <div className="flex flex-col md:flex-row">
                         {article.cover_image_url && (

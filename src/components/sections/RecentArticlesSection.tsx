@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { ArrowRight, BookOpen, Calendar, Clock } from "lucide-react";
+import { prefetchRoute } from "@/utils/prefetch";
 
 export function RecentArticlesSection() {
   const { articles, isLoading } = usePublishedArticles();
@@ -37,7 +38,7 @@ export function RecentArticlesSection() {
           {isLoading
             ? Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-80 rounded-xl" />)
             : recentArticles.map((article) => (
-                <Link key={article.id} to={`/artigo/${article.slug}`} className="group">
+                <Link key={article.id} to={`/artigo/${article.slug}`} className="group" onMouseEnter={() => prefetchRoute('/artigo/')}>
                   <Card className="h-full border-2 border-border/50 bg-card/95 hover:border-secondary/30 hover:shadow-elegant transition-all duration-300 overflow-hidden">
                     {article.cover_image_url && (
                       <div className="h-48 overflow-hidden">
@@ -77,7 +78,7 @@ export function RecentArticlesSection() {
 
         {recentArticles.length > 0 && (
           <div className={`text-center mt-10 transition-all duration-700 delay-400 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-            <Link to="/artigos">
+            <Link to="/artigos" onMouseEnter={() => prefetchRoute('/artigos')}>
               <Button variant="outline" size="lg" className="gap-2">
                 Ver todos os artigos
                 <ArrowRight className="w-4 h-4" />
