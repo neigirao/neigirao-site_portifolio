@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SEOHead } from "@/components/SEO";
 import { useExperiences, useSkills, useEducation } from "@/hooks/usePortfolioData";
+import { prefetchRoute } from "@/utils/prefetch";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Download, Linkedin, Mail, MapPin, Calendar, Award } from "lucide-react";
@@ -152,7 +153,7 @@ export default function Sobre() {
                     <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">{category}</h3>
                     <div className="flex flex-wrap gap-2">
                       {catSkills.map(skill => (
-                        <Link key={skill.id} to={`/skill/${skill.slug || skill.name.toLowerCase()}`}>
+                        <Link key={skill.id} to={`/skill/${skill.slug || skill.name.toLowerCase()}`} onMouseEnter={() => prefetchRoute('/skill/')}>
                           <Badge
                             variant="secondary"
                             className="hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer px-3 py-1"
@@ -173,7 +174,7 @@ export default function Sobre() {
             <Section title="Trajetória Profissional">
               <div className="space-y-4">
                 {experiences.map(exp => (
-                  <Link key={exp.id} to={`/experiencia/${exp.slug || exp.company.toLowerCase()}`}>
+                  <Link key={exp.id} to={`/experiencia/${exp.slug || exp.company.toLowerCase()}`} onMouseEnter={() => prefetchRoute('/experiencia/')}>
                     <Card className="border border-border/50 hover:border-primary/40 hover:shadow-elegant transition-all duration-300 group">
                       <CardContent className="p-6">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">

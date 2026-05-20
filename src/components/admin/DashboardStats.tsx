@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Briefcase, Code, GraduationCap, FolderOpen, AlertTriangle, CheckCircle, Image, FileText, Newspaper, Quote, Award, Building2, BarChart3, HelpCircle } from 'lucide-react';
+import { Briefcase, Code, GraduationCap, FolderOpen, AlertTriangle, CheckCircle, Image, FileText, Newspaper, Quote, Award, Building2, BarChart3, HelpCircle, Hash } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface ContentItem {
@@ -113,13 +113,76 @@ function calculateStats(
     item[imageField]
   ).length;
 
+  const missingSlug = items.filter(item => !item.slug).length;
+  const missingSeometa = items.filter(item => !item.meta_title || !item.meta_description).length;
   const missingSeo = items.filter(item =>
     !item.meta_title || !item.meta_description || !item.slug
   ).length;
 
   const missingImage = items.filter(item => !item[imageField]).length;
 
-  return { complete, missingSeo, missingImage };
+  return { complete, missingSeo, missingSlug, missingSeometa, missingImage };
+}
+
+interface AlertEntry { label: string; count: number; }
+
+function HealthAlertsCard({
+  slugAlerts,
+  metaAlerts,
+  isLoading,
+}: {
+  slugAlerts: AlertEntry[];
+  metaAlerts: AlertEntry[];
+  isLoading: boolean;
+}) {
+  if (isLoading) return null;
+
+  const totalSlugs = slugAlerts.reduce((s, a) => s + a.count, 0);
+  const totalMeta = metaAlerts.reduce((s, a) => s + a.count, 0);
+  const hasAlerts = totalSlugs > 0 || totalMeta > 0;
+
+  return (
+    <Card>
+      <CardContent className="pt-4 pb-4">
+        <p className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+          {hasAlerts
+            ? <AlertTriangle className="h-4 w-4 text-yellow-500" aria-hidden="true" />
+            : <CheckCircle className="h-4 w-4 text-green-500" aria-hidden="true" />
+          }
+          Alertas de Saúde
+        </p>
+
+        {!hasAlerts ? (
+          <p className="text-sm text-green-600 dark:text-green-400">Tudo em dia — nenhum item sem slug ou SEO.</p>
+        ) : (
+          <div className="space-y-3">
+            {totalSlugs > 0 && (
+              <div>
+                <Badge variant="secondary" className="bg-orange-500/10 text-orange-600 dark:text-orange-400 gap-1 mb-1">
+                  <Hash className="h-3 w-3" aria-hidden="true" />
+                  {totalSlugs} {totalSlugs === 1 ? 'item' : 'itens'} sem slug
+                </Badge>
+                <p className="text-xs text-muted-foreground pl-1">
+                  {slugAlerts.filter(a => a.count > 0).map(a => `${a.label} (${a.count})`).join(' · ')}
+                </p>
+              </div>
+            )}
+            {totalMeta > 0 && (
+              <div>
+                <Badge variant="secondary" className="bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 gap-1 mb-1">
+                  <FileText className="h-3 w-3" aria-hidden="true" />
+                  {totalMeta} {totalMeta === 1 ? 'item' : 'itens'} sem meta title/description
+                </Badge>
+                <p className="text-xs text-muted-foreground pl-1">
+                  {metaAlerts.filter(a => a.count > 0).map(a => `${a.label} (${a.count})`).join(' · ')}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 }
 
 export function DashboardStats({
@@ -138,6 +201,21 @@ export function DashboardStats({
   const seoComplete = expStats.complete + skillStats.complete + eduStats.complete + projStats.complete + artStats.complete;
   const totalItems = seoItems + testimonials.length + certifications.length + companies.length + metrics.length + faqs.length;
   const overallCompletion = seoItems > 0 ? Math.round((seoComplete / seoItems) * 100) : 0;
+
+  const slugAlerts: AlertEntry[] = [
+    { label: 'Experiências', count: expStats.missingSlug },
+    { label: 'Projetos', count: projStats.missingSlug },
+    { label: 'Skills', count: skillStats.missingSlug },
+    { label: 'Educação', count: eduStats.missingSlug },
+    { label: 'Artigos', count: artStats.missingSlug },
+  ];
+  const metaAlerts: AlertEntry[] = [
+    { label: 'Experiências', count: expStats.missingSeometa },
+    { label: 'Projetos', count: projStats.missingSeometa },
+    { label: 'Skills', count: skillStats.missingSeometa },
+    { label: 'Educação', count: eduStats.missingSeometa },
+    { label: 'Artigos', count: artStats.missingSeometa },
+  ];
 
   const supplementary = [
     { label: 'Depoimentos', count: testimonials.length, icon: <Quote className="h-3.5 w-3.5" /> },
@@ -220,6 +298,9 @@ export function DashboardStats({
           </div>
         </CardContent>
       </Card>
+
+      {/* Health alerts */}
+      <HealthAlertsCard slugAlerts={slugAlerts} metaAlerts={metaAlerts} isLoading={isLoading} />
     </div>
   );
 }

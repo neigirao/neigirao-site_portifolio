@@ -85,14 +85,6 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 - Ocultar/mostrar/excluir em lote
 - Útil quando há 20+ skills ou experiences
 
-### Atalhos de teclado nos formulários
-- `⌘S` / `Ctrl+S` para salvar
-- `Esc` para cancelar edição
-
-### Categorias com autocomplete em SkillsManager
-- Input de categoria com sugestões das categorias já existentes
-- Evita inconsistências ("Frontend" vs "front-end" vs "Front End")
-
 ### Histórico simples de edições
 - Snapshot do registro antes de cada update
 - Tabela `edit_history` com `entity`, `entity_id`, `before`, `after`, `edited_at`
@@ -114,8 +106,8 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 
 - `OptimizedImage` com `loading="lazy"` padronizado em todas as seções
 - `fetchpriority="high"` no LCP do CoverSection
-- Prefetch de rotas ao hover em cards de projeto/experiência
-- Mover `RichTextEditor` (Tiptap) para chunk separado — só carrega no admin
+- ~~Prefetch de rotas ao hover em cards de projeto/experiência~~ ✅ `prefetchRoute` em `onMouseEnter` nos cards de artigos, experiências e skills
+- ~~Mover `RichTextEditor` (Tiptap) para chunk separado — só carrega no admin~~ ✅ já configurado em `vite.config.ts` (`@tiptap → vendor-editor`) com `AdminDashboard` lazy
 
 ### Acessibilidade (site público)
 
@@ -147,4 +139,4 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 
 ---
 
-*Última atualização: 2026-05-20*
+*Última atualização: 2026-05-21*
