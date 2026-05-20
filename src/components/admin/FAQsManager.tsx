@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,13 +14,7 @@ import { AutosaveIndicator } from './AutosaveIndicator';
 import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { useAutosave } from '@/hooks/useAutosave';
 
-interface FAQ {
-  id: string;
-  question: string;
-  answer: string;
-  order_index: number;
-  is_visible: boolean;
-}
+type FAQ = Database['public']['Tables']['faqs']['Row'];
 
 interface FAQsManagerProps {
   onDirtyChange?: (dirty: boolean) => void;
@@ -52,7 +47,7 @@ export function FAQsManager({ onDirtyChange }: FAQsManagerProps) {
     setFetchError(false);
     const { data, error } = await supabase.from('faqs').select('*').order('order_index');
     if (error) { toast.error('Erro ao carregar FAQs'); setFetchError(true); }
-    setItems((data || []) as unknown as FAQ[]);
+    setItems(data || []);
     setIsLoading(false);
   };
 
