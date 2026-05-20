@@ -51,6 +51,7 @@ export function TestimonialsSection() {
                     src={t.author_photo_url}
                     alt={t.author_name}
                     className="w-10 h-10 rounded-full object-cover"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-teal-accent/10 flex items-center justify-center text-teal-accent font-bold text-sm">

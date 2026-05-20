@@ -1,341 +1,273 @@
 # Arquitetura do Projeto
 
-Este documento descreve a arquitetura e os padrões de design utilizados no portfolio.
+Portfolio profissional de Nei Girão. SPA React com CMS admin completo alimentado por Supabase.
 
-## 🏗️ Visão Geral da Arquitetura
+---
 
-### Padrão de Arquitetura
-
-O projeto segue uma **arquitetura baseada em componentes** com separação clara de responsabilidades:
+## Visão geral
 
 ```
-┌─────────────────────────────────────┐
-│         Presentation Layer          │
-│  (src/pages/Index.tsx)              │
-│  - Composição de seções             │
-│  - Gerenciamento de estado local    │
-│  - Navegação entre seções           │
-└─────────────────┬───────────────────┘
-                  │
-┌─────────────────▼───────────────────┐
-│       Component Layer               │
-│  (src/components/)                  │
-│  - ExperienceItem                   │
-│  - SkillCard                        │
-│  - Icons                            │
-│  - UI Components (shadcn)           │
-└─────────────────┬───────────────────┘
-                  │
-┌─────────────────▼───────────────────┐
-│         Data Layer                  │
-│  (src/data/portfolio.ts)            │
-│  - Experiências profissionais       │
-│  - Habilidades técnicas             │
-│  - Fonte única de verdade           │
-└─────────────────┬───────────────────┘
-                  │
-┌─────────────────▼───────────────────┐
-│         Type Layer                  │
-│  (src/types/index.ts)               │
-│  - Interfaces TypeScript            │
-│  - Contratos de dados               │
-└─────────────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│                 Usuário / Admin                      │
+└──────────────┬───────────────────┬──────────────────┘
+               │                   │
+     ┌─────────▼──────┐   ┌────────▼────────┐
+     │  Site Público  │   │  Admin /admin   │
+     │  (read-only)   │   │  (CRUD + auth)  │
+     └─────────┬──────┘   └────────┬────────┘
+               │                   │
+     ┌─────────▼───────────────────▼──────────┐
+     │            React 18 + Vite SPA         │
+     │   React Router v6 · shadcn-ui          │
+     │   @tanstack/react-query · Sonner       │
+     └──────────────────┬─────────────────────┘
+                        │
+     ┌──────────────────▼─────────────────────┐
+     │              Supabase                  │
+     │  PostgreSQL · Auth · Storage · RLS     │
+     └────────────────────────────────────────┘
 ```
 
-## 📂 Estrutura de Pastas Detalhada
+Hospedagem e deploy: **Lovable** (lovable.dev). Migrations SQL aplicadas automaticamente no merge de PR.
 
-### `/src/components`
+---
 
-**Propósito**: Componentes React reutilizáveis
+## Stack
 
-- **ExperienceItem.tsx**: Renderiza um item individual na timeline de experiências
-  - Aceita um objeto `Experience`
-  - Usa design de timeline com markers e linhas
-  - Responsivo por padrão
+| Camada | Tecnologia |
+|--------|-----------|
+| Frontend | React 18 + TypeScript + Vite |
+| Estilo | Tailwind CSS + shadcn-ui (tokens semânticos) |
+| Banco | Supabase — PostgreSQL + RLS |
+| Auth | Supabase Auth (email/password) |
+| Storage | Supabase Storage (bucket `portfolio-images`) |
+| Fetching | @tanstack/react-query |
+| Routing | React Router v6 |
+| Notificações | Sonner (toasts) |
+| Rich text | Tiptap (RichTextEditor) |
+| Drag-and-drop | dnd-kit (SortableList) |
+| Deploy | Lovable |
 
-- **SkillCard.tsx**: Card animado para exibir habilidades
-  - Aceita um objeto `Skill` e um índice
-  - Animação escalonada baseada no índice
-  - Hover effects para interatividade
+---
 
-- **Icons.tsx**: Centralização de todos os ícones SVG
-  - Todos os ícones são componentes React
-  - Props padrão para customização
-  - Facilita manutenção e reutilização
-
-- **/ui**: Componentes shadcn-ui
-  - ⚠️ Não editar diretamente
-  - Regenerar usando CLI do shadcn se necessário
-
-### `/src/data`
-
-**Propósito**: Dados estáticos do portfolio
-
-- **portfolio.ts**: Fonte única de verdade para conteúdo
-  - Array `experiences`: Lista de experiências profissionais
-  - Array `skills`: Lista de habilidades técnicas
-  - Facilita edições de conteúdo sem tocar em componentes
-
-### `/src/types`
-
-**Propósito**: Definições TypeScript compartilhadas
-
-- **index.ts**: Interfaces principais
-  - `Experience`: Estrutura de experiência profissional
-  - `Skill`: Estrutura de habilidade
-  - `Education`: Estrutura de educação (para futuro uso)
-
-### `/src/pages`
-
-**Propósito**: Componentes de página
-
-- **Index.tsx**: Página principal do portfolio
-  - Composição de todas as seções
-  - Gerenciamento de navegação smooth scroll
-  - Estado local para seção ativa
-
-- **NotFound.tsx**: Página 404
-  - Tratamento de rotas inexistentes
-
-## 🎨 Sistema de Design
-
-### Hierarquia de Estilos
+## Estrutura de pastas
 
 ```
-1. Design Tokens (src/index.css)
-   ↓
-2. Tailwind Config (tailwind.config.ts)
-   ↓
-3. Component Classes (className props)
+src/
+├── pages/                    # Páginas roteadas
+│   ├── Index.tsx             # Homepage — compõe todas as seções
+│   ├── AdminDashboard.tsx    # Painel admin /admin
+│   ├── AdminLogin.tsx        # Login /admin/login
+│   ├── ExperienceDetail.tsx  # /experiencia/:slug
+│   ├── ProjectDetail.tsx     # /projeto/:slug
+│   ├── SkillDetail.tsx       # /skill/:slug
+│   ├── ArticleDetail.tsx     # /artigo/:slug
+│   ├── ArticlesListing.tsx   # /artigos
+│   ├── Sobre.tsx             # /sobre
+│   └── Contato.tsx           # /contato
+│
+├── components/
+│   ├── admin/                # Managers do CMS (padrão uniforme)
+│   │   ├── ExperiencesManager.tsx
+│   │   ├── ProjectsManager.tsx
+│   │   ├── ArticlesManager.tsx
+│   │   ├── SkillsManager.tsx
+│   │   ├── EducationManager.tsx
+│   │   ├── CompaniesManager.tsx
+│   │   ├── CertificationsManager.tsx
+│   │   ├── TestimonialsManager.tsx
+│   │   ├── MetricsManager.tsx
+│   │   ├── FAQsManager.tsx
+│   │   ├── SiteSettingsManager.tsx
+│   │   ├── ContactMessagesManager.tsx
+│   │   ├── DashboardStats.tsx
+│   │   └── utilitários:
+│   │       ImageUploader, RichTextEditor, SEOFields,
+│   │       SortableList, DeleteConfirmButton,
+│   │       AutosaveIndicator, BulkSlugGenerator,
+│   │       PreviewModal, CompletenessIndicator
+│   │
+│   ├── sections/             # Seções do site público
+│   │   ├── HeroSection, AboutSection, WorkSection
+│   │   ├── ProjectsSection, ProjectsEditorialSection
+│   │   ├── SkillsSection, StackSection
+│   │   ├── EducationSection, CertificationsSection
+│   │   ├── TestimonialsSection, FAQSection
+│   │   ├── ContactSection, ContactEditorialSection
+│   │   └── editorial:
+│   │       CoverSection, MastheadSection, EssaySection,
+│   │       PullQuoteSection, CasesSection, CredentialsSection
+│   │
+│   └── ui/                   # Componentes shadcn — não editar diretamente
+│
+├── hooks/
+│   ├── usePortfolioData.tsx  # Leitura pública (experiences, skills, etc.)
+│   ├── useAdminData.tsx      # Leitura admin + refetch coordenado
+│   ├── useSiteSettings.tsx   # Configurações globais (site_settings)
+│   ├── usePortfolioDetail.tsx# Detalhe de item único por slug
+│   ├── useRelatedContent.tsx # Conteúdo relacionado em detalhe
+│   ├── useArticles.tsx       # Artigos públicos
+│   ├── useAuth.tsx           # Autenticação Supabase
+│   ├── useAutosave.tsx       # Rascunho automático (localStorage, 5s debounce)
+│   └── useUnsavedChanges.tsx # Guard de navegação (beforeunload)
+│
+├── integrations/supabase/
+│   ├── client.ts             # Instância única do cliente Supabase
+│   └── types.ts              # Gerado automaticamente — nunca editar
+│
+└── config/
+    └── constants.ts          # BASE_URL e constantes globais
+
+supabase/
+└── migrations/               # SQL aplicado pelo Lovable no merge
 ```
 
-### Variáveis CSS Customizadas
+---
 
-Todas as cores, gradientes e sombras são definidas como variáveis CSS em `src/index.css`:
+## Banco de dados
 
-```css
-:root {
-  /* Cores base */
-  --primary: ...;
-  --secondary: ...;
-  
-  /* Cores customizadas */
-  --dark-navy: ...;
-  --light-blue: ...;
-  
-  /* Gradientes */
-  --gradient-primary: ...;
-  
-  /* Sombras */
-  --shadow-elegant: ...;
+### Tabelas de conteúdo
+
+| Tabela | Descrição | Campos-chave |
+|--------|-----------|-------------|
+| `experiences` | Experiências profissionais | `role`, `company`, `slug`, `is_visible`, `is_case` |
+| `projects` | Projetos e cases | `title`, `slug`, `tags[]`, `is_visible`, `brand` |
+| `articles` | Artigos/blog | `title`, `slug`, `status`, `published_at` |
+| `skills` | Habilidades técnicas | `name`, `slug`, `category`, `is_visible` |
+| `education` | Formação acadêmica | `institution`, `degree`, `slug`, `is_visible` |
+| `companies` | Empresas (logos) | `name`, `abbr`, `logo_url`, `is_visible` |
+| `certifications` | Certificações | `name`, `issuer`, `logo_url` |
+| `testimonials` | Depoimentos | `author_name`, `quote`, `is_visible` |
+| `impact_metrics` | Métricas de impacto | `value`, `label`, `icon`, `color` |
+| `faqs` | Perguntas frequentes | `question`, `answer`, `is_visible` |
+
+### Tabelas de sistema
+
+| Tabela | Descrição |
+|--------|-----------|
+| `site_settings` | Textos e configs globais (`key TEXT`, `value TEXT`) |
+| `contact_messages` | Mensagens do formulário de contato |
+
+### Chaves de `site_settings` (exemplos)
+
+`hero_tagline`, `about_bio`, `masthead_title`, `essay_body`, `contact_pitch`, `footer_text`
+
+Editar via `/admin → Configurações` ou via SQL/migration.
+
+---
+
+## Fluxo de dados
+
+### Site público (leitura)
+
+```
+Supabase (PostgreSQL)
+  └─ useQuery (React Query)
+      └─ hook (usePortfolioData, useArticles, useSiteSettings)
+          └─ componente de seção
+              └─ renderização
+```
+
+### Admin (escrita)
+
+```
+Manager (formulário)
+  └─ supabase.from('tabela').insert/update/delete
+      └─ toast de feedback (Sonner)
+          └─ fetchItems() — refaz leitura local
+```
+
+---
+
+## Padrão dos managers (CMS)
+
+Todos os managers seguem o mesmo padrão:
+
+```tsx
+export function XManager({ onDirtyChange }: { onDirtyChange?: (d: boolean) => void }) {
+  const [items, setItems] = useState<Item[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [formData, setFormData] = useState(emptyForm);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
+
+  const { status: autosaveStatus, clearDraft } = useAutosave({ key: 'x-form', data: formData, onRecover });
+
+  // fetchItems → handleSubmit → handleEdit → handleDelete → handleReorder → resetForm
 }
 ```
 
-### Modo Escuro
+**Padrões obrigatórios nos managers:**
+- `useAutosave` com rascunho em localStorage
+- `useUnsavedChanges` guard via `onDirtyChange`
+- `DeleteConfirmButton` (AlertDialog de confirmação)
+- Undo de deleção via Sonner com botão "Desfazer"
+- Rollback de reordenação se `Promise.all` falhar
+- Mensagens de erro com `error.message` do Supabase
+- `fetchError` + botão "Tentar novamente" quando lista falha
+- Ring visual (`ring-2 ring-primary`) no card sendo editado
 
-O projeto suporta modo escuro através da classe `.dark`:
+---
 
-```css
-.dark {
-  --background: ...;
-  --foreground: ...;
-  /* ... outras variáveis */
-}
+## Rotas
+
+| Rota | Componente | Auth |
+|------|-----------|------|
+| `/` | Index | — |
+| `/sobre` | Sobre | — |
+| `/contato` | Contato | — |
+| `/artigos` | ArticlesListing | — |
+| `/artigo/:slug` | ArticleDetail | — |
+| `/experiencia/:slug` | ExperienceDetail | — |
+| `/projeto/:slug` | ProjectDetail | — |
+| `/skill/:slug` | SkillDetail | — |
+| `/admin/login` | AdminLogin | — |
+| `/admin` | AdminDashboard | ✅ Supabase Auth |
+| `/sitemap.xml` | SitemapRedirect | — |
+| `/llms.txt` | LlmsTxtRedirect | — |
+
+---
+
+## Design system
+
+**Regra inviolável: nunca hardcode cores.**
+
+```tsx
+// ✅ Correto
+<div className="bg-primary text-primary-foreground">
+<p className="text-muted-foreground">
+
+// ❌ Errado
+<div className="bg-blue-500 text-white">
+<div className="bg-[#012A4A]">
+<p style={{ color: '#fff' }}>
 ```
 
-## 🔄 Fluxo de Dados
+Tokens disponíveis: `primary`, `secondary`, `accent`, `muted`, `card`, `background`, `foreground`, `border`, `destructive`, `teal-accent`.
 
-### Renderização de Dados
+---
 
-```
-portfolio.ts (Data)
-    ↓
-Index.tsx (Page)
-    ↓
-map() → Components (ExperienceItem, SkillCard)
-    ↓
-Rendered UI
-```
+## Segurança
 
-### Exemplo:
+- **RLS ativo** em todas as tabelas — leitura pública (`anon`), escrita apenas autenticado
+- **Storage**: bucket `portfolio-images` — leitura pública, upload restrito a admin
+- **Auth**: Supabase Auth com sessão JWT. Rota `/admin` protegida por hook `useAuth`
+- **Sem secrets no frontend**: variáveis Supabase são `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` (seguras para client-side)
 
-```typescript
-// 1. Dados definidos em data/portfolio.ts
-export const experiences: Experience[] = [...]
+---
 
-// 2. Importados na página
-import { experiences } from '@/data/portfolio'
+## Deploy e migrations
 
-// 3. Renderizados com map
-{experiences.map((exp, idx) => (
-  <ExperienceItem key={idx} experience={exp} />
-))}
+1. Toda mudança de schema vai em `supabase/migrations/YYYYMMDDHHMMSS_descricao.sql`
+2. Commit + push → PR no GitHub
+3. Lovable faz merge → aplica migrations automaticamente → redeploy
+
+```sql
+-- Exemplo de migration
+ALTER TABLE public.tabela
+  ADD COLUMN IF NOT EXISTS novo_campo TEXT;
 ```
 
-## 🎯 Padrões de Código
+---
 
-### Nomenclatura de Componentes
-
-- **PascalCase** para componentes: `ExperienceItem`, `SkillCard`
-- **camelCase** para funções: `scrollToSection`, `handleClick`
-- **kebab-case** para IDs HTML: `experience-section`, `contact-form`
-- **SNAKE_CASE** para constantes: `API_URL`, `MAX_ITEMS`
-
-### Estrutura de Componente
-
-```typescript
-/**
- * Descrição do componente
- * 
- * @param {Object} props - Props do componente
- * @param {Type} props.propName - Descrição da prop
- */
-interface ComponentProps {
-  propName: Type;
-}
-
-const Component: React.FC<ComponentProps> = ({ propName }) => {
-  // 1. Hooks
-  const [state, setState] = useState();
-  
-  // 2. Funções
-  const handleAction = () => {};
-  
-  // 3. Effects
-  useEffect(() => {}, []);
-  
-  // 4. Render
-  return (
-    <div className="...">
-      {/* JSX */}
-    </div>
-  );
-};
-
-export default Component;
-```
-
-### Design System Usage
-
-❌ **Evite:**
-```typescript
-<button className="text-white bg-blue-500 hover:bg-blue-600">
-```
-
-✅ **Use:**
-```typescript
-<Button variant="primary" className="hover:opacity-90">
-```
-
-### Animações
-
-❌ **Evite:**
-```typescript
-<div style={{ animation: 'fadeIn 0.5s' }}>
-```
-
-✅ **Use:**
-```typescript
-<div className="animate-fade-in-up">
-```
-
-## 🔌 Integrações
-
-### shadcn-ui
-
-- Componentes instalados sob demanda
-- Customizados através de `src/components/ui`
-- Tema controlado por variáveis CSS
-
-### Tailwind CSS
-
-- Config centralizado em `tailwind.config.ts`
-- Extend do tema padrão
-- Classes utilitárias customizadas
-
-### React Router
-
-- Routing simples com BrowserRouter
-- Página 404 como catch-all
-
-## 📊 Performance
-
-### Otimizações Implementadas
-
-1. **Code Splitting**: Componentes carregados sob demanda
-2. **Lazy Loading**: Imagens e seções abaixo da dobra
-3. **Tree Shaking**: Apenas ícones importados são incluídos
-4. **CSS Purging**: Tailwind remove classes não utilizadas em produção
-
-### Métricas Alvo
-
-- First Contentful Paint: < 1.5s
-- Time to Interactive: < 3.0s
-- Cumulative Layout Shift: < 0.1
-
-## 🧪 Testing Strategy (Futuro)
-
-Estrutura preparada para:
-
-1. **Unit Tests**: Componentes individuais
-2. **Integration Tests**: Fluxos de navegação
-3. **E2E Tests**: Jornada completa do usuário
-
-## 🚀 Deploy
-
-### Build Process
-
-```bash
-npm run build
-```
-
-Gera:
-- `dist/` - Arquivos estáticos otimizados
-- Minificação de JS/CSS
-- Hash de assets para cache busting
-
-### Requisitos de Hospedagem
-
-- Servidor de arquivos estáticos
-- Suporte a SPA routing (rewrite para index.html)
-- HTTPS recomendado
-
-## 📝 Manutenção
-
-### Adicionando Nova Seção
-
-1. Defina dados em `src/data/` (se aplicável)
-2. Crie componente em `src/components/` (se reutilizável)
-3. Adicione seção em `src/pages/Index.tsx`
-4. Adicione link de navegação
-5. Atualize tipos em `src/types/` (se necessário)
-
-### Atualizando Design System
-
-1. Modifique variáveis em `src/index.css`
-2. Atualize `tailwind.config.ts` se necessário
-3. Teste em modo claro e escuro
-4. Verifique acessibilidade de contraste
-
-### Troubleshooting Comum
-
-| Problema | Solução |
-|----------|---------|
-| Cores não aplicadas | Verificar se está usando `hsl(var(--color))` |
-| Ícone não aparece | Verificar importação em `Icons.tsx` |
-| Build falha | Limpar `node_modules` e reinstalar |
-| Animação não funciona | Verificar se classe está em `index.css` |
-
-## 🔐 Segurança
-
-- Sem secrets no código frontend
-- Sanitização de inputs (se formulários forem adicionados)
-- HTTPS obrigatório em produção
-- Headers de segurança recomendados
-
-## 📚 Recursos Adicionais
-
-- [React Docs](https://react.dev)
-- [TypeScript Docs](https://www.typescriptlang.org/docs)
-- [Tailwind CSS Docs](https://tailwindcss.com/docs)
-- [shadcn-ui Docs](https://ui.shadcn.com)
+*Última atualização: 2026-05-20*

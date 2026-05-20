@@ -71,6 +71,7 @@ export default function ExperienceDetail() {
         description={experience.meta_description || experience.description.slice(0, 160)}
         canonicalUrl={`${BASE_URL}/experiencia/${canonicalSlug}`}
         ogType="article"
+        ogImage={experience.logo_url || undefined}
         keywords={[
           experience.role,
           experience.company,

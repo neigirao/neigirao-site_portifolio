@@ -154,6 +154,8 @@ export function XManager({ onDirtyChange }: { onDirtyChange?: (d: boolean) => vo
   const [items, setItems] = useState([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(emptyForm);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const { status: autosaveStatus, clearDraft } = useAutosave({ key: 'x-form', data: formData, onRecover });
 
   // fetch → handleSubmit → handleEdit → handleDelete → handleReorder
@@ -162,14 +164,101 @@ export function XManager({ onDirtyChange }: { onDirtyChange?: (d: boolean) => vo
 }
 ```
 
+### Padrões obrigatórios ao criar/editar managers
+
+**Undo de deleção** — sempre capturar o item antes de deletar e oferecer desfazer:
+```tsx
+const handleDelete = async (id: string) => {
+  const deletedItem = items.find(i => i.id === id);
+  const { error } = await supabase.from('tabela').delete().eq('id', id);
+  if (error) { toast.error(`Erro ao excluir: ${error.message}`); return; }
+  fetchItems();
+  if (deletedItem) {
+    const { id: _id, ...itemWithoutId } = deletedItem;
+    toast.success('Excluído!', {
+      action: { label: 'Desfazer', onClick: async () => {
+        await supabase.from('tabela').insert([itemWithoutId]);
+        fetchItems();
+      }},
+    });
+  }
+};
+```
+
+**Rollback de reordenação** — salvar estado anterior, reverter se falhar:
+```tsx
+const handleReorder = async (reorderedItems: Item[]) => {
+  const previousItems = items;
+  setItems(reorderedItems);
+  const results = await Promise.all(
+    reorderedItems.map((item, index) =>
+      supabase.from('tabela').update({ order_index: index }).eq('id', item.id)
+    )
+  );
+  if (results.some(r => r.error)) {
+    setItems(previousItems);
+    toast.error('Erro ao salvar ordem. Revertendo.');
+    return;
+  }
+  toast.success('Ordem atualizada!');
+};
+```
+
+**Retry button** — estado de erro com botão de retry na lista:
+```tsx
+// No JSX da lista:
+{isLoading ? (
+  <div className="py-8 text-center text-muted-foreground text-sm">Carregando...</div>
+) : fetchError ? (
+  <div className="py-8 text-center space-y-3">
+    <p className="text-sm text-muted-foreground">Erro ao carregar os dados.</p>
+    <Button variant="outline" size="sm" onClick={fetchItems}>Tentar novamente</Button>
+  </div>
+) : items.length === 0 ? (
+  <p className="text-center text-muted-foreground py-8 text-sm">Nenhum item adicionado.</p>
+) : (
+  <SortableList ... />
+)}
+```
+
+**Destaque de edição** — ring visual no card sendo editado:
+```tsx
+<Card className={`${editingId === item.id ? 'ring-2 ring-primary' : ''} ${!item.is_visible ? 'opacity-50' : ''}`}>
+```
+
+**Validação de slug duplicado** (managers com SEO) — checar antes de salvar:
+```tsx
+if (formData.slug) {
+  let q = supabase.from('tabela').select('id').eq('slug', formData.slug);
+  if (editingId) q = q.neq('id', editingId);
+  const { data: existing } = await q.maybeSingle();
+  if (existing) { toast.error('Este slug já está em uso. Escolha outro.'); return; }
+}
+```
+
+**Mensagens de erro** — sempre incluir `error.message`:
+```tsx
+toast.error(`Erro ao atualizar: ${error.message}`);
+```
+
+**Busca/filtro** (managers com listas grandes) — desabilitar drag ao filtrar:
+```tsx
+const filtered = searchQuery
+  ? items.filter(i => i.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  : items;
+
+// Se searchQuery ativo: renderizar lista plana, não SortableList
+```
+
 Utilitários disponíveis para managers:
 - `<ImageUploader>` — upload para Supabase Storage
 - `<SEOFields>` — campos meta_title, meta_description, slug
-- `<RichTextEditor>` — editor de texto rico
+- `<RichTextEditor>` — editor de texto rico (Tiptap)
 - `<SortableList>` — lista drag-and-drop (dnd-kit)
 - `<DeleteConfirmButton>` — confirmação via AlertDialog
 - `<AutosaveIndicator>` — feedback visual de autosave
 - `<PreviewModal>` — prévia do conteúdo
+- `<CompletenessIndicator>` — badge de completude (SEO + imagem + slug)
 
 ---
 
@@ -278,4 +367,16 @@ Esta sessão roda em container isolado. A rede bloqueia conexões externas (Supa
 
 ---
 
-*Última atualização: 2026-05-18*
+## Documentação relacionada
+
+| Arquivo | Conteúdo |
+|---------|---------|
+| `ARCHITECTURE.md` | Diagrama de arquitetura, stack, estrutura de pastas, banco, fluxo de dados |
+| `CONTRIBUTING.md` | Design system, padrão de manager, hooks, migrations, checklists |
+| `ROADMAP.md` | Histórico de evoluções e próximos passos |
+| `docs/AI_MAINTENANCE_GUIDE.md` | Referência rápida para IAs — decision tree, debugging |
+| `README.md` | Visão geral pública do projeto |
+
+---
+
+*Última atualização: 2026-05-20*
