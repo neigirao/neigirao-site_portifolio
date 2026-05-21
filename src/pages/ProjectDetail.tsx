@@ -1,77 +1,49 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useProjectDetail, useRelatedProjects, generateSlug } from '@/hooks/usePortfolioDetail';
-import { useSkillsForProject, useExperiencesForProject, useSeeAlso } from '@/hooks/useRelatedContent';
+import { useProjectDetail, generateSlug } from '@/hooks/usePortfolioDetail';
+import { useProjects } from '@/hooks/usePortfolioData';
 import { SEOHead } from '@/components/SEO/SEOHead';
 import { BreadcrumbSchema } from '@/components/SEO/BreadcrumbSchema';
 import { BASE_URL } from '@/config/constants';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { OptimizedImage } from '@/components/ui/optimized-image';
-import { ExternalLink, Tag, ChevronRight, Lightbulb, Target, AlertTriangle, Wrench, BarChart3, BookOpen } from 'lucide-react';
-import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
-import SeeAlso from '@/components/SeeAlso';
 import { SafeHTML } from '@/components/admin/SafeHTML';
-
-const CASE_STUDY_SECTIONS = [
-  { key: 'context', label: 'Contexto', icon: Target },
-  { key: 'challenge', label: 'Desafio', icon: AlertTriangle },
-  { key: 'solution', label: 'Solução', icon: Wrench },
-  { key: 'results', label: 'Resultados', icon: BarChart3 },
-  { key: 'learnings', label: 'Aprendizados', icon: BookOpen },
-] as const;
 
 export default function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { data: project, isLoading, error } = useProjectDetail(slug || '');
-  const { data: relatedProjects } = useRelatedProjects(
-    project?.tags || null,
-    project?.id || ''
-  );
+  const { projects: allProjects } = useProjects();
 
-  const relatedSkills = useSkillsForProject(project?.tags || null, project?.description || '');
-  const relatedExperiences = useExperiencesForProject(project?.tags || null, project?.description || '');
-  const seeAlsoItems = useSeeAlso([...relatedSkills, ...relatedExperiences], 5);
-
-  const hasCaseStudy = project && CASE_STUDY_SECTIONS.some(s => project[s.key]);
+  const idx = allProjects.findIndex(p => p.slug === slug);
+  const prev = idx > 0 ? allProjects[idx - 1] : null;
+  const next = idx < allProjects.length - 1 ? allProjects[idx + 1] : null;
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background pt-20">
-        <div className="max-w-4xl mx-auto px-6 py-12">
-          <Skeleton className="h-8 w-48 mb-8" />
-          <Skeleton className="h-12 w-3/4 mb-4" />
-          <Skeleton className="h-64 w-full mb-8" />
-          <Skeleton className="h-32 w-full" />
-        </div>
+      <div className="ed-root" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span className="ed-mono" style={{ color: 'var(--ed-muted)' }}>Carregando…</span>
       </div>
     );
   }
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-background pt-20 flex items-center justify-center">
-        <Card className="max-w-md mx-auto">
-          <CardContent className="p-8 text-center">
-            <h1 className="text-2xl font-bold mb-4">Projeto não encontrado</h1>
-            <p className="text-muted-foreground mb-6">O projeto que você procura não existe ou foi removido.</p>
-            <Button onClick={() => navigate('/')}>
-              Voltar ao Portfolio
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="ed-root" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 24 }}>
+        <p style={{ fontFamily: 'Fraunces, serif', fontSize: 32, fontStyle: 'italic' }}>Projeto não encontrado</p>
+        <button className="pp-btn pp-btn-sec" onClick={() => navigate('/')}>← Voltar ao portfólio</button>
       </div>
     );
   }
 
   const canonicalSlug = project.slug || generateSlug(project.title);
 
+  const outcomePills = project.highlight_metric
+    ? project.highlight_metric.split(/\s*·\s*/).map(s => s.trim()).filter(Boolean)
+    : [];
+
   return (
-    <>
+    <div className="ed-root">
       <SEOHead
         title={project.meta_title || project.title}
-        description={project.meta_description || project.description.slice(0, 160)}
+        description={project.meta_description || (project.description || '').slice(0, 160)}
         canonicalUrl={`${BASE_URL}/projeto/${canonicalSlug}`}
         ogType="article"
         ogImage={project.image_url || undefined}
@@ -81,14 +53,12 @@ export default function ProjectDetail() {
         "@context": "https://schema.org",
         "@type": "CreativeWork",
         "name": project.title,
-        "description": project.meta_description || project.description.slice(0, 160),
+        "description": project.meta_description || (project.description || '').slice(0, 160),
         "url": `${BASE_URL}/projeto/${canonicalSlug}`,
         "author": { "@type": "Person", "name": "Nei Girão", "url": BASE_URL },
-        "datePublished": undefined,
-        "dateModified": undefined,
         ...(project.image_url ? { "image": project.image_url } : {}),
         ...(project.link ? { "mainEntityOfPage": project.link } : {}),
-        ...(project.tags ? { "keywords": project.tags.join(", ") } : {})
+        ...(project.tags ? { "keywords": project.tags.join(", ") } : {}),
       }) }} />
       <BreadcrumbSchema items={[
         { name: 'Início', url: '/' },
@@ -96,131 +66,218 @@ export default function ProjectDetail() {
         { name: project.title },
       ]} />
 
-      <div className="min-h-screen bg-background">
-        <StandaloneNavbar />
-        <header className="bg-gradient-hero pt-24 pb-16">
-          <div className="max-w-4xl mx-auto px-6">
-            <nav className="flex items-center gap-2 text-sm text-white/70 mb-8">
-              <Link to="/" className="hover:text-white transition-colors">Início</Link>
-              <ChevronRight className="w-4 h-4" />
-              <Link to="/#projects" className="hover:text-white transition-colors">Projetos</Link>
-              <ChevronRight className="w-4 h-4" />
-              <span className="text-white">{project.title}</span>
-            </nav>
+      {/* MASTHEAD */}
+      <header className="ed-mast">
+        <div className="ed-mast-left">
+          <Link to="/" className="ed-mast-title">Nei Girão</Link>
+          <span className="ed-mast-sub">Edição 2026 · Vol. XV</span>
+        </div>
+        <nav className="ed-mast-right">
+          <Link to="/">Início</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/#projects">Projetos</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/#work">Experiência</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/#contact">Contato</Link>
+        </nav>
+      </header>
 
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">{project.title}</h1>
+      {/* BREADCRUMB */}
+      <div className="ed-container">
+        <div className="pp-crumb">
+          <Link to="/">Nei Girão</Link>
+          <span className="pp-crumb-sep">/</span>
+          <Link to="/#projects">Produtos vivos</Link>
+          <span className="pp-crumb-sep">/</span>
+          <span className="pp-crumb-current">{project.brand || project.title}</span>
+        </div>
+      </div>
 
-            {project.highlight_metric && (
-              <div className="mb-4">
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-teal-accent/20 backdrop-blur-sm rounded-full text-teal-accent font-semibold text-sm border border-teal-accent/30">
-                  <BarChart3 className="w-4 h-4" />
-                  {project.highlight_metric}
-                </span>
-              </div>
-            )}
+      {/* HERO */}
+      <section className="pp-hero">
+        <div className="ed-container">
+          <div className="pp-brand-row">
+            {project.brand && <span>{project.brand}</span>}
+            {project.brand && project.highlight_metric && <span className="pp-brand-sep">·</span>}
+            {project.highlight_metric && <span style={{ color: 'var(--ed-muted)' }}>{project.highlight_metric}</span>}
+          </div>
+          <h1 className="pp-title ed-display">{project.title}</h1>
+          {project.project_subtitle && (
+            <div className="pp-role">{project.project_subtitle}</div>
+          )}
+        </div>
+      </section>
 
-            {project.tags && project.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {project.tags.map((tag, i) => (
-                  <span key={i} className="inline-flex items-center gap-1 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-sm text-white/90">
-                    <Tag className="w-3 h-3" />
-                    {tag}
-                  </span>
-                ))}
+      {/* SCREENSHOT */}
+      <section className="pp-shot">
+        <div className="ed-container">
+          <div className="pp-shot-frame">
+            {project.image_url ? (
+              <img src={project.image_url} alt={project.title} loading="lazy" />
+            ) : (
+              <div className="pp-shot-placeholder">
+                <div className="pp-shot-glyph">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <rect x="3" y="5" width="18" height="14" rx="2"/>
+                    <circle cx="8.5" cy="10.5" r="1.5"/>
+                    <path d="M21 16l-5-5L8 19"/>
+                  </svg>
+                </div>
+                <div className="pp-shot-placeholder-title">Imagem do projeto</div>
               </div>
             )}
           </div>
-        </header>
+          <div className="pp-shot-caption">
+            {project.image_url
+              ? `${project.brand ? project.brand + ' · ' : ''}${project.title}`
+              : '— Imagem não disponível —'
+            }
+          </div>
+        </div>
+      </section>
 
-        <main className="max-w-4xl mx-auto px-6 py-12">
-          {project.image_url && (
-            <Card className="mb-8 overflow-hidden shadow-elegant">
-              <OptimizedImage src={project.image_url} alt={project.title} className="w-full h-64 md:h-96" priority />
-            </Card>
-          )}
-
-          {/* Description */}
-          <Card className="shadow-elegant border-2 border-border/50 mb-8">
-            <CardContent className="p-8 md:p-12">
-              <h2 className="text-xl font-semibold mb-4">Sobre o Projeto</h2>
-              <SafeHTML html={project.description} className="text-muted-foreground leading-relaxed text-lg prose prose-lg max-w-none" />
-              {project.link && (
-                <div className="mt-8 pt-6 border-t border-border">
-                  <Button onClick={() => window.open(project.link!, '_blank')} className="gap-2">
-                    <ExternalLink className="w-4 h-4" />
-                    Ver Projeto
-                  </Button>
+      {/* BODY */}
+      <section className="pp-body">
+        <div className="ed-container">
+          <div className="pp-grid">
+            {/* SIDEBAR */}
+            <aside className="pp-side">
+              {outcomePills.length > 0 && (
+                <div className="pp-side-block">
+                  <div className="pp-side-head">Resultado</div>
+                  {outcomePills.map((o, i) => (
+                    <span key={i} className="pp-outcome">{o}</span>
+                  ))}
                 </div>
               )}
-            </CardContent>
-          </Card>
 
-          {/* Case Study Sections */}
-          {hasCaseStudy && (
-            <div className="space-y-6 mb-12">
-              {CASE_STUDY_SECTIONS.map(({ key, label, icon: Icon }) => {
-                const content = project[key];
-                if (!content) return null;
-                return (
-                  <Card key={key} className="shadow-elegant border-2 border-border/50">
-                    <CardContent className="p-8">
-                      <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                        <Icon className="w-5 h-5 text-teal-accent" />
-                        {label}
-                      </h2>
-                      <SafeHTML html={content} className="text-muted-foreground leading-relaxed prose max-w-none" />
-                    </CardContent>
-                  </Card>
-                );
-              })}
+              {project.tags && project.tags.length > 0 && (
+                <div className="pp-side-block">
+                  <div className="pp-side-head">Ferramental</div>
+                  {project.tags.map((tag, i) => (
+                    <div key={i} className="pp-stack-item">{tag}</div>
+                  ))}
+                </div>
+              )}
+
+              {project.link && (
+                <div className="pp-side-block">
+                  <div className="pp-side-head">Link</div>
+                  <a href={project.link} target="_blank" rel="noopener noreferrer" className="pp-ext-link">
+                    Ver produto ↗
+                  </a>
+                </div>
+              )}
+            </aside>
+
+            {/* MAIN CONTENT */}
+            <div className="pp-main">
+              {project.context && (
+                <div className="pp-section">
+                  <h2>Contexto</h2>
+                  <SafeHTML html={project.context} className="pp-prose" />
+                </div>
+              )}
+
+              {project.description && (
+                <div className="pp-section">
+                  <h2>O que eu fiz</h2>
+                  <SafeHTML html={project.description} className="pp-prose" />
+                </div>
+              )}
+
+              {project.challenge && (
+                <div className="pp-section">
+                  <h2>Desafio</h2>
+                  <SafeHTML html={project.challenge} className="pp-prose" />
+                </div>
+              )}
+
+              {project.solution && (
+                <div className="pp-section">
+                  <h2>Solução</h2>
+                  <SafeHTML html={project.solution} className="pp-prose" />
+                </div>
+              )}
+
+              {project.results && (
+                <div className="pp-section">
+                  <h2>Resultados</h2>
+                  <SafeHTML html={project.results} className="pp-prose" />
+                </div>
+              )}
+
+              {project.learnings && (
+                <div className="pp-section">
+                  <h2>Aprendizados</h2>
+                  <SafeHTML html={project.learnings} className="pp-prose" />
+                </div>
+              )}
             </div>
-          )}
-
-          {/* Related Skills */}
-          {relatedSkills.length > 0 && (
-            <section className="mb-12">
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <Lightbulb className="w-5 h-5 text-teal-accent" />
-                Habilidades Relacionadas
-              </h2>
-              <div className="flex flex-wrap gap-3">
-                {relatedSkills.map((skill) => (
-                  <Link key={skill.id} to={`/skill/${skill.slug || skill.id}`} className="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-full text-sm font-medium hover:bg-teal-accent/10 hover:text-teal-accent transition-colors">
-                    <Lightbulb className="w-4 h-4" />
-                    {skill.title}
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Related Projects */}
-          {relatedProjects && relatedProjects.length > 0 && (
-            <section className="mt-12">
-              <h2 className="text-2xl font-bold mb-6">Projetos Relacionados</h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {relatedProjects.map((proj) => (
-                  <Link key={proj.id} to={`/projeto/${proj.slug || proj.id}`} className="block">
-                    <Card className="h-full hover:shadow-glow transition-all hover:border-teal-accent/30">
-                      <CardContent className="p-6">
-                        <h3 className="font-semibold text-foreground mb-2">{proj.title}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2">{proj.description}</p>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-
-          <SeeAlso items={seeAlsoItems} title="Veja Também" />
-
-          <div className="mt-12 text-center">
-            <p className="text-muted-foreground mb-4">Quer saber mais sobre este ou outros projetos?</p>
-            <Button onClick={() => navigate('/#contact')}>Entre em Contato</Button>
           </div>
-        </main>
-      </div>
-    </>
+        </div>
+      </section>
+
+      {/* CTA STRIP */}
+      <section className="pp-cta">
+        <div className="ed-container">
+          <div className="pp-cta-grid">
+            <h3>
+              Quer conversar sobre <em>este projeto</em>?
+            </h3>
+            <div className="pp-cta-actions">
+              <a
+                className="pp-btn pp-btn-pri"
+                href={`mailto:neigirao@gmail.com?subject=${encodeURIComponent('Sobre o projeto: ' + project.title)}`}
+              >
+                Falar comigo
+              </a>
+              <button className="pp-btn pp-btn-sec" onClick={() => navigate('/#contact')}>
+                Ver contato
+              </button>
+              <a
+                className="pp-btn pp-btn-ghost"
+                href="https://linkedin.com/in/neigirao"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                LinkedIn ↗
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PREV / NEXT NAV */}
+      <section className="pp-nav">
+        <div className="ed-container">
+          <div className="pp-nav-grid">
+            {prev ? (
+              <Link to={`/projeto/${prev.slug}`} className="pp-nav-link">
+                <span className="pp-nav-dir">← Projeto anterior</span>
+                <span className="pp-nav-title">{prev.title}</span>
+                {prev.brand && <span className="pp-nav-brand">{prev.brand}</span>}
+              </Link>
+            ) : <div />}
+            {next ? (
+              <Link to={`/projeto/${next.slug}`} className="pp-nav-link pp-nav-next">
+                <span className="pp-nav-dir">Próximo projeto →</span>
+                <span className="pp-nav-title">{next.title}</span>
+                {next.brand && <span className="pp-nav-brand">{next.brand}</span>}
+              </Link>
+            ) : <div />}
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="pp-foot">
+        <div>© Nei Girão · 2026</div>
+        <div>
+          <Link to="/" style={{ color: '#E27464' }}>← Voltar ao site</Link>
+        </div>
+      </footer>
+    </div>
   );
 }
