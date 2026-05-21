@@ -45,10 +45,10 @@ const Index = () => {
             <ErrorBoundary><EssaySection /></ErrorBoundary>
             <ErrorBoundary><PullQuoteSection /></ErrorBoundary>
             <ErrorBoundary>
-              <CasesSection experiences={experiences} isLoading={loadingExperiences} />
+              <WorkSection experiences={experiences} isLoading={loadingExperiences} />
             </ErrorBoundary>
             <ErrorBoundary>
-              <WorkSection experiences={experiences} isLoading={loadingExperiences} />
+              <CasesSection experiences={experiences} isLoading={loadingExperiences} />
             </ErrorBoundary>
             <ErrorBoundary>
               <ProjectsEditorialSection projects={projects} isLoading={loadingProjects} />
