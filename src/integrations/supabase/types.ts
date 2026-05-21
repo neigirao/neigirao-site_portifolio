@@ -73,6 +73,7 @@ export type Database = {
           created_at: string
           credential_url: string | null
           id: string
+          is_visible: boolean
           issuer: string
           logo_url: string | null
           name: string
@@ -84,6 +85,7 @@ export type Database = {
           created_at?: string
           credential_url?: string | null
           id?: string
+          is_visible?: boolean
           issuer: string
           logo_url?: string | null
           name: string
@@ -95,6 +97,7 @@ export type Database = {
           created_at?: string
           credential_url?: string | null
           id?: string
+          is_visible?: boolean
           issuer?: string
           logo_url?: string | null
           name?: string
@@ -300,6 +303,7 @@ export type Database = {
           description: string
           icon: string
           id: string
+          is_visible: boolean
           label: string
           order_index: number
           updated_at: string
@@ -311,6 +315,7 @@ export type Database = {
           description: string
           icon?: string
           id?: string
+          is_visible?: boolean
           label: string
           order_index?: number
           updated_at?: string
@@ -322,6 +327,7 @@ export type Database = {
           description?: string
           icon?: string
           id?: string
+          is_visible?: boolean
           label?: string
           order_index?: number
           updated_at?: string
