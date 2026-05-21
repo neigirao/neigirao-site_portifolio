@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -59,6 +59,8 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
   const [fetchError, setFetchError] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'draft' | 'published'>('all');
+  const formRef = useRef<HTMLFormElement>(null);
+  const publishOverride = useRef(false);
 
   const { status: autosaveStatus, clearDraft } = useAutosave({
     key: 'articles-form',
@@ -89,9 +91,12 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const statusToUse = publishOverride.current ? 'published' : formData.status;
+    publishOverride.current = false;
+
     const nextOrderIndex = articles.length > 0 ? Math.max(...articles.map(a => a.order_index)) + 1 : 0;
     const readingTime = estimateReadingTime(formData.content);
-    
+
     const dataToSubmit = {
       title: formData.title,
       slug: formData.slug || null,
@@ -99,8 +104,8 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
       content: formData.content,
       cover_image_url: formData.cover_image_url || null,
       tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
-      status: formData.status,
-      published_at: formData.status === 'published' ? new Date().toISOString() : null,
+      status: statusToUse,
+      published_at: statusToUse === 'published' ? new Date().toISOString() : null,
       meta_title: formData.meta_title || null,
       meta_description: formData.meta_description || null,
       reading_time_minutes: readingTime,
@@ -108,9 +113,8 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
     };
 
     if (editingId) {
-      // Preserve original published_at if already published
       const existing = articles.find(a => a.id === editingId);
-      if (existing?.published_at && formData.status === 'published') {
+      if (existing?.published_at && statusToUse === 'published') {
         dataToSubmit.published_at = existing.published_at;
       }
       const { error } = await supabase.from('articles').update(dataToSubmit).eq('id', editingId);
@@ -123,6 +127,11 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
     }
     resetForm();
     fetchArticles();
+  };
+
+  const handlePublish = () => {
+    publishOverride.current = true;
+    formRef.current?.requestSubmit();
   };
 
   const handleEdit = (article: Article) => {
@@ -186,7 +195,7 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="article-title">Título <span className="text-destructive" aria-hidden="true">*</span></Label>
               <Input
@@ -267,6 +276,9 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
 
             <div className="flex gap-2">
               <Button type="submit">{editingId ? 'Atualizar' : 'Criar'}</Button>
+              {formData.status !== 'published' && (
+                <Button type="button" variant="default" onClick={handlePublish}>Publicar</Button>
+              )}
               {editingId && <Button type="button" variant="outline" onClick={resetForm}>Cancelar</Button>}
             </div>
           </form>
@@ -328,7 +340,7 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
           );
           const isFiltered = !!searchQuery || statusFilter !== 'all';
           const renderCard = (article: Article) => (
-          <Card className={editingId === article.id ? 'ring-2 ring-primary' : ''}>
+          <Card className={`${editingId === article.id ? 'ring-2 ring-primary' : ''} ${article.status !== 'published' ? 'opacity-60' : ''}`}>
             <CardContent className="pt-4 pb-4">
               <div className="flex justify-between items-start">
                 <div className="flex-1 min-w-0">

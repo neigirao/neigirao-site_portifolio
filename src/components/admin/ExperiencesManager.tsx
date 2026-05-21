@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2, Eye, Copy, EyeOff, Search, X } from 'lucide-react';
+import { Pencil, Trash2, Eye, Copy, EyeOff, Search, X, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { RichTextEditor } from './RichTextEditor';
@@ -19,6 +19,7 @@ import { PreviewModal } from './PreviewModal';
 import { CompletenessIndicator } from './CompletenessIndicator';
 import { AutosaveIndicator } from './AutosaveIndicator';
 import { useAutosave } from '@/hooks/useAutosave';
+import { generateSlug } from '@/hooks/usePortfolioDetail';
 
 interface Experience {
   id: string;
@@ -62,7 +63,6 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
     onRecover: useCallback((data: typeof emptyForm) => { setFormData(data); }, []),
   });
 
-  // Track dirty state
   useEffect(() => {
     const hasContent = Object.values(formData).some(v => typeof v === 'string' && v.trim().length > 0);
     onDirtyChange?.(hasContent);
@@ -81,23 +81,18 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const nextOrderIndex = experiences.length > 0 ? Math.max(...experiences.map(exp => exp.order_index)) + 1 : 0;
-    const existing = editingId ? experiences.find(e => e.id === editingId) : null;
-    const dataToSubmit = {
-      company: formData.company, role: formData.role, period: formData.period,
-      description: formData.description, logo_url: formData.logo_url || null,
-      meta_title: formData.meta_title || null, meta_description: formData.meta_description || null,
-      slug: formData.slug || null,
-      is_case: formData.is_case,
-      case_result: formData.case_result || null,
-      case_body: formData.case_body || null,
-      // Preserve current visibility on update; default true on create
-      is_visible: existing ? existing.is_visible : true,
-      order_index: existing ? existing.order_index : nextOrderIndex,
-    };
 
-    if (formData.slug) {
-      let slugQuery = supabase.from('experiences').select('id').eq('slug', formData.slug);
+    if (formData.is_case && !formData.case_body?.trim()) {
+      toast.error('Cases precisam de texto do case (campo "Texto do case").');
+      return;
+    }
+
+    const nextOrderIndex = experiences.length > 0 ? Math.max(...experiences.map(exp => exp.order_index)) + 1 : 0;
+
+    const slugToUse = formData.slug || (formData.role && formData.company ? generateSlug(`${formData.role}-${formData.company}`) : null);
+
+    if (slugToUse) {
+      let slugQuery = supabase.from('experiences').select('id').eq('slug', slugToUse);
       if (editingId) slugQuery = slugQuery.neq('id', editingId);
       const { data: existing } = await slugQuery.maybeSingle();
       if (existing) {
@@ -105,6 +100,19 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
         return;
       }
     }
+
+    const existingExp = editingId ? experiences.find(e => e.id === editingId) : null;
+    const dataToSubmit = {
+      company: formData.company, role: formData.role, period: formData.period,
+      description: formData.description, logo_url: formData.logo_url || null,
+      meta_title: formData.meta_title || null, meta_description: formData.meta_description || null,
+      slug: slugToUse || null,
+      is_case: formData.is_case,
+      case_result: formData.case_result || null,
+      case_body: formData.case_body || null,
+      is_visible: existingExp?.is_visible ?? true,
+      order_index: editingId ? existingExp?.order_index || 0 : nextOrderIndex,
+    };
 
     if (editingId) {
       const { error } = await supabase.from('experiences').update(dataToSubmit).eq('id', editingId);
@@ -209,6 +217,13 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
           </div>
           <div className="flex gap-2 items-center flex-shrink-0 ml-4">
             <Switch checked={exp.is_visible} onCheckedChange={() => handleToggleVisibility(exp)} aria-label={`Visibilidade de ${exp.role}`} />
+            {exp.slug && exp.is_visible && (
+              <Button size="icon" variant="ghost" asChild aria-label={`Ver ${exp.role} no site`}>
+                <a href={`/experiencia/${exp.slug}`} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                </a>
+              </Button>
+            )}
             <Button size="icon" variant="outline" onClick={() => handleDuplicate(exp)} aria-label={`Duplicar ${exp.role}`}>
               <Copy className="h-4 w-4" aria-hidden="true" />
             </Button>
@@ -293,7 +308,6 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
               onMetaDescriptionChange={(value) => setFormData({ ...formData, meta_description: value })}
               onSlugChange={(value) => setFormData({ ...formData, slug: value })}
               titleSource={`${formData.role} - ${formData.company}`}
-              existingSlugs={experiences.filter(e => e.id !== editingId && e.slug).map(e => e.slug!)}
             />
             <div className="flex gap-2">
               <Button type="submit">{editingId ? 'Atualizar' : 'Criar'}</Button>

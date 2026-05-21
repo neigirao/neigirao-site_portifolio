@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 import { Pencil, Copy, Award } from 'lucide-react';
 import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { toast } from 'sonner';
@@ -20,6 +21,7 @@ interface Certification {
   logo_url: string | null;
   credential_url: string | null;
   order_index: number;
+  is_visible: boolean;
 }
 
 const emptyForm = { name: '', issuer: '', year: '', logo_url: '', credential_url: '' };
@@ -99,6 +101,12 @@ export function CertificationsManager({ onDirtyChange }: CertificationsManagerPr
     toast.success('Certificação excluída!'); fetchItems();
   };
 
+  const handleToggleVisibility = async (c: Certification) => {
+    const { error } = await supabase.from('certifications').update({ is_visible: !c.is_visible }).eq('id', c.id);
+    if (error) { toast.error('Erro ao alterar visibilidade'); return; }
+    setItems(prev => prev.map(x => x.id === c.id ? { ...x, is_visible: !c.is_visible } : x));
+  };
+
   const handleReorder = async (reordered: Certification[]) => {
     setItems(reordered);
     await Promise.all(
@@ -164,7 +172,7 @@ export function CertificationsManager({ onDirtyChange }: CertificationsManagerPr
           <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma certificação adicionada ainda. Adicione a primeira acima.</p>
         ) : (
         <SortableList items={items} onReorder={handleReorder} renderItem={(c) => (
-          <Card className={editingId === c.id ? 'ring-2 ring-primary' : ''}>
+          <Card className={`${editingId === c.id ? 'ring-2 ring-primary' : ''} ${!c.is_visible ? 'opacity-50' : ''}`}>
             <CardContent className="pt-4 pb-4">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-3">
@@ -174,7 +182,8 @@ export function CertificationsManager({ onDirtyChange }: CertificationsManagerPr
                     <span className="ml-2 text-sm text-muted-foreground">{c.issuer}{c.year ? ` · ${c.year}` : ''}</span>
                   </div>
                 </div>
-                <div className="flex gap-2 flex-shrink-0 ml-4">
+                <div className="flex gap-2 flex-shrink-0 ml-4 items-center">
+                  <Switch checked={c.is_visible} onCheckedChange={() => handleToggleVisibility(c)} aria-label={`Visibilidade de ${c.name}`} />
                   <Button size="icon" variant="outline" onClick={() => handleDuplicate(c)} aria-label={`Duplicar ${c.name}`}><Copy className="h-4 w-4" /></Button>
                   <Button size="icon" variant="outline" onClick={() => handleEdit(c)} aria-label={`Editar ${c.name}`}><Pencil className="h-4 w-4" /></Button>
                   <DeleteConfirmButton itemName={c.name} onConfirm={() => handleDelete(c.id)} />

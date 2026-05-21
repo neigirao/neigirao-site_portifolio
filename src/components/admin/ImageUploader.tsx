@@ -20,6 +20,9 @@ interface ImageUploaderProps {
   label?: string;
   bucket?: string;
   folder?: string;
+  altValue?: string;
+  onAltChange?: (alt: string) => void;
+  altRequired?: boolean;
 }
 
 export function ImageUploader({
@@ -28,6 +31,9 @@ export function ImageUploader({
   label = 'Imagem',
   bucket = 'portfolio-images',
   folder = 'uploads',
+  altValue,
+  onAltChange,
+  altRequired = false,
 }: ImageUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -174,6 +180,20 @@ export function ImageUploader({
               </span>
             </label>
           )}
+        </div>
+      )}
+      {onAltChange && (
+        <div className="space-y-1">
+          <Label htmlFor="img-alt">
+            Texto alternativo (alt){altRequired && <span className="text-destructive ml-1" aria-hidden="true">*</span>}
+          </Label>
+          <Input
+            id="img-alt"
+            value={altValue || ''}
+            onChange={(e) => onAltChange(e.target.value)}
+            placeholder="Descrição da imagem para acessibilidade"
+            required={altRequired}
+          />
         </div>
       )}
     </div>
