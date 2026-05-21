@@ -1,4 +1,5 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -30,6 +31,22 @@ const ExperienceDetail = lazy(() => import("./pages/ExperienceDetail"));
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
 const SkillDetail = lazy(() => import("./pages/SkillDetail"));
 
+function FaviconInjector() {
+  const { settings } = useSiteSettings();
+  useEffect(() => {
+    const url = settings.favicon_url;
+    if (!url) return;
+    let link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.head.appendChild(link);
+    }
+    link.href = url;
+  }, [settings.favicon_url]);
+  return null;
+}
+
 // Loading fallback for lazy routes
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
@@ -60,6 +77,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <FaviconInjector />
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/" element={<Index />} />

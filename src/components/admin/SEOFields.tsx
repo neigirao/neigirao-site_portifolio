@@ -128,6 +128,15 @@ export function SEOFields({
             placeholder="Título para SEO (máx. 60 caracteres)"
             maxLength={70}
           />
+          {!metaTitle && titleSource && (
+            <button
+              type="button"
+              className="text-xs text-muted-foreground hover:text-foreground underline-offset-2 underline transition-colors"
+              onClick={() => onMetaTitleChange(titleSource.slice(0, 60))}
+            >
+              Sugestão: "{titleSource.slice(0, 57)}{titleSource.length > 57 ? '…' : ''}" — clique para usar
+            </button>
+          )}
         </div>
 
         {/* Meta Description */}

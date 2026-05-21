@@ -11,6 +11,7 @@ import { Building2, Calendar, Briefcase, ChevronRight, Lightbulb } from 'lucide-
 import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
 import SeeAlso from '@/components/SeeAlso';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { BackToTop } from '@/components/BackToTop';
 
 export default function ExperienceDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -241,6 +242,7 @@ export default function ExperienceDetail() {
             </div>
           </div>
         </main>
+        <BackToTop />
       </div>
     </>
   );

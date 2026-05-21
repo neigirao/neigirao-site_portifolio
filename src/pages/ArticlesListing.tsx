@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { usePublishedArticles } from '@/hooks/useArticles';
 import { SEOHead } from '@/components/SEO/SEOHead';
@@ -6,7 +7,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OptimizedImage } from '@/components/ui/optimized-image';
-import { Clock, Calendar } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Clock, Calendar, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { prefetchRoute } from '@/utils/prefetch';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +17,15 @@ import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
 export default function ArticlesListing() {
   const { articles, isLoading } = usePublishedArticles();
   const navigate = useNavigate();
+  const [query, setQuery] = useState('');
+
+  const filtered = query.trim()
+    ? articles.filter((a) =>
+        a.title.toLowerCase().includes(query.toLowerCase()) ||
+        a.excerpt?.toLowerCase().includes(query.toLowerCase()) ||
+        a.tags?.some((t) => t.toLowerCase().includes(query.toLowerCase()))
+      )
+    : articles;
 
   return (
     <>
@@ -36,21 +47,40 @@ export default function ArticlesListing() {
           </div>
         </header>
 
-        <main className="max-w-4xl mx-auto px-6 py-12">
+        <div className="max-w-4xl mx-auto px-6 pt-8">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar por título, tag ou tema..."
+              className="pl-9"
+              aria-label="Buscar artigos"
+            />
+          </div>
+        </div>
+
+        <main className="max-w-4xl mx-auto px-6 py-8">
           {isLoading ? (
             <div className="grid gap-6">
               {[1, 2, 3].map((i) => (
                 <Skeleton key={i} className="h-48 w-full rounded-lg" />
               ))}
             </div>
-          ) : articles.length === 0 ? (
+          ) : filtered.length === 0 ? (
             <div className="text-center py-16">
-              <p className="text-muted-foreground text-lg">Nenhum artigo publicado ainda.</p>
-              <Button className="mt-4" onClick={() => navigate('/')}>Voltar ao Portfolio</Button>
+              <p className="text-muted-foreground text-lg">
+                {query ? 'Nenhum artigo encontrado para esta busca.' : 'Nenhum artigo publicado ainda.'}
+              </p>
+              {query ? (
+                <Button className="mt-4" variant="outline" onClick={() => setQuery('')}>Limpar busca</Button>
+              ) : (
+                <Button className="mt-4" onClick={() => navigate('/')}>Voltar ao Portfolio</Button>
+              )}
             </div>
           ) : (
             <div className="grid gap-6">
-              {articles.map((article) => {
+              {filtered.map((article) => {
                 const publishedDate = article.published_at
                   ? new Date(article.published_at).toLocaleDateString('pt-BR', { year: 'numeric', month: 'short', day: 'numeric' })
                   : null;

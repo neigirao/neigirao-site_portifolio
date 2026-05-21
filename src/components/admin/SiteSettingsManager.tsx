@@ -16,7 +16,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Upload, Save, FileText, ExternalLink, Newspaper, Star, FileSignature, Briefcase, Wrench, GraduationCap, Mail, AlignLeft, BookOpen, ChevronDown } from 'lucide-react';
+import { Upload, Save, FileText, ExternalLink, Newspaper, Star, FileSignature, Briefcase, Wrench, GraduationCap, Mail, AlignLeft, BookOpen, ChevronDown, Globe } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 function FileUploader({ value, onChange, label, accept = 'application/pdf', folder = 'cv' }: {
   value: string;
@@ -260,6 +261,27 @@ export function SiteSettingsManager() {
           </Button>
         </div>
       </div>
+
+      {/* Perfil Público / SEO */}
+      <SectionCard id="profile" title="Perfil Público / SEO" icon={<Globe className="h-5 w-5" />} open={openSections.has('profile')} onToggle={() => toggleSection('profile')}>
+        <div>
+          <div className="flex justify-between mb-1">
+            <Label>Pitch de valor (máx. 160 chars)</Label>
+            <span className={cn('text-xs', (local.value_pitch || '').length > 160 ? 'text-destructive' : 'text-muted-foreground')}>
+              {(local.value_pitch || '').length}/160
+            </span>
+          </div>
+          <Textarea
+            value={local.value_pitch || ''}
+            onChange={(e) => set('value_pitch', e.target.value)}
+            rows={2}
+            maxLength={200}
+            placeholder="PM com 15 anos de história, foco em resultado mensurável, liderança de times de produto em Telecom, Mídia e Seguros."
+          />
+          <p className="text-xs text-muted-foreground mt-1">Usado como fallback de meta_description nas páginas sem descrição própria.</p>
+        </div>
+        <TextField k="favicon_url" label="URL do Favicon" placeholder="https://exemplo.com/favicon.ico" local={local} set={set} />
+      </SectionCard>
 
       {/* CV upload */}
       <SectionCard id="cv" title="Currículo (CV)" icon={<FileText className="h-5 w-5" />} open={openSections.has('cv')} onToggle={() => toggleSection('cv')} contentClass="">
