@@ -76,6 +76,34 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 - Contar projetos ocultos
 - Alertas para itens sem SEO ou sem slug
 
+### Redator — Estrutura de case STAR (site público)
+- Substituir campo genérico `case_body` por três campos opcionais: `case_challenge`, `case_solution`, `case_result`
+- Migrations: `ALTER TABLE experiences/projects ADD COLUMN IF NOT EXISTS case_challenge/case_solution/case_result TEXT`
+- Renderizar os três blocos com títulos e iconografia em `ExperienceDetail` e `ProjectDetail`
+- Força narrativa STAR (Situação → Tarefa → Ação → Resultado), padrão reconhecido por recrutadores
+
+### Redator — Pitch de valor global
+- Chave `value_pitch` em `site_settings`: frase única (máx. 160 chars) que resume a proposta de valor
+- Usar como fallback de `meta_description` nas páginas sem descrição própria
+
+### UX — Barra de progresso de leitura em ArticleDetail
+- Componente `ReadingProgressBar`: faixa fina no topo da página que avança com o scroll
+- Hook `useScrollProgress` com `window.scrollY / document.body.scrollHeight`
+
+### UX — Sumário automático (Table of Contents) em artigos longos
+- Extrair headings `h2` e `h3` do HTML do `body` via DOM parser
+- Lista fixa à direita em desktop (`sticky top-24`) ou dropdown no mobile; links com scroll suave
+- Só exibir quando há ≥ 3 headings
+
+### UX — "Copiar email" no /contato
+- Botão com ícone de clipboard ao lado do endereço de email
+- `navigator.clipboard.writeText(email)` + toast de confirmação
+
+### Design — OG image por projeto/experiência
+- Elevar prioridade da "OG image dinâmica" já no roadmap
+- Tag `<meta property="og:image" content={cover_image_url || defaultOgImage}>` nas páginas de detalhe
+- Melhora preview ao compartilhar links no LinkedIn/WhatsApp
+
 ---
 
 ## Em aberto — prioridade média
@@ -90,6 +118,22 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 - Tabela `edit_history` com `entity`, `entity_id`, `before`, `after`, `edited_at`
 - Permite reverter edições acidentais
 
+### Redator — Excerpt para compartilhamento social
+- Campo `excerpt` (TEXT, máx. 280 chars) em `articles` e `experiences`
+- Usar como preview em cards de artigo e em OG description
+- CMS: textarea com counter no ArticlesManager e ExperiencesManager
+
+### Redator — Contador de palavras no RichTextEditor
+- Exibir word count e tempo de leitura estimado no editor (já calculado em ArticlesManager, replicar para `case_body`)
+
+### UX — Filtro/busca em ArticlesListing (página pública)
+- Input de busca por título, tag ou categoria em `ArticlesListing.tsx`
+- Padrão já existente nos managers do admin
+
+### UX — "Voltar ao topo"
+- Botão flutuante `↑` que aparece após 400px de scroll
+- `window.scrollTo({ top: 0, behavior: 'smooth' })`
+
 ---
 
 ## Em aberto — prioridade baixa / próximas fases
@@ -98,7 +142,7 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 
 - **Schema.org BreadcrumbList** em ProjectDetail e ExperienceDetail
 - **Article schema** em ArticleDetail
-- **OG image dinâmica** por projeto/case usando `cover_image_url`
+- ~~**OG image dinâmica** por projeto/case~~ → movida para prioridade alta
 - **"Related content"** em ArticleDetail e ExperienceDetail (hook `useRelatedContent` já existe)
 - **Canonical URLs** validadas em todas as páginas de detalhe
 
@@ -115,6 +159,21 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 - `prefers-reduced-motion` respeitado em transições de EssaySection e PullQuoteSection
 - Navegação por teclado no WorkSection (lista de experiências expandíveis)
 - Revisão de densidade tipográfica em mobile 393px
+
+### RH — LinkedIn em destaque
+- Promover link do LinkedIn do footer para o header ou CoverSection
+- Adicionar chave `linkedin_url` em `site_settings` se ausente
+
+### Redator — Hint de meta_title no SEOFields
+- No `SEOFields`, exibir sugestão pré-preenchida em cinza quando `meta_title` está vazio
+- `titleSource` já é prop do componente — basta mostrar o hint visual
+
+### Design — Favicon via CMS
+- Chave `favicon_url` em `site_settings`; injetar dinamicamente no `<head>`
+
+### UX — Conteúdo relacionado nas páginas de detalhe
+- Hook `useRelatedContent` (`src/hooks/useRelatedContent.tsx`) já existe mas não está ativado
+- Exibir 2–3 cards relacionados ao final de `ExperienceDetail`, `ProjectDetail`, `ArticleDetail`
 
 ### Segurança e robustez
 
@@ -139,4 +198,4 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 
 ---
 
-*Última atualização: 2026-05-21*
+*Última atualização: 2026-05-21 — adicionadas sugestões de RH, Redator, Design e UX*
