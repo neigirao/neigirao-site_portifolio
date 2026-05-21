@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
 import { DbProject } from "@/hooks/usePortfolioData";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { SafeHTMLLite as SafeHTML } from "./SafeHTMLLite";
+import { prefetchRoute } from "@/utils/prefetch";
 
 interface Props {
   projects: DbProject[];
@@ -36,15 +38,30 @@ export function ProjectsEditorialSection({ projects, isLoading }: Props) {
         </div>
 
         <div className="ed-projects">
-          {projects.map((p) => (
-            <div key={p.id} className="ed-project">
-              {p.brand && <div className="brand">{p.brand}</div>}
-              <div className="proj-title">{p.title}</div>
-              <div className="note">
-                {p.project_subtitle || p.highlight_metric || p.description?.slice(0, 80)}
-              </div>
-            </div>
-          ))}
+          {projects.map((p) => {
+            const inner = (
+              <>
+                {p.brand && <div className="brand">{p.brand}</div>}
+                <div className="proj-title">{p.title}</div>
+                <div className="note">
+                  {p.project_subtitle || p.highlight_metric || p.description?.slice(0, 80)}
+                </div>
+              </>
+            );
+            return p.slug ? (
+              <Link
+                key={p.id}
+                to={`/projeto/${p.slug}`}
+                className="ed-project"
+                onMouseEnter={() => prefetchRoute('/projeto/')}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                {inner}
+              </Link>
+            ) : (
+              <div key={p.id} className="ed-project">{inner}</div>
+            );
+          })}
         </div>
       </div>
     </section>
