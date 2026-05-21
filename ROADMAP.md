@@ -41,6 +41,20 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 - **Erros específicos**: todos os `toast.error` incluem `error.message` do Supabase
 - **Validação de slug duplicado**: Experiences, Projects, Skills, Education, Articles
 
+### Site público — UX, Redator e Perfil (Mai 2026)
+
+- **Barra de progresso de leitura**: já presente via `StandaloneNavbar` → `useScrollProgress` em todas as páginas
+- **OG image dinâmica**: `ogImage` em todas as páginas de detalhe (ArticleDetail, ExperienceDetail, ProjectDetail)
+- **Sumário automático (TOC)**: componente `TableOfContents` em `ArticleDetail`
+- **"Voltar ao topo"**: componente `BackToTop` em ArticleDetail e ExperienceDetail
+- **"Copiar email"**: botão clipboard em `/contato`
+- **Busca de artigos**: input por título/excerpt/tag em `/artigos`
+- **Contador de palavras**: `RichTextEditor` exibe palavras e estimativa de leitura
+- **Hint de meta_title**: sugestão clicável em `SEOFields` quando vazio
+- **Pitch de valor + Favicon via CMS**: campos em `SiteSettingsManager` → "Perfil Público / SEO"
+- **LinkedIn no navbar**: ícone LinkedIn na `StandaloneNavbar`
+- **Favicon dinâmico**: `FaviconInjector` em `App.tsx`
+
 ### CMS — UX heurísticas (média prioridade, Mai 2026, PR #16)
 
 - **Destaque de edição**: `ring-2 ring-primary` no card sendo editado (todos os 10 managers)

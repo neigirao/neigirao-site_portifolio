@@ -13,6 +13,8 @@ import { Clock, Calendar, Tag, ChevronRight } from 'lucide-react';
 import { SafeHTML } from '@/components/admin/SafeHTML';
 import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
 import { Helmet } from 'react-helmet-async';
+import { TableOfContents } from '@/components/TableOfContents';
+import { BackToTop } from '@/components/BackToTop';
 
 function RelatedArticles({ currentArticle }: { currentArticle: DbArticle }) {
   const { articles: allArticles } = usePublishedArticles();
@@ -201,63 +203,70 @@ export default function ArticleDetail() {
         </header>
 
         {/* Content */}
-        <main className="max-w-3xl mx-auto px-6 py-12">
-          {/* Cover Image */}
-          {article.cover_image_url && (
-            <Card className="mb-8 overflow-hidden shadow-elegant">
-              <OptimizedImage
-                src={article.cover_image_url}
-                alt={article.title}
-                className="w-full h-64 md:h-96"
-                priority
-              />
-            </Card>
-          )}
+        <main className="max-w-5xl mx-auto px-6 py-12">
+          <div className="flex gap-10 items-start">
+            <div className="flex-1 min-w-0">
+              {/* Cover Image */}
+              {article.cover_image_url && (
+                <Card className="mb-8 overflow-hidden shadow-elegant">
+                  <OptimizedImage
+                    src={article.cover_image_url}
+                    alt={article.title}
+                    className="w-full h-64 md:h-96"
+                    priority
+                  />
+                </Card>
+              )}
 
-          {/* Article Content */}
-          <Card className="shadow-elegant border-2 border-border/50 mb-8">
-            <CardContent className="p-8 md:p-12">
-              <SafeHTML
-                html={article.content}
-                className="prose prose-lg dark:prose-invert max-w-none leading-relaxed
-                  prose-headings:text-foreground prose-headings:font-bold
-                  prose-a:text-accent prose-a:underline
-                  prose-img:rounded-lg prose-img:shadow-md"
-              />
-            </CardContent>
-          </Card>
+              {/* Article Content */}
+              <Card className="shadow-elegant border-2 border-border/50 mb-8">
+                <CardContent className="p-8 md:p-12">
+                  <SafeHTML
+                    html={article.content}
+                    className="prose prose-lg dark:prose-invert max-w-none leading-relaxed
+                      prose-headings:text-foreground prose-headings:font-bold
+                      prose-a:text-accent prose-a:underline
+                      prose-img:rounded-lg prose-img:shadow-md"
+                  />
+                </CardContent>
+              </Card>
 
-          {/* Author Card */}
-          <Card className="shadow-elegant mb-8">
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-secondary flex items-center justify-center text-white font-bold text-lg">
-                NG
+              {/* Author Card */}
+              <Card className="shadow-elegant mb-8">
+                <CardContent className="p-6 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-secondary flex items-center justify-center text-white font-bold text-lg">
+                    NG
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">Nei Girão</p>
+                    <p className="text-sm text-muted-foreground">Product Manager | Observabilidade | Produtos Digitais</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Related Articles */}
+              <RelatedArticles currentArticle={article} />
+
+              {/* CTA */}
+              <div className="mt-12 text-center">
+                <p className="text-muted-foreground mb-4">
+                  Gostou deste artigo? Confira outros conteúdos ou entre em contato.
+                </p>
+                <div className="flex gap-3 justify-center">
+                  <Button variant="outline" onClick={() => navigate('/artigos')}>
+                    Ver Mais Artigos
+                  </Button>
+                  <Button onClick={() => navigate('/#contact')}>
+                    Entre em Contato
+                  </Button>
+                </div>
               </div>
-              <div>
-                <p className="font-semibold text-foreground">Nei Girão</p>
-                <p className="text-sm text-muted-foreground">Product Manager | Observabilidade | Produtos Digitais</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Related Articles */}
-          <RelatedArticles currentArticle={article} />
-
-          {/* CTA */}
-          <div className="mt-12 text-center">
-            <p className="text-muted-foreground mb-4">
-              Gostou deste artigo? Confira outros conteúdos ou entre em contato.
-            </p>
-            <div className="flex gap-3 justify-center">
-              <Button variant="outline" onClick={() => navigate('/artigos')}>
-                Ver Mais Artigos
-              </Button>
-              <Button onClick={() => navigate('/#contact')}>
-                Entre em Contato
-              </Button>
             </div>
+
+            <TableOfContents key={article.id} />
           </div>
         </main>
+        <BackToTop />
       </div>
     </>
   );

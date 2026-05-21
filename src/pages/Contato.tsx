@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { SEOHead } from "@/components/SEO";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { Mail, Linkedin, MessageCircle, MapPin, Clock, ExternalLink, Send } from "lucide-react";
+import { Mail, Linkedin, MessageCircle, MapPin, Clock, ExternalLink, Send, Copy, Check } from "lucide-react";
 import { StandaloneNavbar } from "@/components/sections/StandaloneNavbar";
 import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, AUTHOR_WHATSAPP, BASE_URL } from "@/config/constants";
 import { Helmet } from "react-helmet-async";
@@ -78,6 +78,14 @@ function ContactCard({ icon, title, description, action, href, external, highlig
 export default function Contato() {
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
   const [sending, setSending] = useState(false);
+  const [emailCopied, setEmailCopied] = useState(false);
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(AUTHOR_EMAIL);
+    setEmailCopied(true);
+    toast.success("Email copiado!");
+    setTimeout(() => setEmailCopied(false), 2000);
+  };
 
   const checkRateLimit = (): boolean => {
     const key = "contact_form_timestamps";
@@ -218,7 +226,7 @@ export default function Contato() {
           </Card>
 
           {/* Contact Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-4">
             <ContactCard
               icon={<Mail className="w-7 h-7" />}
               title="Email"
@@ -243,6 +251,24 @@ export default function Contato() {
               href={AUTHOR_LINKEDIN}
               external
             />
+          </div>
+
+          {/* Copy email */}
+          <div className="flex items-center gap-2 mb-12 px-1">
+            <Mail className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+            <span className="text-sm text-muted-foreground">{AUTHOR_EMAIL}</span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              onClick={handleCopyEmail}
+              aria-label="Copiar endereço de email"
+            >
+              {emailCopied
+                ? <Check className="h-3.5 w-3.5 text-green-500" />
+                : <Copy className="h-3.5 w-3.5" />}
+            </Button>
           </div>
 
           {/* Additional Info */}

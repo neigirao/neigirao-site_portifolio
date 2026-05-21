@@ -21,7 +21,7 @@ import {
   Redo
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface RichTextEditorProps {
   value: string;
@@ -36,6 +36,7 @@ export function RichTextEditor({
   label,
   placeholder = 'Digite aqui...',
 }: RichTextEditorProps) {
+  const [wordCount, setWordCount] = useState(0);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -58,6 +59,8 @@ export function RichTextEditor({
     },
     onUpdate: ({ editor }) => {
       onChange(DOMPurify.sanitize(editor.getHTML()));
+      const words = editor.getText().trim().split(/\s+/).filter(Boolean).length;
+      setWordCount(words);
     },
   });
 
@@ -175,6 +178,12 @@ export function RichTextEditor({
 
         {/* Editor Content */}
         <EditorContent editor={editor} />
+
+        {wordCount > 0 && (
+          <div className="px-3 py-1.5 border-t bg-muted/20 text-xs text-muted-foreground text-right">
+            {wordCount} {wordCount === 1 ? 'palavra' : 'palavras'} · ~{Math.max(1, Math.ceil(wordCount / 200))} min de leitura
+          </div>
+        )}
       </div>
     </div>
   );

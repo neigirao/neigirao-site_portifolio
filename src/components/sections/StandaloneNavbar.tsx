@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Menu, Download } from "lucide-react";
+import { Menu, Download, Linkedin } from "lucide-react";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useState } from "react";
@@ -18,6 +18,7 @@ export function StandaloneNavbar() {
   const { scrollProgress } = useScrollProgress();
   const { settings } = useSiteSettings();
   const cvUrl = settings.cv_file_url || "/cv-nei-girao.pdf";
+  const linkedinUrl = settings.contact_linkedin || "https://linkedin.com/in/neigirao";
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -56,6 +57,15 @@ export function StandaloneNavbar() {
                   {link.label}
                 </Link>
               ))}
+              <a
+                href={linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="text-muted-foreground hover:text-secondary transition-colors"
+              >
+                <Linkedin className="w-4 h-4" />
+              </a>
               <ThemeToggle />
               <Button
                 size="sm"
