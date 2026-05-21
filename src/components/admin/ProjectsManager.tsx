@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Trash2, Eye, Copy, Search, X } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Pencil, Eye, Copy, Search, X, ExternalLink, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
 import { RichTextEditor } from './RichTextEditor';
@@ -38,6 +39,7 @@ interface Project {
   learnings: string | null;
   brand: string | null;
   project_subtitle: string | null;
+  is_visible: boolean;
 }
 
 interface ProjectsManagerProps {
@@ -69,10 +71,11 @@ interface ProjectCardProps {
   onEdit: (project: Project) => void;
   onDuplicate: (project: Project) => void;
   onDelete: (id: string, name: string) => void;
+  onToggleVisibility: (project: Project) => void;
 }
 
-const ProjectCard = ({ project, editingId, onEdit, onDuplicate, onDelete }: ProjectCardProps) => (
-  <Card className={`${editingId === project.id ? 'ring-2 ring-primary' : ''}`}>
+const ProjectCard = ({ project, editingId, onEdit, onDuplicate, onDelete, onToggleVisibility }: ProjectCardProps) => (
+  <Card className={`${editingId === project.id ? 'ring-2 ring-primary' : ''} ${!project.is_visible ? 'opacity-50' : ''}`}>
     <CardContent className="pt-4 pb-4">
       <div className="flex justify-between items-start">
         <div className="flex-1 min-w-0">
@@ -91,7 +94,15 @@ const ProjectCard = ({ project, editingId, onEdit, onDuplicate, onDelete }: Proj
             </div>
           )}
         </div>
-        <div className="flex gap-2 flex-shrink-0 ml-4">
+        <div className="flex gap-2 flex-shrink-0 ml-4 items-center">
+          <Switch checked={project.is_visible} onCheckedChange={() => onToggleVisibility(project)} aria-label={`Visibilidade de ${project.title}`} />
+          {project.slug && project.is_visible && (
+            <Button size="icon" variant="ghost" asChild aria-label={`Ver ${project.title} no site`}>
+              <a href={`/projeto/${project.slug}`} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
+              </a>
+            </Button>
+          )}
           <Button size="icon" variant="outline" onClick={() => onDuplicate(project)} aria-label={`Duplicar ${project.title}`}>
             <Copy className="h-4 w-4" aria-hidden="true" />
           </Button>
@@ -124,7 +135,6 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
     }, []),
   });
 
-  // Track dirty state
   useEffect(() => {
     const hasContent = Object.values(formData).some(v => typeof v === 'string' && v.trim().length > 0);
     onDirtyChange?.(hasContent);
@@ -240,6 +250,12 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
     }
   };
 
+  const handleToggleVisibility = async (project: Project) => {
+    const { error } = await supabase.from('projects').update({ is_visible: !project.is_visible }).eq('id', project.id);
+    if (error) { toast.error('Erro ao alterar visibilidade'); return; }
+    setProjects(prev => prev.map(p => p.id === project.id ? { ...p, is_visible: !project.is_visible } : p));
+  };
+
   const handleReorder = async (reorderedItems: Project[]) => {
     const previousItems = projects;
     setProjects(reorderedItems);
@@ -292,10 +308,19 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
                 <Input id="tags" value={formData.tags} onChange={(e) => setFormData({ ...formData, tags: e.target.value })} placeholder="React, TypeScript, Node.js" />
               </div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="highlight_metric">Métrica de Destaque</Label>
-              <Input id="highlight_metric" value={formData.highlight_metric} onChange={(e) => setFormData({ ...formData, highlight_metric: e.target.value })} placeholder="Ex: 40% redução MTTR" />
-              <p className="text-xs text-muted-foreground">Métrica-chave exibida em destaque no card e na página do projeto</p>
+              <Input
+                id="highlight_metric"
+                value={formData.highlight_metric}
+                onChange={(e) => setFormData({ ...formData, highlight_metric: e.target.value })}
+                placeholder="Ex: +15% conversão · 6 produtos lançados"
+                maxLength={100}
+              />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Métrica-chave exibida em destaque no card e na página do projeto</span>
+                <span>{formData.highlight_metric.length}/100</span>
+              </div>
             </div>
 
             {/* Campos para design editorial */}
@@ -384,6 +409,7 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
                 onEdit={handleEdit}
                 onDuplicate={handleDuplicate}
                 onDelete={handleDelete}
+                onToggleVisibility={handleToggleVisibility}
               />
             ))}
           </div>
@@ -395,6 +421,7 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
               onEdit={handleEdit}
               onDuplicate={handleDuplicate}
               onDelete={handleDelete}
+              onToggleVisibility={handleToggleVisibility}
             />
           )} />
         )}

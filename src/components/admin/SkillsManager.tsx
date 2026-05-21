@@ -85,6 +85,13 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
       order_index: editingId ? skills.find(s => s.id === editingId)?.order_index || 0 : nextOrderIndex,
     };
 
+    if (formData.slug) {
+      let q = supabase.from('skills').select('id').eq('slug', formData.slug);
+      if (editingId) q = q.neq('id', editingId);
+      const { data: existing } = await q.maybeSingle();
+      if (existing) { toast.error('Este slug já está em uso. Escolha outro.'); return; }
+    }
+
     if (editingId) {
       const { error } = await supabase.from('skills').update(dataToSubmit).eq('id', editingId);
       if (error) { toast.error('Erro ao atualizar skill'); return; }

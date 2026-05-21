@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Pencil, Copy } from 'lucide-react';
 import { toast } from 'sonner';
@@ -20,6 +21,7 @@ interface Metric {
   icon: string;
   color: string;
   order_index: number;
+  is_visible: boolean;
 }
 
 const ICON_OPTIONS = [
@@ -119,6 +121,12 @@ export function MetricsManager({ onDirtyChange }: MetricsManagerProps) {
     fetchMetrics();
   };
 
+  const handleToggleVisibility = async (m: Metric) => {
+    const { error } = await supabase.from('impact_metrics').update({ is_visible: !m.is_visible }).eq('id', m.id);
+    if (error) { toast.error('Erro ao alterar visibilidade'); return; }
+    setMetrics(prev => prev.map(x => x.id === m.id ? { ...x, is_visible: !m.is_visible } : x));
+  };
+
   const handleReorder = async (reordered: Metric[]) => {
     setMetrics(reordered);
     await Promise.all(
@@ -204,7 +212,7 @@ export function MetricsManager({ onDirtyChange }: MetricsManagerProps) {
             items={metrics}
             onReorder={handleReorder}
             renderItem={(m) => (
-              <Card className={editingId === m.id ? 'ring-2 ring-primary' : ''}>
+              <Card className={`${editingId === m.id ? 'ring-2 ring-primary' : ''} ${!m.is_visible ? 'opacity-50' : ''}`}>
                 <CardContent className="pt-4 pb-4">
                   <div className="flex justify-between items-center">
                     <div>
@@ -212,7 +220,8 @@ export function MetricsManager({ onDirtyChange }: MetricsManagerProps) {
                       <span className="ml-2 text-muted-foreground">{m.label}</span>
                       <p className="text-sm text-muted-foreground">{m.description}</p>
                     </div>
-                    <div className="flex gap-2 flex-shrink-0 ml-4">
+                    <div className="flex gap-2 flex-shrink-0 ml-4 items-center">
+                      <Switch checked={m.is_visible} onCheckedChange={() => handleToggleVisibility(m)} aria-label={`Visibilidade de ${m.label}`} />
                       <Button size="icon" variant="outline" onClick={() => handleDuplicate(m)} aria-label={`Duplicar ${m.label}`}><Copy className="h-4 w-4" /></Button>
                       <Button size="icon" variant="outline" onClick={() => handleEdit(m)} aria-label={`Editar ${m.label}`}><Pencil className="h-4 w-4" /></Button>
                       <DeleteConfirmButton itemName={`${m.value} ${m.label}`} onConfirm={() => handleDelete(m.id)} />
