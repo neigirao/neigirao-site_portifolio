@@ -12,6 +12,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { HelpCircle } from "lucide-react";
+import { SafeHTMLLite as SafeHTML } from "./SafeHTMLLite";
 
 export function FAQSection() {
   const { ref, isVisible } = useScrollAnimation();
@@ -50,7 +51,7 @@ export function FAQSection() {
                   </span>
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
-                  {item.answer}
+                  <SafeHTML as="div" html={item.answer || ''} />
                 </AccordionContent>
               </AccordionItem>
             ))}

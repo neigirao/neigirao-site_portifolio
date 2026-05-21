@@ -7,7 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from './RichTextEditor';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Pencil, Eye, Copy, EyeOff } from 'lucide-react';
@@ -165,10 +165,7 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
               <Label htmlFor="period">Período <span className="text-destructive" aria-hidden="true">*</span></Label>
               <Input id="period" value={formData.period} onChange={(e) => setFormData({ ...formData, period: e.target.value })} required />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Descrição (opcional)</Label>
-              <Textarea id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={3} />
-            </div>
+            <RichTextEditor value={formData.description} onChange={(value) => setFormData({ ...formData, description: value })} label="Descrição (opcional)" />
             <SEOFields
               metaTitle={formData.meta_title} metaDescription={formData.meta_description} slug={formData.slug}
               onMetaTitleChange={(v) => setFormData({ ...formData, meta_title: v })}

@@ -54,7 +54,7 @@ export function CasesSection({ experiences, isLoading }: Props) {
               </div>
               <div>
                 <h3 className="ed-case-title">{c.role}</h3>
-                <p className="ed-case-body">{c.case_body || c.description}</p>
+                <SafeHTML as="div" className="ed-case-body" html={c.case_body || c.description || ''} />
               </div>
             </article>
           ))}
