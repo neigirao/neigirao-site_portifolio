@@ -7,7 +7,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Pencil, Trash2, Eye, Copy, EyeOff, Search, X } from 'lucide-react';
@@ -268,13 +267,10 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
               {formData.is_case && (
                 <div className="space-y-3">
                   <div className="space-y-2">
-                    <Label htmlFor="case_body">Texto do case (exibido na seção Cases)</Label>
-                    <Textarea
-                      id="case_body"
+                    <RichTextEditor
                       value={formData.case_body}
-                      onChange={(e) => setFormData({ ...formData, case_body: e.target.value })}
-                      rows={4}
-                      placeholder="Descreva o projeto, o desafio e o impacto de forma concisa para o visitante do site..."
+                      onChange={(value) => setFormData({ ...formData, case_body: value })}
+                      label="Texto do case (exibido na seção Cases)"
                     />
                     <p className="text-xs text-muted-foreground">Este texto substitui a descrição geral na seção Cases da home. Se vazio, usa a descrição acima.</p>
                   </div>

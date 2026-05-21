@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pencil, Eye, Copy, EyeOff, Search, X } from 'lucide-react';
+import { Pencil, Eye, Copy, EyeOff, Search, X, List, LayoutGrid, Check, Plus, Trash2 } from 'lucide-react';
 import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
@@ -46,6 +46,11 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState<'list' | 'category'>('list');
+  const [renamingCategory, setRenamingCategory] = useState<string | null>(null);
+  const [categoryRenameValue, setCategoryRenameValue] = useState('');
+  const [addingToCategory, setAddingToCategory] = useState<string | null>(null);
+  const [quickAddName, setQuickAddName] = useState('');
 
   const { status: autosaveStatus, clearDraft } = useAutosave({
     key: 'skills-form',
@@ -138,6 +143,31 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
 
   const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
+  const handleRenameCategory = async (oldName: string, newName: string) => {
+    const trimmed = newName.trim();
+    if (!trimmed || trimmed === oldName) { setRenamingCategory(null); return; }
+    const toUpdate = skills.filter(s => s.category === oldName);
+    const results = await Promise.all(
+      toUpdate.map(s => supabase.from('skills').update({ category: trimmed }).eq('id', s.id))
+    );
+    if (results.some(r => r.error)) { toast.error('Erro ao renomear categoria'); return; }
+    toast.success(`Categoria renomeada para "${trimmed}"`);
+    setRenamingCategory(null);
+    fetchSkills();
+  };
+
+  const handleQuickAdd = async (category: string) => {
+    const name = quickAddName.trim();
+    if (!name) return;
+    const nextOrderIndex = skills.length > 0 ? Math.max(...skills.map(s => s.order_index)) + 1 : 0;
+    const { error } = await supabase.from('skills').insert([{ name, category, order_index: nextOrderIndex }]);
+    if (error) { toast.error('Erro ao adicionar item'); return; }
+    toast.success(`"${name}" adicionado em ${category}`);
+    setQuickAddName('');
+    setAddingToCategory(null);
+    fetchSkills();
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -177,7 +207,47 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
         </CardContent>
       </Card>
 
-      <div className="space-y-2">
+      {/* View mode toggle */}
+      <div className="flex items-center gap-2">
+        <Button
+          variant={viewMode === 'list' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setViewMode('list')}
+          className="gap-2"
+        >
+          <List className="h-4 w-4" /> Lista
+        </Button>
+        <Button
+          variant={viewMode === 'category' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setViewMode('category')}
+          className="gap-2"
+        >
+          <LayoutGrid className="h-4 w-4" /> Por categoria
+        </Button>
+      </div>
+
+      {viewMode === 'category' && !isLoading && !fetchError && (
+        <CategoryView
+          skills={skills}
+          renamingCategory={renamingCategory}
+          categoryRenameValue={categoryRenameValue}
+          addingToCategory={addingToCategory}
+          quickAddName={quickAddName}
+          onStartRename={(cat) => { setRenamingCategory(cat); setCategoryRenameValue(cat); }}
+          onRenameValueChange={setCategoryRenameValue}
+          onConfirmRename={handleRenameCategory}
+          onCancelRename={() => setRenamingCategory(null)}
+          onStartAdd={(cat) => { setAddingToCategory(cat); setQuickAddName(''); }}
+          onQuickAddChange={setQuickAddName}
+          onQuickAddSubmit={handleQuickAdd}
+          onCancelAdd={() => setAddingToCategory(null)}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      )}
+
+      {viewMode === 'list' && <div className="space-y-2">
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
@@ -271,9 +341,139 @@ export function SkillsManager({ onDirtyChange }: SkillsManagerProps) {
             </div>
           );
         })()}
-      </div>
+      </div>}
 
       <PreviewModal open={showPreview} onOpenChange={setShowPreview} type="skill" data={formData} />
+    </div>
+  );
+}
+
+interface CategoryViewProps {
+  skills: Skill[];
+  renamingCategory: string | null;
+  categoryRenameValue: string;
+  addingToCategory: string | null;
+  quickAddName: string;
+  onStartRename: (cat: string) => void;
+  onRenameValueChange: (v: string) => void;
+  onConfirmRename: (old: string, next: string) => void;
+  onCancelRename: () => void;
+  onStartAdd: (cat: string) => void;
+  onQuickAddChange: (v: string) => void;
+  onQuickAddSubmit: (cat: string) => void;
+  onCancelAdd: () => void;
+  onEdit: (skill: Skill) => void;
+  onDelete: (id: string) => void;
+}
+
+function CategoryView({
+  skills, renamingCategory, categoryRenameValue, addingToCategory, quickAddName,
+  onStartRename, onRenameValueChange, onConfirmRename, onCancelRename,
+  onStartAdd, onQuickAddChange, onQuickAddSubmit, onCancelAdd, onEdit, onDelete,
+}: CategoryViewProps) {
+  const grouped = skills.reduce<Record<string, Skill[]>>((acc, s) => {
+    const cat = s.category || '(sem categoria)';
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(s);
+    return acc;
+  }, {});
+
+  const categories = Object.keys(grouped).sort((a, b) => {
+    if (a === '(sem categoria)') return 1;
+    if (b === '(sem categoria)') return -1;
+    return a.localeCompare(b);
+  });
+
+  if (categories.length === 0) return (
+    <p className="text-center text-muted-foreground py-8 text-sm">Nenhuma skill cadastrada ainda.</p>
+  );
+
+  return (
+    <div className="space-y-6">
+      {categories.map(cat => (
+        <Card key={cat}>
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              {renamingCategory === cat ? (
+                <>
+                  <Input
+                    value={categoryRenameValue}
+                    onChange={e => onRenameValueChange(e.target.value)}
+                    className="h-8 text-base font-semibold flex-1"
+                    autoFocus
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') onConfirmRename(cat, categoryRenameValue);
+                      if (e.key === 'Escape') onCancelRename();
+                    }}
+                  />
+                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => onConfirmRename(cat, categoryRenameValue)} aria-label="Confirmar nome">
+                    <Check className="h-4 w-4 text-green-600" />
+                  </Button>
+                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={onCancelRename} aria-label="Cancelar">
+                    <X className="h-4 w-4" />
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <CardTitle className="text-base flex-1">{cat}</CardTitle>
+                  <span className="text-xs text-muted-foreground">{grouped[cat].length} {grouped[cat].length === 1 ? 'item' : 'itens'}</span>
+                  {cat !== '(sem categoria)' && (
+                    <Button size="sm" variant="ghost" className="h-7 px-2 text-xs gap-1" onClick={() => onStartRename(cat)}>
+                      <Pencil className="h-3 w-3" /> Renomear
+                    </Button>
+                  )}
+                </>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0 space-y-1">
+            {grouped[cat].map(skill => (
+              <div key={skill.id} className={`flex items-center gap-2 py-2 px-3 rounded-md hover:bg-muted/50 ${!skill.is_visible ? 'opacity-50' : ''}`}>
+                {skill.logo_url ? (
+                  <img src={skill.logo_url} alt="" className="w-5 h-5 object-contain flex-shrink-0" />
+                ) : (
+                  <div className="w-5 h-5 flex-shrink-0" />
+                )}
+                <span className="flex-1 text-sm font-medium">{skill.name}</span>
+                {!skill.is_visible && <EyeOff className="h-3 w-3 text-muted-foreground" />}
+                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onEdit(skill)} aria-label={`Editar ${skill.name}`}>
+                  <Pencil className="h-3 w-3" />
+                </Button>
+                <DeleteConfirmButton itemName={skill.name} onConfirm={() => onDelete(skill.id)} />
+              </div>
+            ))}
+
+            {addingToCategory === cat ? (
+              <div className="flex items-center gap-2 pt-2">
+                <Input
+                  value={quickAddName}
+                  onChange={e => onQuickAddChange(e.target.value)}
+                  placeholder="Nome do item..."
+                  className="h-8 text-sm"
+                  autoFocus
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') onQuickAddSubmit(cat === '(sem categoria)' ? '' : cat);
+                    if (e.key === 'Escape') onCancelAdd();
+                  }}
+                />
+                <Button size="sm" className="h-8" onClick={() => onQuickAddSubmit(cat === '(sem categoria)' ? '' : cat)}>
+                  <Check className="h-4 w-4" />
+                </Button>
+                <Button size="sm" variant="ghost" className="h-8" onClick={onCancelAdd}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <button
+                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mt-2 py-1 px-3 rounded transition-colors"
+                onClick={() => onStartAdd(cat)}
+              >
+                <Plus className="h-3 w-3" /> Adicionar item
+              </button>
+            )}
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }

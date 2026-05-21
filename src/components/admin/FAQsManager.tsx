@@ -4,7 +4,7 @@ import type { Database } from '@/integrations/supabase/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from './RichTextEditor';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Pencil, Copy, HelpCircle, Eye, EyeOff } from 'lucide-react';
@@ -128,7 +128,7 @@ export function FAQsManager({ onDirtyChange }: FAQsManagerProps) {
             </div>
             <div className="space-y-2">
               <Label>Resposta <span className="text-destructive" aria-hidden="true">*</span></Label>
-              <Textarea value={formData.answer} onChange={e => setFormData({ ...formData, answer: e.target.value })} placeholder="Resposta detalhada..." rows={4} required />
+              <RichTextEditor value={formData.answer} onChange={(value) => setFormData({ ...formData, answer: value })} label="" />
             </div>
             <div className="flex items-center gap-2">
               <Switch checked={formData.is_visible} onCheckedChange={(v) => setFormData({ ...formData, is_visible: v })} />

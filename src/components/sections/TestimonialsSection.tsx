@@ -1,4 +1,5 @@
 import { Quote, Linkedin } from "lucide-react";
+import { SafeHTMLLite as SafeHTML } from "./SafeHTMLLite";
 import { useTestimonials } from "@/hooks/usePortfolioData";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -42,9 +43,7 @@ export function TestimonialsSection() {
               style={{ transitionDelay: isVisible ? `${index * 100}ms` : "0ms" }}
             >
               <Quote className="w-8 h-8 text-teal-accent/20 absolute top-4 right-4" />
-              <p className="text-foreground/80 leading-relaxed mb-6 italic text-sm">
-                "{t.quote}"
-              </p>
+              <SafeHTML as="div" html={t.quote || ''} className="text-foreground/80 leading-relaxed mb-6 italic text-sm" />
               <div className="flex items-center gap-3">
                 {t.author_photo_url ? (
                   <img

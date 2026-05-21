@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from './RichTextEditor';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Pencil, Copy, Quote, Eye, EyeOff } from 'lucide-react';
@@ -164,7 +164,7 @@ export function TestimonialsManager({ onDirtyChange }: TestimonialsManagerProps)
             </div>
             <div className="space-y-2">
               <Label>Depoimento <span className="text-destructive" aria-hidden="true">*</span></Label>
-              <Textarea value={formData.quote} onChange={e => setFormData({ ...formData, quote: e.target.value })} placeholder="Nei é um profissional excepcional..." rows={3} required />
+              <RichTextEditor value={formData.quote} onChange={(value) => setFormData({ ...formData, quote: value })} label="" />
             </div>
             <ImageUploader value={formData.author_photo_url} onChange={(url) => setFormData({ ...formData, author_photo_url: url })} label="Foto do Autor" folder="testimonials" />
             <div className="flex items-center gap-2">
