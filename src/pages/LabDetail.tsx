@@ -85,13 +85,18 @@ export default function LabDetail() {
       ]} />
 
       {/* Masthead */}
-      <header className="pp-mast">
-        <div className="pp-mast-inner">
-          <Link to="/" className="pp-back">← {settings.site_name || 'Nei Girão'}</Link>
-          <div className="pp-mast-right ed-mono">
-            <span style={{ color: 'var(--ed-accent)' }}>Lab</span>
-          </div>
+      <header className="ed-mast">
+        <div className="ed-mast-left">
+          <Link to="/" className="ed-mast-title">{settings.site_name || 'Nei Girão'}</Link>
+          <span className="ed-mast-sub" style={{ color: 'var(--ed-accent)' }}>Lab</span>
         </div>
+        <nav className="ed-mast-right">
+          <Link to="/">Início</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/#lab">Lab</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/#contact">Contato</Link>
+        </nav>
       </header>
 
       <main>
