@@ -491,7 +491,7 @@ All colors MUST be HSL.
 
 /* CREDENTIALS */
 .ed-cred-grid {
-  display: grid; grid-template-columns: 1.4fr 1fr 1fr;
+  display: grid; grid-template-columns: 1.4fr 1fr;
   gap: 64px; padding-top: 16px;
 }
 .ed-cred-col h3 {
@@ -504,6 +504,44 @@ All colors MUST be HSL.
 .ed-cred-item .t { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 460; letter-spacing: -0.01em; margin-bottom: 4px; }
 .ed-cred-item .meta { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ed-muted); }
 .ed-cred-item .meta .acc { color: var(--ed-accent); }
+
+/* LAB */
+.ed-lab { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.ed-lab-card {
+  padding: 28px 32px;
+  border: 1px dashed var(--ed-line);
+  border-radius: 6px;
+  background: rgba(243, 239, 226, 0.4);
+  display: flex; flex-direction: column; gap: 12px;
+  transition: all .15s;
+  text-decoration: none; color: inherit;
+}
+.ed-lab-card:hover { border-style: solid; border-color: var(--ed-accent); background: var(--ed-paper); }
+.ed-lab-card .lab-row1 {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ed-muted);
+}
+.ed-lab-card .lab-tag {
+  color: var(--ed-accent);
+  background: rgba(179, 58, 45, 0.08);
+  padding: 3px 8px; border-radius: 4px; letter-spacing: 0.1em;
+}
+.ed-lab-card .lab-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 460;
+  letter-spacing: -0.015em; line-height: 1.15; margin: 0;
+}
+.ed-lab-card .lab-cat { font-style: italic; color: var(--ed-muted); font-size: 14px; }
+.ed-lab-card .lab-desc { font-size: 15px; line-height: 1.55; color: var(--ed-fg); margin: 0; }
+.ed-lab-card .lab-why {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; color: var(--ed-muted);
+  padding-top: 12px; border-top: 1px dotted var(--ed-line);
+  margin-top: auto; line-height: 1.5;
+}
+.ed-lab-card .lab-why strong { color: var(--ed-accent); font-weight: 500; }
 
 /* CONTACT */
 .ed-contact { padding: 120px 0; background: var(--ed-fg); color: var(--ed-bg); }
@@ -751,6 +789,7 @@ All colors MUST be HSL.
   .ed-project:nth-child(2n) { border-right: none; }
   .ed-stack-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
   .ed-cred-grid { grid-template-columns: 1fr; gap: 40px; }
+  .ed-lab { grid-template-columns: 1fr; }
   .ed-section-head { grid-template-columns: 1fr; gap: 16px; }
   .ed-contact-card { grid-template-columns: 1fr; gap: 8px; }
   .ed-foot { flex-direction: column; gap: 8px; padding: 24px; }

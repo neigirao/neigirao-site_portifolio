@@ -289,6 +289,48 @@ export function useTestimonials() {
   return { testimonials: data || [], isLoading, error: error?.message || null };
 }
 
+// Lab Projects
+export interface DbLabProject {
+  id: string;
+  title: string;
+  slug: string | null;
+  category: string | null;
+  year: string | null;
+  description: string | null;
+  why: string | null;
+  context: string | null;
+  actions: string[];
+  outcomes: string[];
+  stack: string[];
+  brand: string | null;
+  is_visible: boolean;
+  order_index: number;
+  meta_title: string | null;
+  meta_description: string | null;
+}
+
+export function useLabProjects() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['lab-projects'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('lab_projects')
+        .select('*')
+        .neq('is_visible', false)
+        .order('order_index', { ascending: true });
+      if (error) throw error;
+      return (data || []).map(p => ({
+        ...p,
+        actions: Array.isArray(p.actions) ? p.actions : [],
+        outcomes: Array.isArray(p.outcomes) ? p.outcomes : [],
+        stack: Array.isArray(p.stack) ? p.stack : [],
+      })) as DbLabProject[];
+    },
+    ...queryOptions,
+  });
+  return { labProjects: data || [], isLoading, error: error?.message || null };
+}
+
 // Prefetch function for critical data
 export async function prefetchPortfolioData(queryClient: import('@tanstack/react-query').QueryClient) {
   await Promise.all([
