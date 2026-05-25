@@ -10,11 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { SEOHead } from "@/components/SEO";
+import { BreadcrumbSchema } from "@/components/SEO/BreadcrumbSchema";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Mail, Linkedin, MessageCircle, MapPin, Clock, ExternalLink, Send, Copy, Check } from "lucide-react";
 import { StandaloneNavbar } from "@/components/sections/StandaloneNavbar";
 import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, AUTHOR_WHATSAPP, BASE_URL } from "@/config/constants";
-import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
 
 const contactSchema = {
@@ -135,9 +135,11 @@ export default function Contato() {
         canonicalUrl={`${BASE_URL}/contato`}
         keywords={["contato", "Nei Girão", "Product Manager", "oportunidades", "parcerias", "Rio de Janeiro"]}
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(contactSchema)}</script>
-      </Helmet>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(contactSchema) }} />
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Contato' },
+      ]} />
 
       <div className="min-h-screen bg-background">
         <StandaloneNavbar />

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SEOHead } from "@/components/SEO";
+import { BreadcrumbSchema } from "@/components/SEO/BreadcrumbSchema";
 import { useExperiences, useSkills, useEducation } from "@/hooks/usePortfolioData";
 import { prefetchRoute } from "@/utils/prefetch";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -16,7 +17,6 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Download, Linkedin, Mail, MapPin, Calendar, Award } from "lucide-react";
 import { StandaloneNavbar } from "@/components/sections/StandaloneNavbar";
 import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, BASE_URL } from "@/config/constants";
-import { Helmet } from "react-helmet-async";
 import { SafeHTML } from "@/components/admin/SafeHTML";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -70,9 +70,11 @@ export default function Sobre() {
         ogType="profile"
         keywords={["Nei Girão", "Product Manager", "observabilidade", "Dynatrace", "Grafana", "Icatu", "TIM", "Oi", "Globo", "Rio de Janeiro"]}
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(personSchema)}</script>
-      </Helmet>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }} />
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Sobre' },
+      ]} />
 
       <div className="min-h-screen bg-background">
         <StandaloneNavbar />

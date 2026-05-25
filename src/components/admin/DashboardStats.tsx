@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Briefcase, Code, GraduationCap, FolderOpen, AlertTriangle, CheckCircle, Image, FileText, Newspaper, Quote, Award, Building2, BarChart3, HelpCircle, Hash } from 'lucide-react';
+import { Briefcase, Code, GraduationCap, FolderOpen, AlertTriangle, CheckCircle, Image, FileText, Newspaper, Quote, Award, Building2, BarChart3, HelpCircle, Hash, Mail, PenLine } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface ContentItem {
@@ -28,6 +28,8 @@ interface DashboardStatsProps {
   companies?: SimpleCountItem[];
   metrics?: SimpleCountItem[];
   faqs?: SimpleCountItem[];
+  unreadMessages?: number;
+  draftArticles?: number;
   isLoading: boolean;
 }
 
@@ -189,6 +191,7 @@ export function DashboardStats({
   experiences, skills, education, projects,
   articles = [], testimonials = [], certifications = [],
   companies = [], metrics = [], faqs = [],
+  unreadMessages = 0, draftArticles = 0,
   isLoading,
 }: DashboardStatsProps) {
   const expStats = calculateStats(experiences, 'logo_url');
@@ -298,6 +301,32 @@ export function DashboardStats({
           </div>
         </CardContent>
       </Card>
+
+      {/* Inbox & drafts alerts */}
+      {!isLoading && (unreadMessages > 0 || draftArticles > 0) && (
+        <Card>
+          <CardContent className="pt-4 pb-4">
+            <p className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-yellow-500" aria-hidden="true" />
+              Atenção necessária
+            </p>
+            <div className="flex flex-wrap gap-3">
+              {unreadMessages > 0 && (
+                <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 dark:text-blue-400 gap-1">
+                  <Mail className="h-3 w-3" aria-hidden="true" />
+                  {unreadMessages} {unreadMessages === 1 ? 'mensagem não lida' : 'mensagens não lidas'}
+                </Badge>
+              )}
+              {draftArticles > 0 && (
+                <Badge variant="secondary" className="bg-orange-500/10 text-orange-600 dark:text-orange-400 gap-1">
+                  <PenLine className="h-3 w-3" aria-hidden="true" />
+                  {draftArticles} {draftArticles === 1 ? 'artigo em rascunho' : 'artigos em rascunho'}
+                </Badge>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Health alerts */}
       <HealthAlertsCard slugAlerts={slugAlerts} metaAlerts={metaAlerts} isLoading={isLoading} />

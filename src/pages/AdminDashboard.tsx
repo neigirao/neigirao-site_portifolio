@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -72,6 +72,15 @@ export default function AdminDashboard() {
   const [isDirty, setIsDirty] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [pendingTab, setPendingTab] = useState<string | null>(null);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const [draftArticles, setDraftArticles] = useState(0);
+
+  useEffect(() => {
+    supabase.from('contact_messages').select('*', { count: 'exact', head: true }).is('read_at', null)
+      .then(({ count }) => setUnreadMessages(count || 0));
+    supabase.from('articles').select('*', { count: 'exact', head: true }).eq('status', 'draft')
+      .then(({ count }) => setDraftArticles(count || 0));
+  }, []);
 
   useUnsavedChanges({ hasChanges: isDirty });
 
@@ -86,7 +95,7 @@ export default function AdminDashboard() {
   const handleExportJSON = async () => {
     setIsExporting(true);
     try {
-      const [exp, proj, sk, edu, art, cert, test, comp, met, faq] = await Promise.all([
+      const [exp, proj, sk, edu, art, cert, test, comp, met, faq, lab] = await Promise.all([
         supabase.from('experiences').select('*'),
         supabase.from('projects').select('*'),
         supabase.from('skills').select('*'),
@@ -97,6 +106,7 @@ export default function AdminDashboard() {
         supabase.from('companies').select('*'),
         supabase.from('impact_metrics').select('*'),
         supabase.from('faqs').select('*'),
+        supabase.from('lab_projects').select('*'),
       ]);
 
       const exportData = {
@@ -111,6 +121,7 @@ export default function AdminDashboard() {
         companies: comp.data,
         metrics: met.data,
         faqs: faq.data,
+        lab_projects: lab.data,
       };
 
       const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
@@ -197,6 +208,8 @@ export default function AdminDashboard() {
             companies={companies}
             metrics={metrics}
             faqs={faqs}
+            unreadMessages={unreadMessages}
+            draftArticles={draftArticles}
             isLoading={isLoading}
           />
         </section>

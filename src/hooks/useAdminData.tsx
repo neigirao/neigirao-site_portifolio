@@ -20,6 +20,13 @@ export interface AdminExperience extends AdminContentItem {
   period: string;
   description: string;
   logo_url: string | null;
+  is_visible: boolean;
+  is_case: boolean;
+  case_result: string | null;
+  case_body: string | null;
+  case_title: string | null;
+  case_challenge: string | null;
+  case_solution: string | null;
 }
 
 export interface AdminSkill extends AdminContentItem {

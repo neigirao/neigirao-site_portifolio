@@ -5,6 +5,7 @@ const DEFAULT_NAV = [
   { label: "Cases", href: "#cases" },
   { label: "Experiência", href: "#work" },
   { label: "Projetos", href: "#projects" },
+  { label: "Lab", href: "#lab" },
   { label: "Contato", href: "#contact" },
 ];
 

@@ -22,6 +22,11 @@ interface PreviewData {
   role?: string;
   period?: string;
   description?: string;
+  is_case?: boolean;
+  case_title?: string;
+  case_challenge?: string;
+  case_solution?: string;
+  case_result?: string;
   // Project fields
   title?: string;
   link?: string;
@@ -46,6 +51,29 @@ export function PreviewModal({ open, onOpenChange, type, data }: PreviewModalPro
   const renderPreview = () => {
     switch (type) {
       case 'experience':
+        if (data.is_case && (data.case_challenge || data.case_solution)) {
+          return (
+            <div className="bg-background p-6 rounded-lg space-y-4">
+              <div className="border-b pb-4">
+                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-1">{data.company} · {data.period}</p>
+                <h3 className="text-2xl font-bold">{data.case_title || data.role || 'Título do case'}</h3>
+                {data.case_result && <p className="text-xs font-mono mt-2 text-muted-foreground uppercase tracking-wide">{data.case_result}</p>}
+              </div>
+              {data.case_challenge && (
+                <div>
+                  <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-2">Desafio</p>
+                  <div className="text-sm text-muted-foreground" dangerouslySetInnerHTML={{ __html: data.case_challenge }} />
+                </div>
+              )}
+              {data.case_solution && (
+                <div>
+                  <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-2">Solução</p>
+                  <div className="text-sm text-muted-foreground" dangerouslySetInnerHTML={{ __html: data.case_solution }} />
+                </div>
+              )}
+            </div>
+          );
+        }
         return (
           <div className="bg-background p-6 rounded-lg">
             <ExperienceItem
