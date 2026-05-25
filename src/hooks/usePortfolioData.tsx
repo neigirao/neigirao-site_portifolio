@@ -15,6 +15,9 @@ export interface DbExperience {
   is_case?: boolean;
   case_result?: string | null;
   case_body?: string | null;
+  case_title?: string | null;
+  case_challenge?: string | null;
+  case_solution?: string | null;
 }
 
 export interface DbSkill {

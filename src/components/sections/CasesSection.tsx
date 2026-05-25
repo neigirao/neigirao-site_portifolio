@@ -53,8 +53,21 @@ export function CasesSection({ experiences, isLoading }: Props) {
                 )}
               </div>
               <div>
-                <h3 className="ed-case-title">{c.role}</h3>
-                <SafeHTML as="div" className="ed-case-body" html={c.case_body || c.description || ''} />
+                <h3 className="ed-case-title">{c.case_title || c.role}</h3>
+                {c.case_challenge && c.case_solution ? (
+                  <div className="ed-case-star">
+                    <div className="ed-case-block">
+                      <span className="ed-case-block-label">Desafio</span>
+                      <SafeHTML as="div" className="ed-case-body" html={c.case_challenge} />
+                    </div>
+                    <div className="ed-case-block">
+                      <span className="ed-case-block-label">Solução</span>
+                      <SafeHTML as="div" className="ed-case-body" html={c.case_solution} />
+                    </div>
+                  </div>
+                ) : (
+                  <SafeHTML as="div" className="ed-case-body" html={c.case_body || c.description || ''} />
+                )}
               </div>
             </article>
           ))}

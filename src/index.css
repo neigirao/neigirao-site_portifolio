@@ -409,6 +409,13 @@ All colors MUST be HSL.
   margin: 0 0 24px 0;
 }
 .ed-case-body { font-size: 18px; line-height: 1.6; max-width: 600px; }
+.ed-case-star { display: flex; flex-direction: column; gap: 32px; }
+.ed-case-block { }
+.ed-case-block-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ed-accent); display: block; margin-bottom: 10px;
+}
 
 /* WORK */
 .ed-work { border-top: 2px solid var(--ed-fg); }
