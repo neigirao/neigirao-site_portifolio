@@ -159,22 +159,54 @@ export default function ExperienceDetail() {
 
         {/* Content */}
         <main className="max-w-4xl mx-auto px-6 py-12">
-          <Card className="shadow-elegant border-2 border-border/50">
-            <CardContent className="p-8 md:p-12">
-              <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                <Briefcase className="w-5 h-5 text-teal-accent" />
-                Responsabilidades e Conquistas
-              </h2>
-              <ul className="space-y-4">
-                {descriptions.map((point, index) => (
-                  <li key={index} className="flex items-start text-muted-foreground leading-relaxed">
-                    <span className="text-teal-accent mr-3 mt-1 flex-shrink-0 text-lg">▪</span>
-                    <span className="text-base">{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+          {/* STAR case blocks — shown when structured case fields exist */}
+          {(experience as any).case_challenge && (experience as any).case_solution ? (
+            <div className="space-y-6">
+              <Card className="shadow-elegant border-2 border-border/50">
+                <CardContent className="p-8 md:p-12">
+                  <p className="text-xs font-mono uppercase tracking-widest text-teal-accent mb-4">Desafio</p>
+                  <div
+                    className="prose prose-lg max-w-none text-muted-foreground"
+                    dangerouslySetInnerHTML={{ __html: (experience as any).case_challenge }}
+                  />
+                </CardContent>
+              </Card>
+              <Card className="shadow-elegant border-2 border-border/50">
+                <CardContent className="p-8 md:p-12">
+                  <p className="text-xs font-mono uppercase tracking-widest text-teal-accent mb-4">Solução</p>
+                  <div
+                    className="prose prose-lg max-w-none text-muted-foreground"
+                    dangerouslySetInnerHTML={{ __html: (experience as any).case_solution }}
+                  />
+                </CardContent>
+              </Card>
+              {(experience as any).case_result && (
+                <Card className="shadow-elegant border-2 border-teal-accent/30 bg-teal-accent/5">
+                  <CardContent className="p-8 md:p-12">
+                    <p className="text-xs font-mono uppercase tracking-widest text-teal-accent mb-4">Resultado</p>
+                    <p className="text-lg font-medium">{(experience as any).case_result}</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          ) : (
+            <Card className="shadow-elegant border-2 border-border/50">
+              <CardContent className="p-8 md:p-12">
+                <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-teal-accent" />
+                  Responsabilidades e Conquistas
+                </h2>
+                <ul className="space-y-4">
+                  {descriptions.map((point, index) => (
+                    <li key={index} className="flex items-start text-muted-foreground leading-relaxed">
+                      <span className="text-teal-accent mr-3 mt-1 flex-shrink-0 text-lg">▪</span>
+                      <span className="text-base">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Related Skills - Internal Linking */}
           {relatedSkills.length > 0 && (

@@ -10,7 +10,7 @@
  * - Course schema para educação
  */
 
-import { useExperiences, useSkills, useEducation, useProjects } from "@/hooks/usePortfolioData";
+import { useExperiences, useSkills, useEducation, useProjects, useFAQs } from "@/hooks/usePortfolioData";
 import { BASE_URL } from "@/config/constants";
 
 interface SchemaProps {
@@ -22,6 +22,7 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
   const { skills } = useSkills();
   const { education } = useEducation();
   const { projects } = useProjects();
+  const { faqs } = useFAQs();
 
   // Build Person schema with dynamic data
   const personSchema = {
@@ -112,6 +113,20 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
     }))
   } : null;
 
+  // Build FAQPage schema
+  const faqSchema = faqs.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer?.replace(/<[^>]*>/g, '') || ''
+      }
+    }))
+  } : null;
+
   // Build Course schema for Education entries
   const courseSchemas = education.map(edu => ({
     "@context": "https://schema.org",
@@ -151,6 +166,12 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(projectListSchema) }}
+        />
+      )}
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
       )}
       {courseSchemas.map((schema, i) => (

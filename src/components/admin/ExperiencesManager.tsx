@@ -36,6 +36,9 @@ interface Experience {
   is_case: boolean;
   case_result: string | null;
   case_body: string | null;
+  case_title: string | null;
+  case_challenge: string | null;
+  case_solution: string | null;
 }
 
 interface ExperiencesManagerProps {
@@ -45,7 +48,7 @@ interface ExperiencesManagerProps {
 const emptyForm = {
   company: '', role: '', period: '', description: '', logo_url: '',
   meta_title: '', meta_description: '', slug: '',
-  is_case: false, case_result: '', case_body: '',
+  is_case: false, case_result: '', case_body: '', case_title: '', case_challenge: '', case_solution: '',
 };
 
 export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
@@ -82,8 +85,8 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (formData.is_case && !formData.case_body?.trim()) {
-      toast.error('Cases precisam de texto do case (campo "Texto do case").');
+    if (formData.is_case && !formData.case_challenge?.trim() && !formData.case_body?.trim()) {
+      toast.error('Cases precisam de ao menos "Desafio" ou "Texto do case" preenchido.');
       return;
     }
 
@@ -110,6 +113,9 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       is_case: formData.is_case,
       case_result: formData.case_result || null,
       case_body: formData.case_body || null,
+      case_title: formData.case_title || null,
+      case_challenge: formData.case_challenge || null,
+      case_solution: formData.case_solution || null,
       is_visible: existingExp?.is_visible ?? true,
       order_index: editingId ? existingExp?.order_index || 0 : nextOrderIndex,
     };
@@ -134,6 +140,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
       description: exp.description, logo_url: exp.logo_url || '',
       meta_title: exp.meta_title || '', meta_description: exp.meta_description || '', slug: exp.slug || '',
       is_case: exp.is_case || false, case_result: exp.case_result || '', case_body: exp.case_body || '',
+      case_title: exp.case_title || '', case_challenge: exp.case_challenge || '', case_solution: exp.case_solution || '',
     });
   };
 
@@ -282,18 +289,42 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
               {formData.is_case && (
                 <div className="space-y-3">
                   <div className="space-y-2">
-                    <RichTextEditor
-                      value={formData.case_body}
-                      onChange={(value) => setFormData({ ...formData, case_body: value })}
-                      label="Texto do case (exibido na seção Cases)"
+                    <Label htmlFor="case_title">Título do case (opcional)</Label>
+                    <Input
+                      id="case_title"
+                      value={formData.case_title || ''}
+                      onChange={(e) => setFormData({ ...formData, case_title: e.target.value })}
+                      placeholder="Ex: Head de Produto · E-commerce (substitui o cargo no título)"
                     />
-                    <p className="text-xs text-muted-foreground">Este texto substitui a descrição geral na seção Cases da home. Se vazio, usa a descrição acima.</p>
+                    <p className="text-xs text-muted-foreground">Se preenchido, substitui o cargo como título na seção Cases. Útil para casos onde o título do cargo não traduz bem o contexto do case.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <RichTextEditor
+                      value={formData.case_challenge || ''}
+                      onChange={(value) => setFormData({ ...formData, case_challenge: value })}
+                      label="Desafio (STAR — Situation/Task)"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <RichTextEditor
+                      value={formData.case_solution || ''}
+                      onChange={(value) => setFormData({ ...formData, case_solution: value })}
+                      label="Solução (STAR — Action/Result)"
+                    />
+                    <p className="text-xs text-muted-foreground">Se Desafio e Solução preenchidos, substituem o texto genérico do case. Caso contrário, usa o campo abaixo.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <RichTextEditor
+                      value={formData.case_body || ''}
+                      onChange={(value) => setFormData({ ...formData, case_body: value })}
+                      label="Texto do case (fallback — usado se Desafio/Solução estiverem vazios)"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="case_result">Resultado / Outcome</Label>
                     <Input
                       id="case_result"
-                      value={formData.case_result}
+                      value={formData.case_result || ''}
                       onChange={(e) => setFormData({ ...formData, case_result: e.target.value })}
                       placeholder="+20% conversão · 6 produtos lançados · 35 pessoas em squads"
                     />

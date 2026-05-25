@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useLabProjects, DbLabProject } from '@/hooks/usePortfolioData';
 import { SEOHead } from '@/components/SEO/SEOHead';
+import { BreadcrumbSchema } from '@/components/SEO/BreadcrumbSchema';
 import { BASE_URL } from '@/config/constants';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 
@@ -67,6 +68,21 @@ export default function LabDetail() {
         ogType="article"
         keywords={[project.title, 'lab', 'projeto pessoal', 'Nei Girão', ...(project.stack || [])]}
       />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        "name": project.title,
+        "description": project.meta_description || project.description || '',
+        "url": `${BASE_URL}/lab/${project.slug}`,
+        "author": { "@type": "Person", "name": "Nei Girão", "url": BASE_URL },
+        "keywords": project.stack?.join(', ') || '',
+        "genre": project.category || 'Lab project',
+      }) }} />
+      <BreadcrumbSchema items={[
+        { name: 'Início', url: '/' },
+        { name: 'Lab', url: '/#lab' },
+        { name: project.title },
+      ]} />
 
       {/* Masthead */}
       <header className="pp-mast">

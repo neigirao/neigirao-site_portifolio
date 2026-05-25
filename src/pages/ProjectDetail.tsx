@@ -5,6 +5,7 @@ import { SEOHead } from '@/components/SEO/SEOHead';
 import { BreadcrumbSchema } from '@/components/SEO/BreadcrumbSchema';
 import { BASE_URL } from '@/config/constants';
 import { SafeHTML } from '@/components/admin/SafeHTML';
+import { useExperiencesForProject, useSkillsForProject } from '@/hooks/useRelatedContent';
 
 export default function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -15,6 +16,9 @@ export default function ProjectDetail() {
   const idx = allProjects.findIndex(p => p.slug === slug);
   const prev = idx > 0 ? allProjects[idx - 1] : null;
   const next = idx < allProjects.length - 1 ? allProjects[idx + 1] : null;
+
+  const relatedExperiences = useExperiencesForProject(project?.tags || null, project?.description || '');
+  const relatedSkills = useSkillsForProject(project?.tags || null, project?.description || '');
 
   if (isLoading) {
     return (
@@ -218,6 +222,45 @@ export default function ProjectDetail() {
           </div>
         </div>
       </section>
+
+      {/* RELATED CONTENT */}
+      {(relatedExperiences.length > 0 || relatedSkills.length > 0) && (
+        <section style={{ borderTop: '1px solid var(--ed-line)', padding: '48px 0' }}>
+          <div className="ed-container">
+            <div style={{ display: 'grid', gap: 40, gridTemplateColumns: relatedExperiences.length > 0 && relatedSkills.length > 0 ? '1fr 1fr' : '1fr' }}>
+              {relatedExperiences.length > 0 && (
+                <div>
+                  <div className="ed-mono" style={{ fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--ed-muted)', marginBottom: 16 }}>Experiências relacionadas</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {relatedExperiences.map(exp => (
+                      <Link key={exp.id} to={`/experiencia/${exp.slug || exp.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <div style={{ padding: '12px 0', borderBottom: '1px solid var(--ed-line)' }}>
+                          <div style={{ fontWeight: 500, fontSize: 15 }}>{exp.title}</div>
+                          {exp.subtitle && <div style={{ fontSize: 13, color: 'var(--ed-muted)', marginTop: 2 }}>{exp.subtitle}</div>}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {relatedSkills.length > 0 && (
+                <div>
+                  <div className="ed-mono" style={{ fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--ed-muted)', marginBottom: 16 }}>Habilidades relacionadas</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {relatedSkills.map(skill => (
+                      <Link key={skill.id} to={`/skill/${skill.slug || skill.id}`} style={{ textDecoration: 'none' }}>
+                        <span style={{ display: 'inline-block', padding: '6px 14px', border: '1px solid var(--ed-line)', borderRadius: 20, fontSize: 13, color: 'var(--ed-fg)', transition: 'border-color 0.15s' }}>
+                          {skill.title}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CTA STRIP */}
       <section className="pp-cta">
