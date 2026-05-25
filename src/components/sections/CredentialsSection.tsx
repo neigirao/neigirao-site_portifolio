@@ -23,7 +23,6 @@ export function CredentialsSection({ education, certifications, isLoading }: Pro
   const lead = settings.cred_lead || "A formação acadêmica, os cursos relevantes e as certificações que sustentam a prática.";
   const labelEducation = settings.cred_label_education || "Formação acadêmica";
   const labelCerts = settings.cred_label_certs || "Certificações";
-  const labelCourses = settings.cred_label_courses || "Cursos";
   const courses = parseJsonSetting<{ title: string; meta: string }[]>(settings.cred_courses, DEFAULT_COURSES);
 
   if (isLoading) {
@@ -72,12 +71,8 @@ export function CredentialsSection({ education, certifications, isLoading }: Pro
                 </div>
               </div>
             ))}
-          </div>
-
-          <div className="ed-cred-col">
-            <h3>{labelCourses}</h3>
             {courses.map((co, i) => (
-              <div key={i} className="ed-cred-item">
+              <div key={`course-${i}`} className="ed-cred-item">
                 <div className="t">{co.title}</div>
                 <div className="meta">{co.meta}</div>
               </div>

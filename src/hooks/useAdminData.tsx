@@ -90,6 +90,27 @@ export interface AdminFAQ {
   order_index: number;
 }
 
+export interface AdminLabProject {
+  id: string;
+  title: string;
+  slug: string | null;
+  category: string | null;
+  year: string | null;
+  description: string | null;
+  why: string | null;
+  context: string | null;
+  actions: string[];
+  outcomes: string[];
+  stack: string[];
+  brand: string | null;
+  is_visible: boolean;
+  order_index: number;
+  meta_title: string | null;
+  meta_description: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 const queryOptions = {
   staleTime: 1000 * 60 * 5,
   gcTime: 1000 * 60 * 30,
@@ -246,6 +267,26 @@ export function useAdminFAQs() {
   });
 }
 
+export function useAdminLabProjects() {
+  return useQuery({
+    queryKey: ['admin-lab-projects'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('lab_projects')
+        .select('*')
+        .order('order_index', { ascending: true });
+      if (error) throw error;
+      return (data || []).map(p => ({
+        ...p,
+        actions: Array.isArray(p.actions) ? p.actions : [],
+        outcomes: Array.isArray(p.outcomes) ? p.outcomes : [],
+        stack: Array.isArray(p.stack) ? p.stack : [],
+      })) as AdminLabProject[];
+    },
+    ...queryOptions,
+  });
+}
+
 export function useAdminDashboardData() {
   const experiences = useAdminExperiences();
   const skills = useAdminSkills();
@@ -257,6 +298,7 @@ export function useAdminDashboardData() {
   const companies = useAdminCompanies();
   const metrics = useAdminMetrics();
   const faqs = useAdminFAQs();
+  const labProjects = useAdminLabProjects();
 
   const isLoading =
     experiences.isLoading || skills.isLoading || education.isLoading ||
@@ -277,6 +319,7 @@ export function useAdminDashboardData() {
     companies: companies.data || [],
     metrics: metrics.data || [],
     faqs: faqs.data || [],
+    labProjects: labProjects.data || [],
     isLoading,
     hasError,
     refetchAll: () => {
@@ -290,6 +333,7 @@ export function useAdminDashboardData() {
       companies.refetch();
       metrics.refetch();
       faqs.refetch();
+      labProjects.refetch();
     },
   };
 }

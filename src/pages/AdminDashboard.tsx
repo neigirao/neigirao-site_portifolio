@@ -13,6 +13,7 @@ import { CompaniesManager } from '@/components/admin/CompaniesManager';
 import { CertificationsManager } from '@/components/admin/CertificationsManager';
 import { TestimonialsManager } from '@/components/admin/TestimonialsManager';
 import { FAQsManager } from '@/components/admin/FAQsManager';
+import { LabManager } from '@/components/admin/LabManager';
 import { DashboardStats } from '@/components/admin/DashboardStats';
 import { BulkSlugGenerator } from '@/components/admin/BulkSlugGenerator';
 import { SiteSettingsManager } from '@/components/admin/SiteSettingsManager';
@@ -34,6 +35,7 @@ const tabGroups = [
       { value: 'experiences', label: 'Experiências' },
       { value: 'projects', label: 'Projetos' },
       { value: 'articles', label: 'Artigos' },
+      { value: 'lab', label: 'Lab' },
       { value: 'skills', label: 'Skills' },
       { value: 'education', label: 'Educação' },
     ],
@@ -235,6 +237,9 @@ export default function AdminDashboard() {
           </TabsContent>
           <TabsContent value="articles">
             <ArticlesManager onDirtyChange={setIsDirty} />
+          </TabsContent>
+          <TabsContent value="lab">
+            <LabManager onDirtyChange={setIsDirty} />
           </TabsContent>
           <TabsContent value="skills">
             <SkillsManager onDirtyChange={setIsDirty} />

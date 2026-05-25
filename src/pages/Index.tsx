@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { useExperiences, useSkills, useEducation, useProjects, useCertifications } from "@/hooks/usePortfolioData";
+import { useExperiences, useSkills, useEducation, useProjects, useCertifications, useLabProjects } from "@/hooks/usePortfolioData";
 import { HomeSEOHead, DynamicSchema } from "@/components/SEO";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { MastheadSection, CoverSection } from "@/components/sections";
@@ -12,6 +12,7 @@ const WorkSection = lazy(() => import("@/components/sections/WorkSection").then(
 const ProjectsEditorialSection = lazy(() => import("@/components/sections/ProjectsEditorialSection").then(m => ({ default: m.ProjectsEditorialSection })));
 const StackSection = lazy(() => import("@/components/sections/StackSection").then(m => ({ default: m.StackSection })));
 const CredentialsSection = lazy(() => import("@/components/sections/CredentialsSection").then(m => ({ default: m.CredentialsSection })));
+const LabSection = lazy(() => import("@/components/sections/LabSection").then(m => ({ default: m.LabSection })));
 const ContactEditorialSection = lazy(() => import("@/components/sections/ContactEditorialSection").then(m => ({ default: m.ContactEditorialSection })));
 const FooterEditorialSection = lazy(() => import("@/components/sections/FooterEditorialSection").then(m => ({ default: m.FooterEditorialSection })));
 
@@ -22,6 +23,7 @@ const Index = () => {
   const { education, isLoading: loadingEducation } = useEducation();
   const { projects, isLoading: loadingProjects } = useProjects();
   const { certifications, isLoading: loadingCerts } = useCertifications();
+  const { labProjects, isLoading: loadingLab } = useLabProjects();
 
   return (
     <>
@@ -62,6 +64,9 @@ const Index = () => {
                 certifications={certifications}
                 isLoading={loadingEducation || loadingCerts}
               />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <LabSection labProjects={labProjects} isLoading={loadingLab} />
             </ErrorBoundary>
             <ErrorBoundary><ContactEditorialSection /></ErrorBoundary>
           </Suspense>
