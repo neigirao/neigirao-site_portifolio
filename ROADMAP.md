@@ -7,7 +7,6 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 ## Concluído
 
 ### CMS — Qualidade e estabilidade (Mai 2026)
-
 - `DeleteConfirmButton` com AlertDialog em todos os managers
 - `useAutosave` com rascunho em localStorage (5s debounce, recuperação automática)
 - `useUnsavedChanges` guard com `beforeunload` e dialog ao trocar de aba
@@ -17,59 +16,75 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 - Hook `useAdminDashboardData` expandido para 10 tipos de conteúdo
 
 ### CMS — Funcionalidades (Mai 2026)
-
 - Visibilidade inline (Eye/EyeOff) padronizada em todos os managers
-- `CompaniesManager`: campo `is_visible` + toggle (com migration)
+- `CompaniesManager`: campo `is_visible` + toggle
 - `FAQsManager`: toggle de visibilidade inline
 - Barra flutuante de salvamento em `SiteSettingsManager`
-- `DashboardStats`: contagem total de itens complementares visível
+- `DashboardStats`: contagem total de itens complementares
 - Export JSON (backup completo com 1 clique)
-- `BulkSlugGenerator`: gera slugs em lote para todos os managers
+- `BulkSlugGenerator`: gera slugs em lote
 
-### CMS — Design e UX (Mai 2026, PR #14)
-
+### CMS — Design e UX (Mai 2026)
 - Ícone do grupo "Complementar" corrigido para `LayoutList`
-- Tooltips em todos os botões icon-only do header (Export, Refresh, Home)
+- Tooltips em todos os botões icon-only do header
 - Indicador de grupo ativo quando collapsible está fechado
 - Ordem de botões de ação padronizada: Eye → Copy → Pencil → Delete
-- Label "Conteúdo Complementar" com contagem de itens visível
 
-### CMS — UX heurísticas (alta prioridade, Mai 2026, PR #15)
-
-- **Undo de deleção**: toast com botão "Desfazer" em todos os 10 managers
-- **Rollback de reordenação**: reverte estado local se `Promise.all` falhar
-- **Erros específicos**: todos os `toast.error` incluem `error.message` do Supabase
+### CMS — UX heurísticas (Mai 2026)
+- **Undo de deleção**: toast com botão "Desfazer" em todos os managers
+- **Rollback de reordenação**: reverte estado local se falhar
+- **Erros específicos**: todos os `toast.error` incluem `error.message`
 - **Validação de slug duplicado**: Experiences, Projects, Skills, Education, Articles
+- **Destaque de edição**: `ring-2 ring-primary` no card sendo editado
+- **Busca/filtro**: ExperiencesManager e SkillsManager
+- **AlertDialog**: substituído `window.confirm()` em todas as trocas de aba
+- **Retry button**: botão "Tentar novamente" quando fetch falha
 
-### Site público — UX, Redator e Perfil (Mai 2026)
+### CMS — Upload de imagem com crop (Mai 2026)
+- `ImageCropper.tsx`: modal com canvas interativo, drag, zoom (0.5×–3×), qualidade JPEG (60–100%), aspect ratios (Livre · 1:1 · 4:3 · 3:4 · 16:9)
+- `ImageUploader.tsx`: limite ampliado para 10MB, compressão via `canvas.toBlob()`, saída máxima 1200px; mantém drag-drop, modo URL e alt text
 
-- **Barra de progresso de leitura**: já presente via `StandaloneNavbar` → `useScrollProgress` em todas as páginas
-- **OG image dinâmica**: `ogImage` em todas as páginas de detalhe (ArticleDetail, ExperienceDetail, ProjectDetail)
-- **Sumário automático (TOC)**: componente `TableOfContents` em `ArticleDetail`
-- **"Voltar ao topo"**: componente `BackToTop` em ArticleDetail e ExperienceDetail
-- **"Copiar email"**: botão clipboard em `/contato`
-- **Busca de artigos**: input por título/excerpt/tag em `/artigos`
-- **Contador de palavras**: `RichTextEditor` exibe palavras e estimativa de leitura
-- **Hint de meta_title**: sugestão clicável em `SEOFields` quando vazio
-- **Pitch de valor + Favicon via CMS**: campos em `SiteSettingsManager` → "Perfil Público / SEO"
-- **LinkedIn no navbar**: ícone LinkedIn na `StandaloneNavbar`
-- **Favicon dinâmico**: `FaviconInjector` em `App.tsx`
+### CMS — Case STAR (Mai 2026)
+- Campos `case_title`, `case_challenge`, `case_solution` na tabela `experiences`
+- `ExperiencesManager`: formulário STAR com Título do case, Desafio, Solução e Resultado
+- `case_title` sobrescreve o cargo como título da história em "Cases selecionados"
+- `CasesSection`: exibe blocos Desafio/Solução quando preenchidos; fallback para `case_body`
+- `ExperienceDetail`: cards STAR quando campos preenchidos; lista padrão como fallback
 
-### CMS — UX heurísticas (média prioridade, Mai 2026, PR #16)
+### Site público — Lab (Mai 2026)
+- Tabela `lab_projects` com RLS + seed com 4 projetos
+- `LabSection.tsx`: grid de cards na homepage entre Credenciais e Contato
+- `LabDetail.tsx`: página `/lab/:slug` com hero, contexto, ações numeradas, stack, outcomes, prev/next
+- `LabManager.tsx`: manager completo no admin
+- `BreadcrumbSchema` + JSON-LD `CreativeWork` em LabDetail
 
-- **Destaque de edição**: `ring-2 ring-primary` no card sendo editado (todos os 10 managers)
-- **Busca/filtro**: adicionado em ExperiencesManager e SkillsManager
-- **AlertDialog**: substituído `window.confirm()` por dialog shadcn na troca de aba
-- **Retry button**: botão "Tentar novamente" quando fetch da lista falha (todos os managers)
+### Site público — Credenciais (Mai 2026)
+- Colunas "Certificações" e "Cursos" unificadas em uma só coluna
+
+### Site público — SEO e Schema.org (Mai 2026)
+- `BreadcrumbSchema` em ExperienceDetail, ProjectDetail e LabDetail
+- Article/CreativeWork JSON-LD em ExperienceDetail, ProjectDetail e LabDetail
+- `FAQPage` schema dinâmico em `DynamicSchema.tsx` via `useFAQs()`
+- OG image dinâmica em todas as páginas de detalhe
+
+### Site público — Conteúdo relacionado (Mai 2026)
+- `useRelatedContent.tsx` com hooks: `useSkillsForExperience`, `useExperiencesForProject`, `useSkillsForProject`
+- `SeeAlso` em ExperienceDetail
+- Experiências + habilidades relacionadas em ProjectDetail (antes do CTA)
+
+### Site público — UX (Mai 2026)
+- Barra de progresso de leitura (`useScrollProgress`) em páginas de detalhe
+- Sumário automático (TOC) em `ArticleDetail`
+- `BackToTop` em ArticleDetail e ExperienceDetail
+- "Copiar email" clipboard em `/contato`
+- Busca de artigos por título/excerpt/tag em `/artigos`
+- LinkedIn no navbar (`StandaloneNavbar`)
+- Favicon dinâmico via CMS (`FaviconInjector`)
+- Prefetch de rotas ao hover nos cards
+- `RichTextEditor` (Tiptap) em chunk separado (lazy load, só no admin)
 
 ### Documentação (Mai 2026)
-
-- `CLAUDE.md` criado — guia completo para IAs e desenvolvedores
-- `README.md` reescrito para refletir arquitetura atual (Supabase, não arquivos estáticos)
-- `CONTRIBUTING.md` reescrito com padrões atuais
-- `docs/AI_MAINTENANCE_GUIDE.md` criado — referência rápida para IAs
-- `ARCHITECTURE.md` reescrito (este arquivo era obsoleto)
-- `ROADMAP.md` criado (este arquivo)
+- `CLAUDE.md`, `README.md`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, `docs/AI_MAINTENANCE_GUIDE.md`
 
 ---
 
@@ -85,119 +100,54 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 - Exportar CSV
 
 ### DashboardStats — health checks
-- Contar mensagens não lidas
-- Contar artigos em rascunho
-- Contar projetos ocultos
-- Alertas para itens sem SEO ou sem slug
-
-### Redator — Estrutura de case STAR (site público)
-- Substituir campo genérico `case_body` por três campos opcionais: `case_challenge`, `case_solution`, `case_result`
-- Migrations: `ALTER TABLE experiences/projects ADD COLUMN IF NOT EXISTS case_challenge/case_solution/case_result TEXT`
-- Renderizar os três blocos com títulos e iconografia em `ExperienceDetail` e `ProjectDetail`
-- Força narrativa STAR (Situação → Tarefa → Ação → Resultado), padrão reconhecido por recrutadores
+- Contar mensagens não lidas e artigos em rascunho
+- Alertas para itens sem SEO, sem slug ou sem imagem
 
 ### Redator — Pitch de valor global
-- Chave `value_pitch` em `site_settings`: frase única (máx. 160 chars) que resume a proposta de valor
+- Chave `value_pitch` em `site_settings`: frase única (máx. 160 chars)
 - Usar como fallback de `meta_description` nas páginas sem descrição própria
-
-### UX — Barra de progresso de leitura em ArticleDetail
-- Componente `ReadingProgressBar`: faixa fina no topo da página que avança com o scroll
-- Hook `useScrollProgress` com `window.scrollY / document.body.scrollHeight`
-
-### UX — Sumário automático (Table of Contents) em artigos longos
-- Extrair headings `h2` e `h3` do HTML do `body` via DOM parser
-- Lista fixa à direita em desktop (`sticky top-24`) ou dropdown no mobile; links com scroll suave
-- Só exibir quando há ≥ 3 headings
-
-### UX — "Copiar email" no /contato
-- Botão com ícone de clipboard ao lado do endereço de email
-- `navigator.clipboard.writeText(email)` + toast de confirmação
-
-### Design — OG image por projeto/experiência
-- Elevar prioridade da "OG image dinâmica" já no roadmap
-- Tag `<meta property="og:image" content={cover_image_url || defaultOgImage}>` nas páginas de detalhe
-- Melhora preview ao compartilhar links no LinkedIn/WhatsApp
 
 ---
 
 ## Em aberto — prioridade média
 
 ### Bulk actions nos managers
-- Seleção múltipla de itens
-- Ocultar/mostrar/excluir em lote
-- Útil quando há 20+ skills ou experiences
+- Seleção múltipla de itens para ocultar/mostrar/excluir em lote
 
 ### Histórico simples de edições
 - Snapshot do registro antes de cada update
 - Tabela `edit_history` com `entity`, `entity_id`, `before`, `after`, `edited_at`
-- Permite reverter edições acidentais
 
 ### Redator — Excerpt para compartilhamento social
 - Campo `excerpt` (TEXT, máx. 280 chars) em `articles` e `experiences`
-- Usar como preview em cards de artigo e em OG description
-- CMS: textarea com counter no ArticlesManager e ExperiencesManager
-
-### Redator — Contador de palavras no RichTextEditor
-- Exibir word count e tempo de leitura estimado no editor (já calculado em ArticlesManager, replicar para `case_body`)
+- Usar como preview em cards de artigo e OG description
 
 ### UX — Filtro/busca em ArticlesListing (página pública)
 - Input de busca por título, tag ou categoria em `ArticlesListing.tsx`
-- Padrão já existente nos managers do admin
 
-### UX — "Voltar ao topo"
-- Botão flutuante `↑` que aparece após 400px de scroll
-- `window.scrollTo({ top: 0, behavior: 'smooth' })`
+### Conteúdo relacionado em ArticleDetail
+- Aplicar `useRelatedContent` na página de detalhe de artigo (já feito em Experience e Project)
 
 ---
 
-## Em aberto — prioridade baixa / próximas fases
+## Em aberto — prioridade baixa
 
-### SEO e descoberta (site público)
-
-- **Schema.org BreadcrumbList** em ProjectDetail e ExperienceDetail
-- **Article schema** em ArticleDetail
-- ~~**OG image dinâmica** por projeto/case~~ → movida para prioridade alta
-- **"Related content"** em ArticleDetail e ExperienceDetail (hook `useRelatedContent` já existe)
-- **Canonical URLs** validadas em todas as páginas de detalhe
-
-### Performance (site público)
-
-- `OptimizedImage` com `loading="lazy"` padronizado em todas as seções
-- `fetchpriority="high"` no LCP do CoverSection
-- ~~Prefetch de rotas ao hover em cards de projeto/experiência~~ ✅ `prefetchRoute` em `onMouseEnter` nos cards de artigos, experiências e skills
-- ~~Mover `RichTextEditor` (Tiptap) para chunk separado — só carrega no admin~~ ✅ já configurado em `vite.config.ts` (`@tiptap → vendor-editor`) com `AdminDashboard` lazy
-
-### Acessibilidade (site público)
-
+### Acessibilidade
 - `:focus-visible` ring consistente em todos os links interativos
-- `prefers-reduced-motion` respeitado em transições de EssaySection e PullQuoteSection
-- Navegação por teclado no WorkSection (lista de experiências expandíveis)
-- Revisão de densidade tipográfica em mobile 393px
+- `prefers-reduced-motion` nas transições de EssaySection e PullQuoteSection
+- Navegação por teclado no WorkSection
+- Revisão de tipografia em mobile 393px
 
-### RH — LinkedIn em destaque
-- Promover link do LinkedIn do footer para o header ou CoverSection
-- Adicionar chave `linkedin_url` em `site_settings` se ausente
-
-### Redator — Hint de meta_title no SEOFields
-- No `SEOFields`, exibir sugestão pré-preenchida em cinza quando `meta_title` está vazio
-- `titleSource` já é prop do componente — basta mostrar o hint visual
-
-### Design — Favicon via CMS
-- Chave `favicon_url` em `site_settings`; injetar dinamicamente no `<head>`
-
-### UX — Conteúdo relacionado nas páginas de detalhe
-- Hook `useRelatedContent` (`src/hooks/useRelatedContent.tsx`) já existe mas não está ativado
-- Exibir 2–3 cards relacionados ao final de `ExperienceDetail`, `ProjectDetail`, `ArticleDetail`
+### Performance
+- `OptimizedImage` com `fetchpriority="high"` no LCP do CoverSection
+- `loading="lazy"` padronizado em todas as seções
 
 ### Segurança e robustez
-
-- Auditoria de RLS — revisar policy "Users can view all profiles"
-- Logs estruturados em Edge Functions
+- Auditoria de RLS — revisar policies
 - Substituir `from('faqs' as any)` por tipos gerados (`supabase gen types`)
 - Lint rule para proibir cores hardcoded fora dos tokens Tailwind
 
 ### DX e testes
-
 - Smoke tests dos managers principais com Vitest + Testing Library
 - Storybook leve para componentes UI do admin
 
@@ -212,4 +162,4 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 
 ---
 
-*Última atualização: 2026-05-21 — adicionadas sugestões de RH, Redator, Design e UX*
+*Última atualização: 2026-05-25*
