@@ -96,7 +96,7 @@ supabase/
 
 | Tabela | Conteúdo | Campos-chave |
 |--------|----------|-------------|
-| `experiences` | Experiências profissionais | role, company, slug, is_visible |
+| `experiences` | Experiências profissionais | role, company, slug, is_visible, is_case, case_title, case_challenge, case_solution, case_result |
 | `projects` | Projetos/cases | title, slug, tags, is_visible |
 | `articles` | Artigos/blog | title, slug, status, published_at |
 | `skills` | Habilidades técnicas | name, slug, category |
@@ -108,6 +108,7 @@ supabase/
 | `faqs` | Perguntas frequentes | question, answer, is_visible |
 | `site_settings` | Configurações/textos globais | key (TEXT), value (TEXT) |
 | `contact_messages` | Mensagens recebidas | name, email, message, read_at |
+| `lab_projects` | Projetos pessoais / Lab | title, slug, category, year, actions (JSONB), outcomes (JSONB), stack (JSONB), is_visible |
 
 ### site_settings — chaves importantes
 

@@ -4,14 +4,8 @@ import { useSkillsForExperience, useSeeAlso } from '@/hooks/useRelatedContent';
 import { SEOHead } from '@/components/SEO/SEOHead';
 import { BreadcrumbSchema } from '@/components/SEO/BreadcrumbSchema';
 import { BASE_URL } from '@/config/constants';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Building2, Calendar, Briefcase, ChevronRight, Lightbulb } from 'lucide-react';
-import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
-import SeeAlso from '@/components/SeeAlso';
+import { SafeHTML } from '@/components/admin/SafeHTML';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
-import { BackToTop } from '@/components/BackToTop';
 
 export default function ExperienceDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -23,63 +17,41 @@ export default function ExperienceDetail() {
     experience?.company || '',
     experience?.id || ''
   );
-  
-  // Get related skills based on experience description
   const relatedSkills = useSkillsForExperience(experience?.description || '');
   const seeAlsoItems = useSeeAlso(relatedSkills, 4);
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background pt-20">
-        <div className="max-w-4xl mx-auto px-6 py-12">
-          <Skeleton className="h-8 w-48 mb-8" />
-          <Skeleton className="h-12 w-3/4 mb-4" />
-          <Skeleton className="h-6 w-1/2 mb-8" />
-          <Skeleton className="h-64 w-full" />
-        </div>
+      <div className="ed-root" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span className="ed-mono" style={{ color: 'var(--ed-muted)' }}>Carregando…</span>
       </div>
     );
   }
 
   if (error || !experience) {
     return (
-      <div className="min-h-screen bg-background pt-20 flex items-center justify-center">
-        <Card className="max-w-md mx-auto">
-          <CardContent className="p-8 text-center">
-            <h1 className="text-2xl font-bold mb-4">Experiência não encontrada</h1>
-            <p className="text-muted-foreground mb-6">
-              A experiência que você procura não existe ou foi removida.
-            </p>
-            <Button onClick={() => navigate('/')}>
-              Voltar ao Portfolio
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="ed-root" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 24 }}>
+        <p style={{ fontFamily: 'Fraunces, serif', fontSize: 32, fontStyle: 'italic' }}>Experiência não encontrada</p>
+        <button className="pp-btn pp-btn-sec" onClick={() => navigate('/')}>← Voltar ao portfólio</button>
       </div>
     );
   }
 
-  const descriptions = Array.isArray(experience.description)
-    ? experience.description
-    : experience.description.split('. ').filter(Boolean);
-
   const canonicalSlug = experience.slug || generateSlug(`${experience.role}-${experience.company}`);
+  const exp = experience as any;
+
+  const hasSTAR = !!(exp.case_challenge && exp.case_solution);
+  const bodyContent = exp.case_body || experience.description || '';
 
   return (
-    <>
+    <div className="ed-root">
       <SEOHead
-        title={experience.meta_title || `${experience.role} - ${experience.company}`}
+        title={experience.meta_title || `${experience.role} — ${experience.company}`}
         description={experience.meta_description || experience.description.slice(0, 160)}
         canonicalUrl={`${BASE_URL}/experiencia/${canonicalSlug}`}
         ogType="article"
         ogImage={experience.logo_url || undefined}
-        keywords={[
-          experience.role,
-          experience.company,
-          'experiência profissional',
-          'product manager',
-          'Nei Girão'
-        ]}
+        keywords={[experience.role, experience.company, 'experiência profissional', 'product manager', 'Nei Girão']}
       />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",
@@ -90,192 +62,172 @@ export default function ExperienceDetail() {
         "author": { "@type": "Person", "name": "Nei Girão", "url": BASE_URL },
         "publisher": { "@type": "Person", "name": "Nei Girão", "url": BASE_URL },
         "mainEntityOfPage": `${BASE_URL}/experiencia/${canonicalSlug}`,
-        "datePublished": (experience as any).created_at || undefined,
-        "dateModified": (experience as any).updated_at || undefined,
-        "about": {
-          "@type": "OrganizationRole",
-          "roleName": experience.role,
-          "startDate": experience.period.split(' - ')[0],
-          "namedPosition": experience.role
-        },
-        "mentions": {
-          "@type": "Organization",
-          "name": experience.company,
-          ...(experience.logo_url ? { "logo": experience.logo_url } : {})
-        }
+        "datePublished": exp.created_at || undefined,
+        "dateModified": exp.updated_at || undefined,
+        "about": { "@type": "OrganizationRole", "roleName": experience.role, "startDate": experience.period.split(' - ')[0] },
+        "mentions": { "@type": "Organization", "name": experience.company, ...(experience.logo_url ? { "logo": experience.logo_url } : {}) }
       }) }} />
       <BreadcrumbSchema items={[
         { name: 'Início', url: '/' },
         { name: 'Experiências', url: '/#experience' },
-        { name: `${experience.role} - ${experience.company}` },
+        { name: `${experience.role} — ${experience.company}` },
       ]} />
 
-      <div className="min-h-screen bg-background">
-        <StandaloneNavbar />
-        {/* Header */}
-        <header className="bg-gradient-hero pt-24 pb-16">
-          <div className="max-w-4xl mx-auto px-6">
-            {/* Breadcrumb */}
-            <nav className="flex items-center gap-2 text-sm text-white/70 mb-8">
-              <Link to="/" className="hover:text-white transition-colors">
-                Início
-              </Link>
-              <ChevronRight className="w-4 h-4" />
-              <Link to="/#experience" className="hover:text-white transition-colors">
-                Experiências
-              </Link>
-              <ChevronRight className="w-4 h-4" />
-              <span className="text-white">{experience.company}</span>
-            </nav>
+      {/* MASTHEAD */}
+      <header className="ed-mast">
+        <div className="ed-mast-left">
+          <Link to="/" className="ed-mast-title">Nei Girão</Link>
+          <span className="ed-mast-sub">Edição 2026 · Vol. XV</span>
+        </div>
+        <nav className="ed-mast-right">
+          <Link to="/">Início</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/#experience">Experiência</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/#projects">Projetos</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/#contact">Contato</Link>
+        </nav>
+      </header>
 
-            <div className="flex items-start gap-6">
+      {/* BREADCRUMB */}
+      <div className="ed-container">
+        <div className="pp-crumb">
+          <Link to="/">Nei Girão</Link>
+          <span className="pp-crumb-sep">/</span>
+          <Link to="/#experience">Trajetória</Link>
+          <span className="pp-crumb-sep">/</span>
+          <span className="pp-crumb-current">{experience.company}</span>
+        </div>
+      </div>
+
+      {/* HERO */}
+      <section className="pp-hero">
+        <div className="ed-container">
+          <div className="pp-brand-row">
+            <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--ed-muted)' }}>
+              {experience.period}
+            </span>
+          </div>
+          <h1 className="pp-title ed-display">{exp.case_title || experience.role}</h1>
+          <div className="pp-role">{experience.company}</div>
+        </div>
+      </section>
+
+      {/* BODY */}
+      <section className="pp-body">
+        <div className="ed-container">
+          <div className="pp-grid">
+            {/* SIDEBAR */}
+            <aside className="pp-side">
               {experience.logo_url && (
-                <div className="w-20 h-20 rounded-xl bg-white/10 backdrop-blur-sm p-3 flex-shrink-0">
+                <div className="pp-side-block">
+                  <div className="pp-side-head">Empresa</div>
                   <img
                     src={experience.logo_url}
                     alt={`${experience.company} logo`}
-                    className="w-full h-full object-contain"
+                    style={{ maxWidth: 120, maxHeight: 60, objectFit: 'contain', display: 'block' }}
                   />
                 </div>
               )}
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-                  {experience.role}
-                </h1>
-                <div className="flex flex-wrap items-center gap-4 text-white/80">
-                  <span className="flex items-center gap-2">
-                    <Building2 className="w-5 h-5" />
-                    {experience.company}
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5" />
-                    {experience.period}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
 
-        {/* Content */}
-        <main className="max-w-4xl mx-auto px-6 py-12">
-          {/* STAR case blocks — shown when structured case fields exist */}
-          {(experience as any).case_challenge && (experience as any).case_solution ? (
-            <div className="space-y-6">
-              <Card className="shadow-elegant border-2 border-border/50">
-                <CardContent className="p-8 md:p-12">
-                  <p className="text-xs font-mono uppercase tracking-widest text-teal-accent mb-4">Desafio</p>
-                  <div
-                    className="prose prose-lg max-w-none text-muted-foreground"
-                    dangerouslySetInnerHTML={{ __html: (experience as any).case_challenge }}
-                  />
-                </CardContent>
-              </Card>
-              <Card className="shadow-elegant border-2 border-border/50">
-                <CardContent className="p-8 md:p-12">
-                  <p className="text-xs font-mono uppercase tracking-widest text-teal-accent mb-4">Solução</p>
-                  <div
-                    className="prose prose-lg max-w-none text-muted-foreground"
-                    dangerouslySetInnerHTML={{ __html: (experience as any).case_solution }}
-                  />
-                </CardContent>
-              </Card>
-              {(experience as any).case_result && (
-                <Card className="shadow-elegant border-2 border-teal-accent/30 bg-teal-accent/5">
-                  <CardContent className="p-8 md:p-12">
-                    <p className="text-xs font-mono uppercase tracking-widest text-teal-accent mb-4">Resultado</p>
-                    <p className="text-lg font-medium">{(experience as any).case_result}</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          ) : (
-            <Card className="shadow-elegant border-2 border-border/50">
-              <CardContent className="p-8 md:p-12">
-                <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                  <Briefcase className="w-5 h-5 text-teal-accent" />
-                  Responsabilidades e Conquistas
-                </h2>
-                <ul className="space-y-4">
-                  {descriptions.map((point, index) => (
-                    <li key={index} className="flex items-start text-muted-foreground leading-relaxed">
-                      <span className="text-teal-accent mr-3 mt-1 flex-shrink-0 text-lg">▪</span>
-                      <span className="text-base">{point}</span>
-                    </li>
+              {exp.case_result && (
+                <div className="pp-side-block">
+                  <div className="pp-side-head">Resultado</div>
+                  {exp.case_result.split(/\s*·\s*/).map((r: string, i: number) => (
+                    <span key={i} className="pp-outcome">{r}</span>
                   ))}
-                </ul>
-              </CardContent>
-            </Card>
-          )}
+                </div>
+              )}
 
-          {/* Related Skills - Internal Linking */}
-          {relatedSkills.length > 0 && (
-            <section className="mt-12">
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                <Lightbulb className="w-6 h-6 text-teal-accent" />
-                Habilidades Relacionadas
-              </h2>
-              <div className="flex flex-wrap gap-3">
-                {relatedSkills.map((skill) => (
-                  <Link
-                    key={skill.id}
-                    to={`/skill/${skill.slug || skill.id}`}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-full text-sm font-medium hover:bg-teal-accent/10 hover:text-teal-accent transition-colors"
-                  >
-                    <Lightbulb className="w-4 h-4" />
-                    {skill.title}
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
+              {seeAlsoItems.length > 0 && (
+                <div className="pp-side-block">
+                  <div className="pp-side-head">Skills</div>
+                  {seeAlsoItems.map(skill => (
+                    <div key={skill.id} className="pp-stack-item">
+                      <Link to={`/skill/${skill.slug || skill.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                        {skill.title}
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </aside>
 
-          {/* Related Experiences */}
-          {relatedExperiences && relatedExperiences.length > 0 && (
-            <section className="mt-12">
-              <h2 className="text-2xl font-bold mb-6">Outras Experiências na {experience.company}</h2>
-              <div className="grid gap-4">
-                {relatedExperiences.map((exp) => (
-                  <Link
-                    key={exp.id}
-                    to={`/experiencia/${exp.slug || exp.id}`}
-                    className="block"
-                  >
-                    <Card className="hover:shadow-glow transition-all hover:border-teal-accent/30">
-                      <CardContent className="p-6 flex items-center justify-between">
-                        <div>
-                          <h3 className="font-semibold text-foreground">{exp.role}</h3>
-                          <p className="text-sm text-muted-foreground">{exp.period}</p>
+            {/* MAIN */}
+            <div className="pp-main">
+              {hasSTAR ? (
+                <>
+                  <div className="pp-section">
+                    <h2>Desafio</h2>
+                    <SafeHTML html={exp.case_challenge} className="pp-prose" />
+                  </div>
+                  <div className="pp-section">
+                    <h2>Solução</h2>
+                    <SafeHTML html={exp.case_solution} className="pp-prose" />
+                  </div>
+                </>
+              ) : (
+                <div className="pp-section">
+                  <h2>Sobre esta experiência</h2>
+                  <SafeHTML html={bodyContent} className="pp-prose" />
+                </div>
+              )}
+
+              {relatedExperiences && relatedExperiences.length > 0 && (
+                <div className="pp-section">
+                  <h2>Outras experiências na {experience.company}</h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {relatedExperiences.map(rel => (
+                      <Link
+                        key={rel.id}
+                        to={`/experiencia/${rel.slug || rel.id}`}
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                      >
+                        <div style={{ padding: '12px 0', borderBottom: '1px solid var(--ed-line)' }}>
+                          <div style={{ fontWeight: 500, fontSize: 15 }}>{rel.role}</div>
+                          <div style={{ fontSize: 13, color: 'var(--ed-muted)', marginTop: 2 }}>{rel.period}</div>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* See Also Section */}
-          <SeeAlso items={seeAlsoItems} title="Veja Também" />
-
-          {/* CTA */}
-          <div className="mt-12 text-center">
-            <p className="text-muted-foreground mb-4">
-              Interessado em saber mais sobre minha trajetória?
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button onClick={() => navigate('/#contact')}>
-                Entre em Contato
-              </Button>
-              <Button variant="outline" onClick={() => window.open(cvUrl, '_blank')}>
-                Download CV
-              </Button>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </main>
-        <BackToTop />
-      </div>
-    </>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="pp-cta">
+        <div className="ed-container">
+          <div className="pp-cta-grid">
+            <h3>
+              Quer conversar sobre <em>esta experiência</em>?
+            </h3>
+            <div className="pp-cta-actions">
+              <a
+                className="pp-btn pp-btn-pri"
+                href={`mailto:neigirao@gmail.com?subject=${encodeURIComponent('Sobre: ' + experience.role + ' — ' + experience.company)}`}
+              >
+                Falar comigo
+              </a>
+              <a href={cvUrl} download className="pp-btn pp-btn-sec">Baixar CV</a>
+              <button className="pp-btn pp-btn-ghost" onClick={() => navigate('/#experience')}>
+                Ver trajetória ↑
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="pp-foot">
+        <div>© Nei Girão · 2026</div>
+        <div>
+          <Link to="/" style={{ color: '#E27464' }}>← Voltar ao site</Link>
+        </div>
+      </footer>
+    </div>
   );
 }
