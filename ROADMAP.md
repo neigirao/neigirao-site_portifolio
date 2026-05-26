@@ -49,7 +49,13 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 - `ExperiencesManager`: formulário STAR com Título do case, Desafio, Solução e Resultado
 - `case_title` sobrescreve o cargo como título da história em "Cases selecionados"
 - `CasesSection`: exibe blocos Desafio/Solução quando preenchidos; fallback para `case_body`
-- `ExperienceDetail`: cards STAR quando campos preenchidos; lista padrão como fallback
+- `ExperienceDetail`: redesenhado para design editorial (`ed-mast`, `pp-hero`, `pp-body`); cards STAR quando campos preenchidos
+
+### CMS — DashboardStats (Mai 2026)
+- Badges de mensagens não lidas e artigos em rascunho no painel
+- `DashboardStats`: alertas de saúde com slug, SEO e imagem faltando por categoria
+- Export JSON inclui `lab_projects`
+- `PreviewModal`: preview de cases STAR com blocos Desafio/Solução
 
 ### Site público — Lab (Mai 2026)
 - Tabela `lab_projects` com RLS + seed com 4 projetos
@@ -62,10 +68,11 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 - Colunas "Certificações" e "Cursos" unificadas em uma só coluna
 
 ### Site público — SEO e Schema.org (Mai 2026)
-- `BreadcrumbSchema` em ExperienceDetail, ProjectDetail e LabDetail
+- `BreadcrumbSchema` em todas as páginas: ExperienceDetail, ProjectDetail, LabDetail, Sobre, Contato
 - Article/CreativeWork JSON-LD em ExperienceDetail, ProjectDetail e LabDetail
 - `FAQPage` schema dinâmico em `DynamicSchema.tsx` via `useFAQs()`
 - OG image dinâmica em todas as páginas de detalhe
+- `MastheadSection`: "Lab" adicionado ao nav padrão
 
 ### Site público — Conteúdo relacionado (Mai 2026)
 - `useRelatedContent.tsx` com hooks: `useSkillsForExperience`, `useExperiencesForProject`, `useSkillsForProject`
@@ -98,10 +105,6 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 - Marcar como lida / arquivar
 - Notificação por email via Edge Function quando nova mensagem chega
 - Exportar CSV
-
-### DashboardStats — health checks
-- Contar mensagens não lidas e artigos em rascunho
-- Alertas para itens sem SEO, sem slug ou sem imagem
 
 ### Redator — Pitch de valor global
 - Chave `value_pitch` em `site_settings`: frase única (máx. 160 chars)
@@ -162,4 +165,4 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 
 ---
 
-*Última atualização: 2026-05-25*
+*Última atualização: 2026-05-25 — auditoria completa, itens médio/baixo resolvidos*

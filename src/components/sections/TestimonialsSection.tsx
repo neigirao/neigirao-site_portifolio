@@ -49,8 +49,11 @@ export function TestimonialsSection() {
                   <img
                     src={t.author_photo_url}
                     alt={t.author_name}
+                    width={40}
+                    height={40}
                     className="w-10 h-10 rounded-full object-cover"
                     loading="lazy"
+                    fetchPriority="low"
                   />
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-teal-accent/10 flex items-center justify-center text-teal-accent font-bold text-sm">
