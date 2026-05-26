@@ -53,6 +53,7 @@ export function ProjectsEditorialSection({ projects, isLoading }: Props) {
                 key={p.id}
                 to={`/projeto/${p.slug}`}
                 className="ed-project"
+                aria-label={`Ver projeto: ${p.title}`}
                 onMouseEnter={() => prefetchRoute('/projeto/')}
                 style={{ textDecoration: 'none', color: 'inherit' }}
               >
