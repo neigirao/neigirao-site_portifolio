@@ -1,0 +1,60 @@
+# Nei Girão — Product Leader
+
+> Portfolio profissional de Nei Girão, Product Leader com +15 anos de experiência em Observabilidade, Transformação Digital e Produtos Digitais. Baseado em Rio de Janeiro, Brasil.
+
+## Sobre
+
+Product Manager e líder de times ágeis com histórico comprovado em grandes empresas brasileiras: Icatu Seguros, TIM Brasil, Oi e Globo.com. Especialista em observabilidade (Dynatrace, Grafana, Azure Monitor), ecommerce e produtos digitais em escala.
+
+Resultados relevantes:
+- Elevou a nota do app Meu TIM de 1,5 para 4,5 nas lojas
+- Reduziu 40% dos custos operacionais de atendimento na Oi
+- Aumentou 20% a conversão do ecommerce de Seguros de Vida na Icatu
+
+## Links
+
+- Portfolio: https://neigirao.lovable.app/
+- Sobre: https://neigirao.lovable.app/sobre
+- Contato: https://neigirao.lovable.app/contato
+- Artigos: https://neigirao.lovable.app/artigos
+- LinkedIn: https://linkedin.com/in/neigirao
+- Conteúdo completo para LLMs (dinâmico): https://neigirao.lovable.app/llms.txt
+
+## Especialidades
+
+### Produto
+- Product Management, Discovery contínuo, OKRs, Roadmap estratégico
+
+### Observabilidade
+- Dynatrace, Grafana, Azure Monitor, OpenTelemetry
+
+### Dados
+- Google Analytics, BigQuery, análise de métricas, experimentação
+
+### Domínios
+- Ecommerce, Seguros, Telecom, Mídia & Entretenimento
+
+## Experiência Profissional
+
+1. **Icatu Seguros** — PM / Coordenador de TI (2020–atual)
+   Responsável pelo ecommerce de Seguro de Vida e pela prática de observabilidade de TI. Lidera time de 20 diretos e 35 pessoas em squads.
+
+2. **TIM Brasil** — Product Manager (anterior)
+   Liderou evolução do app Meu TIM. Nota nas lojas de 1,5 para 4,5.
+
+3. **Oi** — Product Manager (anterior)
+   Redução de 40% nos custos de atendimento via automação e produtos digitais.
+
+4. **Globo.com** — Desenvolvimento de produtos digitais em mídia e entretenimento.
+
+## Formação
+
+- Graduação em Tecnologia — Rio de Janeiro
+- Certificações: Scrum Master, Product Owner, Dynatrace Associate
+
+## Contato
+
+- Email: neigirao@gmail.com
+- Telefone: +55 21 98992-1711
+- LinkedIn: linkedin.com/in/neigirao
+- Localização: Rio de Janeiro, Brasil
