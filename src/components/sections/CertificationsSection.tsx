@@ -42,7 +42,7 @@ export function CertificationsSection() {
               style={{ transitionDelay: isVisible ? `${index * 80}ms` : "0ms" }}
             >
               {cert.logo_url ? (
-                <img src={cert.logo_url} alt={cert.name} className="w-8 h-8 object-contain" loading="lazy" />
+                <img src={cert.logo_url} alt={cert.name} width={32} height={32} className="w-8 h-8 object-contain" loading="lazy" />
               ) : (
                 <Award className="w-6 h-6 text-teal-accent" />
               )}

@@ -1,19 +1,7 @@
-/**
- * /contato - Dedicated Contact Page with real form for SEO
- */
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { SEOHead } from "@/components/SEO";
 import { BreadcrumbSchema } from "@/components/SEO/BreadcrumbSchema";
-import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { Mail, Linkedin, MessageCircle, MapPin, Clock, ExternalLink, Send, Copy, Check } from "lucide-react";
-import { StandaloneNavbar } from "@/components/sections/StandaloneNavbar";
 import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, AUTHOR_WHATSAPP, BASE_URL } from "@/config/constants";
 import { toast } from "sonner";
 
@@ -36,44 +24,6 @@ const contactSchema = {
     }
   }
 };
-
-interface ContactCardProps {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  action: string;
-  href: string;
-  external?: boolean;
-  highlight?: boolean;
-}
-
-function ContactCard({ icon, title, description, action, href, external, highlight }: ContactCardProps) {
-  const { ref, isVisible } = useScrollAnimation();
-  return (
-    <div ref={ref} className={`transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-      <Card className={`border-2 hover:shadow-elegant transition-all duration-300 hover:-translate-y-1 h-full ${highlight ? "border-primary/40 bg-primary/5" : "border-border/50"}`}>
-        <CardContent className="p-8 flex flex-col items-center text-center h-full">
-          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 ${highlight ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}>
-            {icon}
-          </div>
-          <h3 className="text-lg font-bold text-foreground mb-2">{title}</h3>
-          <p className="text-muted-foreground text-sm mb-6 flex-1">{description}</p>
-          <a
-            href={href}
-            target={external ? "_blank" : undefined}
-            rel={external ? "noopener noreferrer" : undefined}
-            className="w-full"
-          >
-            <Button className="w-full" variant={highlight ? "default" : "outline"}>
-              {action}
-              {external && <ExternalLink className="w-3 h-3 ml-2" />}
-            </Button>
-          </a>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
 
 export default function Contato() {
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
@@ -128,7 +78,7 @@ export default function Contato() {
   };
 
   return (
-    <>
+    <div className="ed-root">
       <SEOHead
         title="Contato - Nei Girão | Product Manager"
         description="Entre em contato com Nei Girão para projetos, parcerias e oportunidades em Product Management e Observabilidade. Rio de Janeiro, Brasil."
@@ -141,173 +91,254 @@ export default function Contato() {
         { name: 'Contato' },
       ]} />
 
-      <div className="min-h-screen bg-background">
-        <StandaloneNavbar />
-        {/* Header */}
-        <div className="bg-gradient-hero pt-24 pb-20 relative overflow-hidden">
-          <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl" aria-hidden="true" />
-          <div className="absolute bottom-10 right-10 w-80 h-80 bg-teal-accent/10 rounded-full blur-3xl" aria-hidden="true" />
-          <div className="max-w-4xl mx-auto px-6 relative">
-            <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
-              Vamos Conversar?
-            </h1>
-            <p className="text-xl text-white/80 max-w-2xl leading-relaxed">
-              Transformando desafios em produtos digitais de alto impacto.
-            </p>
-            <div className="flex flex-wrap gap-4 mt-8 text-white/70 text-sm">
-              <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
-                <MapPin className="w-4 h-4" />
-                Rio de Janeiro, Brasil
-              </span>
-              <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
-                <Clock className="w-4 h-4" />
-                BRT (UTC-3)
-              </span>
-            </div>
-          </div>
+      {/* MASTHEAD */}
+      <header className="ed-mast">
+        <div className="ed-mast-left">
+          <Link to="/" className="ed-mast-title">Nei Girão</Link>
+          <span className="ed-mast-sub">Edição 2026 · Vol. XV</span>
         </div>
+        <nav className="ed-mast-right">
+          <Link to="/">Início</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/sobre">Sobre</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/#projects">Projetos</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/artigos">Artigos</Link>
+        </nav>
+      </header>
 
-        <div className="max-w-4xl mx-auto px-6 py-16">
-          {/* Contact Form */}
-          <Card className="border-2 border-primary/20 shadow-elegant mb-16">
-            <CardContent className="p-8 md:p-10">
-              <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-3">
-                <Send className="w-6 h-6 text-primary" />
-                Envie uma mensagem
-              </h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Nome *</Label>
-                    <Input
-                      id="name"
-                      placeholder="Seu nome"
-                      value={formData.name}
-                      onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="seu@email.com"
-                      value={formData.email}
-                      onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="subject">Assunto</Label>
-                  <Input
-                    id="subject"
-                    placeholder="Ex: Oportunidade de PM, Consultoria, Parceria..."
-                    value={formData.subject}
-                    onChange={e => setFormData(prev => ({ ...prev, subject: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="message">Mensagem *</Label>
-                  <Textarea
-                    id="message"
-                    placeholder="Conte sobre o projeto, oportunidade ou como posso ajudar..."
-                    rows={5}
-                    value={formData.message}
-                    onChange={e => setFormData(prev => ({ ...prev, message: e.target.value }))}
-                    required
-                  />
-                </div>
-                <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={sending}>
-                  <Send className="w-4 h-4 mr-2" />
-                  {sending ? "Enviando..." : "Enviar Mensagem"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* Contact Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-4">
-            <ContactCard
-              icon={<Mail className="w-7 h-7" />}
-              title="Email"
-              description="Para propostas formais e oportunidades."
-              action="Enviar Email"
-              href={`mailto:${AUTHOR_EMAIL}`}
-              highlight
-            />
-            <ContactCard
-              icon={<MessageCircle className="w-7 h-7" />}
-              title="WhatsApp"
-              description="Para conversas rápidas e networking."
-              action="Abrir WhatsApp"
-              href={AUTHOR_WHATSAPP}
-              external
-            />
-            <ContactCard
-              icon={<Linkedin className="w-7 h-7" />}
-              title="LinkedIn"
-              description="Conecte-se profissionalmente."
-              action="Ver Perfil"
-              href={AUTHOR_LINKEDIN}
-              external
-            />
-          </div>
-
-          {/* Copy email */}
-          <div className="flex items-center gap-2 mb-12 px-1">
-            <Mail className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-            <span className="text-sm text-muted-foreground">{AUTHOR_EMAIL}</span>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7"
-              onClick={handleCopyEmail}
-              aria-label="Copiar endereço de email"
-            >
-              {emailCopied
-                ? <Check className="h-3.5 w-3.5 text-green-500" />
-                : <Copy className="h-3.5 w-3.5" />}
-            </Button>
-          </div>
-
-          {/* Additional Info */}
-          <Card className="border-2 border-border/50 bg-muted/30">
-            <CardContent className="p-8">
-              <h2 className="text-xl font-bold text-foreground mb-4">O que posso ajudar?</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  "Product Management & Strategy",
-                  "Observabilidade (Dynatrace, Grafana)",
-                  "Gestão de Equipes Ágeis",
-                  "Data-Driven Decision Making",
-                  "OKRs & KPIs de Produto",
-                  "Mentoria em Product Management",
-                ].map(topic => (
-                  <div key={topic} className="flex items-center gap-3 text-muted-foreground">
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0" />
-                    {topic}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="text-center mt-12 pt-8 border-t border-border">
-            <p className="text-muted-foreground mb-4">Quer ver meu trabalho primeiro?</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/sobre">
-                <Button variant="outline">Conhecer minha trajetória</Button>
-              </Link>
-              <Link to="/">
-                <Button variant="outline">Ver portfolio completo</Button>
-              </Link>
-            </div>
-          </div>
+      {/* BREADCRUMB */}
+      <div className="ed-container">
+        <div className="pp-crumb">
+          <Link to="/">Nei Girão</Link>
+          <span className="pp-crumb-sep">/</span>
+          <span className="pp-crumb-current">Contato</span>
         </div>
       </div>
-    </>
+
+      {/* HERO */}
+      <section className="pp-hero">
+        <div className="ed-container">
+          <div className="pp-brand-row">
+            <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--ed-muted)' }}>
+              Rio de Janeiro · BRT (UTC-3)
+            </span>
+          </div>
+          <h1 className="pp-title ed-display">Vamos<br />Conversar?</h1>
+          <div className="pp-role">Transformando desafios em produtos digitais de alto impacto.</div>
+        </div>
+      </section>
+
+      {/* BODY */}
+      <section className="pp-body">
+        <div className="ed-container">
+          <div className="pp-grid">
+            {/* SIDEBAR */}
+            <aside className="pp-side">
+              <div className="pp-side-block">
+                <div className="pp-side-head">Canais</div>
+                <a href={`mailto:${AUTHOR_EMAIL}`} className="pp-ext-link" style={{ display: 'block', marginBottom: 8 }}>
+                  Email ↗
+                </a>
+                <a href={AUTHOR_WHATSAPP} target="_blank" rel="noopener noreferrer" className="pp-ext-link" style={{ display: 'block', marginBottom: 8 }}>
+                  WhatsApp ↗
+                </a>
+                <a href={AUTHOR_LINKEDIN} target="_blank" rel="noopener noreferrer" className="pp-ext-link" style={{ display: 'block' }}>
+                  LinkedIn ↗
+                </a>
+              </div>
+
+              <div className="pp-side-block">
+                <div className="pp-side-head">Posso ajudar com</div>
+                {[
+                  "Product Strategy",
+                  "Observabilidade",
+                  "Equipes Ágeis",
+                  "Data-Driven",
+                  "OKRs & KPIs",
+                  "Mentoria PM",
+                ].map(topic => (
+                  <div key={topic} className="pp-stack-item">{topic}</div>
+                ))}
+              </div>
+
+              <div className="pp-side-block">
+                <div className="pp-side-head">Email</div>
+                <button
+                  onClick={handleCopyEmail}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left' }}
+                >
+                  <span className="pp-ext-link" style={{ display: 'block' }}>
+                    {emailCopied ? '✓ Copiado!' : `${AUTHOR_EMAIL} ⧉`}
+                  </span>
+                </button>
+              </div>
+            </aside>
+
+            {/* MAIN: FORM */}
+            <div className="pp-main">
+              <div className="pp-section">
+                <h2>Envie uma mensagem</h2>
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <label htmlFor="name" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--ed-muted)' }}>
+                        Nome *
+                      </label>
+                      <input
+                        id="name"
+                        type="text"
+                        placeholder="Seu nome"
+                        value={formData.name}
+                        onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                        required
+                        autoComplete="name"
+                        style={{
+                          background: 'var(--ed-paper)', border: '1px solid var(--ed-line)',
+                          borderRadius: 4, padding: '10px 14px',
+                          fontFamily: 'Source Serif 4, serif', fontSize: 16, color: 'var(--ed-fg)',
+                          outline: 'none', transition: 'border-color .15s',
+                        }}
+                        onFocus={e => (e.target.style.borderColor = 'var(--ed-fg)')}
+                        onBlur={e => (e.target.style.borderColor = 'var(--ed-line)')}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <label htmlFor="email" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--ed-muted)' }}>
+                        Email *
+                      </label>
+                      <input
+                        id="email"
+                        type="email"
+                        placeholder="seu@email.com"
+                        value={formData.email}
+                        onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                        required
+                        autoComplete="email"
+                        style={{
+                          background: 'var(--ed-paper)', border: '1px solid var(--ed-line)',
+                          borderRadius: 4, padding: '10px 14px',
+                          fontFamily: 'Source Serif 4, serif', fontSize: 16, color: 'var(--ed-fg)',
+                          outline: 'none', transition: 'border-color .15s',
+                        }}
+                        onFocus={e => (e.target.style.borderColor = 'var(--ed-fg)')}
+                        onBlur={e => (e.target.style.borderColor = 'var(--ed-line)')}
+                      />
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <label htmlFor="subject" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--ed-muted)' }}>
+                      Assunto
+                    </label>
+                    <input
+                      id="subject"
+                      type="text"
+                      placeholder="Ex: Oportunidade de PM, Consultoria, Parceria…"
+                      value={formData.subject}
+                      onChange={e => setFormData(prev => ({ ...prev, subject: e.target.value }))}
+                      autoComplete="off"
+                      style={{
+                        background: 'var(--ed-paper)', border: '1px solid var(--ed-line)',
+                        borderRadius: 4, padding: '10px 14px',
+                        fontFamily: 'Source Serif 4, serif', fontSize: 16, color: 'var(--ed-fg)',
+                        outline: 'none', transition: 'border-color .15s',
+                      }}
+                      onFocus={e => (e.target.style.borderColor = 'var(--ed-fg)')}
+                      onBlur={e => (e.target.style.borderColor = 'var(--ed-line)')}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <label htmlFor="message" style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--ed-muted)' }}>
+                      Mensagem *
+                    </label>
+                    <textarea
+                      id="message"
+                      placeholder="Conte sobre o projeto, oportunidade ou como posso ajudar…"
+                      rows={6}
+                      value={formData.message}
+                      onChange={e => setFormData(prev => ({ ...prev, message: e.target.value }))}
+                      required
+                      style={{
+                        background: 'var(--ed-paper)', border: '1px solid var(--ed-line)',
+                        borderRadius: 4, padding: '10px 14px',
+                        fontFamily: 'Source Serif 4, serif', fontSize: 16, color: 'var(--ed-fg)',
+                        outline: 'none', transition: 'border-color .15s', resize: 'vertical',
+                      }}
+                      onFocus={e => (e.target.style.borderColor = 'var(--ed-fg)')}
+                      onBlur={e => (e.target.style.borderColor = 'var(--ed-line)')}
+                    />
+                  </div>
+                  <div>
+                    <button type="submit" className="pp-btn pp-btn-pri" disabled={sending}>
+                      {sending ? "Enviando…" : "Enviar mensagem →"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Contact options editorial style */}
+              <div className="pp-section">
+                <h2>Outros canais</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid var(--ed-line)' }}>
+                  {[
+                    { label: 'Email', value: AUTHOR_EMAIL, href: `mailto:${AUTHOR_EMAIL}`, desc: 'Para propostas formais' },
+                    { label: 'WhatsApp', value: 'Enviar mensagem', href: AUTHOR_WHATSAPP, desc: 'Para conversas rápidas', external: true },
+                    { label: 'LinkedIn', value: '/in/neigirao', href: AUTHOR_LINKEDIN, desc: 'Conecte-se profissionalmente', external: true },
+                  ].map(item => (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      target={item.external ? '_blank' : undefined}
+                      rel={item.external ? 'noopener noreferrer' : undefined}
+                      style={{
+                        display: 'grid', gridTemplateColumns: '160px 1fr 24px',
+                        gap: 24, padding: '18px 0', borderBottom: '1px solid var(--ed-line)',
+                        textDecoration: 'none', color: 'inherit', alignItems: 'center',
+                        transition: 'padding .15s',
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.paddingLeft = '12px')}
+                      onMouseLeave={e => (e.currentTarget.style.paddingLeft = '0')}
+                    >
+                      <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--ed-muted)' }}>
+                        {item.label}
+                      </span>
+                      <span>
+                        <span style={{ fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 440 }}>{item.value}</span>
+                        <span style={{ display: 'block', fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: 'var(--ed-muted)', letterSpacing: '0.08em', marginTop: 2 }}>{item.desc}</span>
+                      </span>
+                      <span style={{ color: 'var(--ed-accent)', fontSize: 18 }}>→</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="pp-cta">
+        <div className="ed-container">
+          <div className="pp-cta-grid">
+            <h3>
+              Quer ver meu <em>trabalho</em> primeiro?
+            </h3>
+            <div className="pp-cta-actions">
+              <Link to="/sobre" className="pp-btn pp-btn-pri">Conhecer trajetória</Link>
+              <Link to="/" className="pp-btn pp-btn-sec">Ver portfólio completo</Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="pp-foot">
+        <div>© Nei Girão · 2026</div>
+        <div>
+          <Link to="/" style={{ color: '#E27464' }}>← Voltar ao site</Link>
+        </div>
+      </footer>
+    </div>
   );
 }

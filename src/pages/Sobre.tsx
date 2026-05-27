@@ -1,36 +1,11 @@
-/**
- * /sobre - Dedicated About Page for SEO
- * 
- * Página dedicada com biografia completa, ranqueia melhor que #about anchor.
- */
-
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { SEOHead } from "@/components/SEO";
 import { BreadcrumbSchema } from "@/components/SEO/BreadcrumbSchema";
 import { useExperiences, useSkills, useEducation } from "@/hooks/usePortfolioData";
 import { prefetchRoute } from "@/utils/prefetch";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { Download, Linkedin, Mail, MapPin, Calendar, Award } from "lucide-react";
-import { StandaloneNavbar } from "@/components/sections/StandaloneNavbar";
 import { AUTHOR_EMAIL, AUTHOR_LINKEDIN, BASE_URL } from "@/config/constants";
 import { SafeHTML } from "@/components/admin/SafeHTML";
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  const { ref, isVisible } = useScrollAnimation();
-  return (
-    <div ref={ref} className={`transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-      <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-3">
-        <span className="w-1 h-7 bg-gradient-primary rounded-full inline-block" />
-        {title}
-      </h2>
-      {children}
-    </div>
-  );
-}
 
 export default function Sobre() {
   const { experiences } = useExperiences();
@@ -62,7 +37,7 @@ export default function Sobre() {
   };
 
   return (
-    <>
+    <div className="ed-root">
       <SEOHead
         title="Sobre Nei Girão - Product Manager | Observabilidade"
         description="Conheça Nei Girão: Product Manager com +15 anos liderando produtos digitais em Icatu Seguros, Oi, TIM e Globo. Expert em Dynatrace, Grafana e Azure Monitor."
@@ -76,168 +51,213 @@ export default function Sobre() {
         { name: 'Sobre' },
       ]} />
 
-      <div className="min-h-screen bg-background">
-        <StandaloneNavbar />
-        {/* Header */}
-        <div className="bg-gradient-hero pt-24 pb-20 relative overflow-hidden">
-          <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-10 right-10 w-80 h-80 bg-teal-accent/10 rounded-full blur-3xl" />
-          <div className="max-w-4xl mx-auto px-6 relative">
-            <div className="flex flex-col md:flex-row md:items-end gap-8">
-              <div className="flex-1">
-                <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
-                  Nei Girão
-                </h1>
-                <p className="text-xl md:text-2xl text-white/90 font-medium mb-2">
-                  Product Manager | Observabilidade & Produtos Digitais
-                </p>
-                <div className="flex flex-wrap gap-3 text-white/70 text-sm mt-4">
-                  <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> Rio de Janeiro, Brasil</span>
-                  <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> +15 anos de experiência</span>
-                </div>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  className="bg-white text-primary hover:bg-white/90"
-                  onClick={() => window.open(cvUrl, "_blank")}
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download CV
-                </Button>
-                <Button
-                  variant="outline"
-                  className="bg-white/10 border-white/30 text-white hover:bg-white/20"
-                  onClick={() => window.open(AUTHOR_LINKEDIN, "_blank")}
-                >
-                  <Linkedin className="w-4 h-4 mr-2" />
-                  LinkedIn
-                </Button>
-              </div>
-            </div>
-          </div>
+      {/* MASTHEAD */}
+      <header className="ed-mast">
+        <div className="ed-mast-left">
+          <Link to="/" className="ed-mast-title">Nei Girão</Link>
+          <span className="ed-mast-sub">Edição 2026 · Vol. XV</span>
         </div>
+        <nav className="ed-mast-right">
+          <Link to="/">Início</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/#experience">Trajetória</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/#projects">Projetos</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/contato">Contato</Link>
+        </nav>
+      </header>
 
-        {/* Content */}
-        <div className="max-w-4xl mx-auto px-6 py-16 space-y-16">
-          {/* Bio */}
-          <Section title="Resumo Profissional">
-            <Card className="border-2 border-border/50 shadow-elegant">
-              <CardContent className="p-8 space-y-4">
-                {settings.about_summary ? (
-                  <SafeHTML html={settings.about_summary} className="text-muted-foreground leading-relaxed" />
-                ) : (
-                  <>
-                    <p className="text-lg text-foreground leading-relaxed font-medium">
-                      Sou um profissional especializado em gestão estratégica de produtos digitais e Observabilidade, com mais de 15 anos de experiência na liderança de equipes ágeis e multidisciplinares.
-                    </p>
-                    <p className="text-muted-foreground leading-relaxed">
-                      Minha trajetória inclui atuação em empresas de grande porte como{" "}
-                      <strong className="text-foreground">Icatu Seguros</strong>,{" "}
-                      <strong className="text-foreground">Oi</strong>,{" "}
-                      <strong className="text-foreground">TIM Brasil</strong> e{" "}
-                      <strong className="text-foreground">Rede Globo</strong>, nas quais liderei iniciativas de alta relevância envolvendo produtos digitais, performance, qualidade e inovação.
-                    </p>
-                    <p className="text-muted-foreground leading-relaxed">
-                      Possuo sólida experiência em todo o ciclo de vida dos produtos digitais, desde a concepção e lançamento até estratégias de atendimento pós-venda. Meu diferencial está em liderar equipes ágeis com cultura analítica e data-driven, usando ferramentas como <strong className="text-foreground">Dynatrace</strong>, <strong className="text-foreground">Grafana</strong> e <strong className="text-foreground">Azure Monitor</strong>.
-                    </p>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </Section>
+      {/* BREADCRUMB */}
+      <div className="ed-container">
+        <div className="pp-crumb">
+          <Link to="/">Nei Girão</Link>
+          <span className="pp-crumb-sep">/</span>
+          <span className="pp-crumb-current">Sobre</span>
+        </div>
+      </div>
 
-          {/* Skills */}
-          {Object.keys(skillsByCategory).length > 0 && (
-            <Section title="Habilidades & Competências">
-              <div className="space-y-6">
-                {Object.entries(skillsByCategory).map(([category, catSkills]) => (
-                  <div key={category}>
-                    <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">{category}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {catSkills.map(skill => (
+      {/* HERO */}
+      <section className="pp-hero">
+        <div className="ed-container">
+          <div className="pp-brand-row">
+            <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--ed-muted)' }}>
+              Rio de Janeiro · +15 anos
+            </span>
+          </div>
+          <h1 className="pp-title ed-display">Nei Girão</h1>
+          <div className="pp-role">Product Manager · Observabilidade & Produtos Digitais</div>
+        </div>
+      </section>
+
+      {/* BODY */}
+      <section className="pp-body">
+        <div className="ed-container">
+          <div className="pp-grid">
+            {/* SIDEBAR */}
+            <aside className="pp-side">
+              <div className="pp-side-block">
+                <div className="pp-side-head">Localização</div>
+                <div className="pp-stack-item">Rio de Janeiro, Brasil</div>
+              </div>
+
+              <div className="pp-side-block">
+                <div className="pp-side-head">Links</div>
+                <a href={AUTHOR_LINKEDIN} target="_blank" rel="noopener noreferrer" className="pp-ext-link" style={{ display: 'block', marginBottom: 8 }}>
+                  LinkedIn ↗
+                </a>
+                <a href={`mailto:${AUTHOR_EMAIL}`} className="pp-ext-link" style={{ display: 'block', marginBottom: 8 }}>
+                  Email ↗
+                </a>
+                <a href={cvUrl} download className="pp-ext-link" style={{ display: 'block' }}>
+                  Baixar CV ↗
+                </a>
+              </div>
+
+              {Object.keys(skillsByCategory).length > 0 && (
+                <div className="pp-side-block">
+                  <div className="pp-side-head">Stack</div>
+                  {Object.entries(skillsByCategory).slice(0, 2).map(([cat, catSkills]) => (
+                    <div key={cat} style={{ marginBottom: 12 }}>
+                      <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ed-accent)', marginBottom: 4 }}>{cat}</div>
+                      {catSkills.slice(0, 5).map(skill => (
                         <Link key={skill.id} to={`/skill/${skill.slug || skill.name.toLowerCase()}`} onMouseEnter={() => prefetchRoute('/skill/')}>
-                          <Badge
-                            variant="secondary"
-                            className="hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer px-3 py-1"
-                          >
-                            {skill.name}
-                          </Badge>
+                          <div className="pp-stack-item">{skill.name}</div>
                         </Link>
                       ))}
                     </div>
+                  ))}
+                </div>
+              )}
+            </aside>
+
+            {/* MAIN */}
+            <div className="pp-main">
+              {/* Bio */}
+              <div className="pp-section">
+                <h2>Resumo Profissional</h2>
+                {settings.about_summary ? (
+                  <SafeHTML html={settings.about_summary} className="pp-prose" />
+                ) : (
+                  <div className="pp-prose">
+                    <p>
+                      Profissional especializado em gestão estratégica de produtos digitais e Observabilidade,
+                      com mais de 15 anos de experiência na liderança de equipes ágeis e multidisciplinares.
+                    </p>
+                    <p>
+                      Trajetória inclui atuação em <strong>Icatu Seguros</strong>, <strong>Oi</strong>,{" "}
+                      <strong>TIM Brasil</strong> e <strong>Rede Globo</strong>, liderando iniciativas de alta
+                      relevância em produtos digitais, performance e inovação.
+                    </p>
+                    <p>
+                      Diferencial em liderança de equipes com cultura analítica e data-driven, usando ferramentas
+                      como <strong>Dynatrace</strong>, <strong>Grafana</strong> e <strong>Azure Monitor</strong>.
+                    </p>
                   </div>
-                ))}
+                )}
               </div>
-            </Section>
-          )}
 
-          {/* Experience */}
-          {experiences.length > 0 && (
-            <Section title="Trajetória Profissional">
-              <div className="space-y-4">
-                {experiences.map(exp => (
-                  <Link key={exp.id} to={`/experiencia/${exp.slug || exp.company.toLowerCase()}`} onMouseEnter={() => prefetchRoute('/experiencia/')}>
-                    <Card className="border border-border/50 hover:border-primary/40 hover:shadow-elegant transition-all duration-300 group">
-                      <CardContent className="p-6">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                          <div>
-                            <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">{exp.role}</h3>
-                            <p className="text-muted-foreground">{exp.company}</p>
+              {/* Experience */}
+              {experiences.length > 0 && (
+                <div className="pp-section">
+                  <h2>Trajetória Profissional</h2>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {experiences.map(exp => (
+                      <Link
+                        key={exp.id}
+                        to={`/experiencia/${exp.slug || exp.company.toLowerCase()}`}
+                        onMouseEnter={() => prefetchRoute('/experiencia/')}
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                      >
+                        <div style={{ padding: '20px 0', borderBottom: '1px solid var(--ed-line)', transition: 'padding .15s' }}
+                          onMouseEnter={e => (e.currentTarget.style.paddingLeft = '8px')}
+                          onMouseLeave={e => (e.currentTarget.style.paddingLeft = '0')}
+                        >
+                          <div style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontWeight: 440, letterSpacing: '-0.01em', marginBottom: 4 }}>
+                            {exp.role}
                           </div>
-                          <Badge variant="outline" className="self-start sm:self-center whitespace-nowrap text-xs">
-                            {exp.period}
-                          </Badge>
+                          <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ed-accent)', marginBottom: 6 }}>
+                            {exp.company}
+                            <span style={{ color: 'var(--ed-muted)', marginLeft: 12 }}>{exp.period}</span>
+                          </div>
+                          <div style={{ fontSize: 15, color: 'var(--ed-muted)', lineHeight: 1.55, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                            {(exp.description || '').replace(/<[^>]*>/g, '').slice(0, 200)}
+                          </div>
                         </div>
-                        <p className="text-sm text-muted-foreground line-clamp-2">{exp.description?.replace(/<[^>]*>/g, '').slice(0, 200) || ''}</p>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            </Section>
-          )}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-          {/* Education */}
-          {education.length > 0 && (
-            <Section title="Formação Acadêmica">
-              <div className="space-y-4">
-                {education.map(edu => (
-                  <Card key={edu.id} className="border border-border/50">
-                    <CardContent className="p-6 flex gap-4">
-                      <div className="flex-shrink-0 mt-1">
-                        <Award className="w-5 h-5 text-primary" />
+              {/* Education */}
+              {education.length > 0 && (
+                <div className="pp-section">
+                  <h2>Formação Acadêmica</h2>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {education.map(edu => (
+                      <div key={edu.id} style={{ padding: '18px 0', borderBottom: '1px dotted var(--ed-line)' }}>
+                        <div style={{ fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 440, letterSpacing: '-0.01em', marginBottom: 4 }}>
+                          {edu.degree}
+                        </div>
+                        <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ed-muted)' }}>
+                          {edu.institution}
+                          {edu.period && <span style={{ marginLeft: 12, color: 'var(--ed-accent)' }}>{edu.period}</span>}
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-foreground">{edu.degree}</h3>
-                        <p className="text-muted-foreground">{edu.institution}</p>
-                        <Badge variant="outline" className="mt-2 text-xs">{edu.period}</Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </Section>
-          )}
+                    ))}
+                  </div>
+                </div>
+              )}
 
-          {/* CTA */}
-          <div className="text-center py-8 border-t border-border">
-            <p className="text-muted-foreground mb-6">Interessado em conectar ou colaborar?</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/contato">
-                <Button size="lg" className="w-full sm:w-auto">
-                  <Mail className="w-4 h-4 mr-2" />
-                  Entrar em Contato
-                </Button>
-              </Link>
-              <Link to="/">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                  Ver Portfolio Completo
-                </Button>
-              </Link>
+              {/* All skills */}
+              {Object.keys(skillsByCategory).length > 2 && (
+                <div className="pp-section">
+                  <h2>Habilidades & Competências</h2>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 32 }}>
+                    {Object.entries(skillsByCategory).map(([cat, catSkills]) => (
+                      <div key={cat}>
+                        <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--ed-accent)', marginBottom: 8, paddingBottom: 8, borderBottom: '1px solid var(--ed-line)' }}>
+                          {cat}
+                        </div>
+                        {catSkills.map(skill => (
+                          <Link key={skill.id} to={`/skill/${skill.slug || skill.name.toLowerCase()}`} onMouseEnter={() => prefetchRoute('/skill/')}>
+                            <div className="pp-stack-item">{skill.name}</div>
+                          </Link>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </div>
-    </>
+      </section>
+
+      {/* CTA */}
+      <section className="pp-cta">
+        <div className="ed-container">
+          <div className="pp-cta-grid">
+            <h3>
+              Vamos <em>conversar</em>?
+            </h3>
+            <div className="pp-cta-actions">
+              <Link to="/contato" className="pp-btn pp-btn-pri">Entrar em contato</Link>
+              <a href={cvUrl} download className="pp-btn pp-btn-sec">Baixar CV</a>
+              <Link to="/" className="pp-btn pp-btn-ghost">Ver portfólio ↑</Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="pp-foot">
+        <div>© Nei Girão · 2026</div>
+        <div>
+          <Link to="/" style={{ color: '#E27464' }}>← Voltar ao site</Link>
+        </div>
+      </footer>
+    </div>
   );
 }
