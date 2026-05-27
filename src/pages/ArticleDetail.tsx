@@ -4,16 +4,9 @@ import type { DbArticle } from '@/hooks/useArticles';
 import { SEOHead } from '@/components/SEO/SEOHead';
 import { BreadcrumbSchema } from '@/components/SEO/BreadcrumbSchema';
 import { BASE_URL } from '@/config/constants';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { OptimizedImage } from '@/components/ui/optimized-image';
-import { Clock, Calendar, Tag, ChevronRight } from 'lucide-react';
 import { SafeHTML } from '@/components/admin/SafeHTML';
-import { StandaloneNavbar } from '@/components/sections/StandaloneNavbar';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 import { Helmet } from 'react-helmet-async';
-import { TableOfContents } from '@/components/TableOfContents';
 import { BackToTop } from '@/components/BackToTop';
 
 function RelatedArticles({ currentArticle }: { currentArticle: DbArticle }) {
@@ -33,34 +26,30 @@ function RelatedArticles({ currentArticle }: { currentArticle: DbArticle }) {
   if (related.length === 0) return null;
 
   return (
-    <section className="mt-12">
-      <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-        <span className="text-accent">→</span>
-        Artigos Relacionados
-      </h2>
-      <div className="grid gap-4">
+    <div className="pp-section">
+      <h2>Artigos Relacionados</h2>
+      <div style={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid var(--ed-line)' }}>
         {related.map((a) => (
-          <Link key={a.id} to={`/artigo/${a.slug}`} className="group">
-            <Card className="hover:shadow-elegant transition-all hover:border-accent/30 hover:-translate-y-0.5">
-              <CardContent className="p-5 flex items-center gap-4">
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-foreground group-hover:text-accent transition-colors truncate">
-                    {a.title}
-                  </h3>
-                  {a.excerpt && (
-                    <p className="text-sm text-muted-foreground line-clamp-1 mt-1">{a.excerpt}</p>
-                  )}
+          <Link key={a.id} to={`/artigo/${a.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div style={{ padding: '16px 0', borderBottom: '1px solid var(--ed-line)', transition: 'padding .15s' }}
+              onMouseEnter={e => (e.currentTarget.style.paddingLeft = '8px')}
+              onMouseLeave={e => (e.currentTarget.style.paddingLeft = '0')}
+            >
+              <div style={{ fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 440, letterSpacing: '-0.01em', marginBottom: 4 }}>
+                {a.title}
+              </div>
+              {a.excerpt && (
+                <div style={{ fontSize: 14, color: 'var(--ed-muted)', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  {a.excerpt}
                 </div>
-                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-accent transition-colors flex-shrink-0" />
-              </CardContent>
-            </Card>
+              )}
+            </div>
           </Link>
         ))}
       </div>
-    </section>
+    </div>
   );
 }
-
 
 export default function ArticleDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -69,31 +58,17 @@ export default function ArticleDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background pt-20">
-        <div className="max-w-3xl mx-auto px-6 py-12">
-          <Skeleton className="h-8 w-48 mb-8" />
-          <Skeleton className="h-12 w-3/4 mb-4" />
-          <Skeleton className="h-64 w-full mb-8" />
-          <Skeleton className="h-32 w-full" />
-        </div>
+      <div className="ed-root" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span className="ed-mono" style={{ color: 'var(--ed-muted)' }}>Carregando…</span>
       </div>
     );
   }
 
   if (error || !article) {
     return (
-      <div className="min-h-screen bg-background pt-20 flex items-center justify-center">
-        <Card className="max-w-md mx-auto">
-          <CardContent className="p-8 text-center">
-            <h1 className="text-2xl font-bold mb-4">Artigo não encontrado</h1>
-            <p className="text-muted-foreground mb-6">
-              O artigo que você procura não existe ou foi removido.
-            </p>
-            <Button onClick={() => navigate('/')}>
-              Voltar ao Portfolio
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="ed-root" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 24 }}>
+        <p style={{ fontFamily: 'Fraunces, serif', fontSize: 32, fontStyle: 'italic' }}>Artigo não encontrado</p>
+        <button className="pp-btn pp-btn-sec" onClick={() => navigate('/artigos')}>← Voltar aos artigos</button>
       </div>
     );
   }
@@ -102,21 +77,19 @@ export default function ArticleDetail() {
     ? new Date(article.published_at).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' })
     : null;
 
+  const publishedDateShort = article.published_at
+    ? new Date(article.published_at).toLocaleDateString('pt-BR', { year: 'numeric', month: 'short', day: 'numeric' })
+    : null;
+
   return (
-    <>
+    <div className="ed-root">
       <SEOHead
         title={article.meta_title || article.title}
         description={article.meta_description || article.excerpt || article.content.replace(/<[^>]*>/g, '').slice(0, 160)}
         canonicalUrl={`${BASE_URL}/artigo/${article.slug}`}
         ogType="article"
         ogImage={article.cover_image_url || undefined}
-        keywords={[
-          article.title,
-          ...(article.tags || []),
-          'artigo',
-          'blog',
-          'Nei Girão',
-        ]}
+        keywords={[article.title, ...(article.tags || []), 'artigo', 'blog', 'Nei Girão']}
       />
       <Helmet>
         {article.published_at && <meta property="article:published_time" content={article.published_at} />}
@@ -137,15 +110,8 @@ export default function ArticleDetail() {
         "dateModified": article.updated_at,
         ...(article.cover_image_url ? { "image": article.cover_image_url } : {}),
         ...(article.tags ? { "keywords": article.tags.join(", ") } : {}),
-        "publisher": {
-          "@type": "Person",
-          "name": "Nei Girão",
-          "url": BASE_URL,
-        },
-        "mainEntityOfPage": {
-          "@type": "WebPage",
-          "@id": `${BASE_URL}/artigo/${article.slug}`,
-        },
+        "publisher": { "@type": "Person", "name": "Nei Girão", "url": BASE_URL },
+        "mainEntityOfPage": { "@type": "WebPage", "@id": `${BASE_URL}/artigo/${article.slug}` },
       }) }} />
       <BreadcrumbSchema items={[
         { name: 'Início', url: '/' },
@@ -153,121 +119,161 @@ export default function ArticleDetail() {
         { name: article.title },
       ]} />
 
-      <div className="min-h-screen bg-background">
-        <StandaloneNavbar />
-        {/* Header */}
-        <header className="bg-gradient-hero pt-24 pb-16">
-          <div className="max-w-3xl mx-auto px-6">
-            {/* Breadcrumb */}
-            <nav className="flex items-center gap-2 text-sm text-white/70 mb-8" aria-label="Breadcrumb">
-              <Link to="/" className="hover:text-white transition-colors">Início</Link>
-              <ChevronRight className="w-4 h-4" />
-              <Link to="/artigos" className="hover:text-white transition-colors">Artigos</Link>
-              <ChevronRight className="w-4 h-4" />
-              <span className="text-white truncate max-w-[200px]">{article.title}</span>
-            </nav>
+      {/* MASTHEAD */}
+      <header className="ed-mast">
+        <div className="ed-mast-left">
+          <Link to="/" className="ed-mast-title">Nei Girão</Link>
+          <span className="ed-mast-sub">Edição 2026 · Vol. XV</span>
+        </div>
+        <nav className="ed-mast-right">
+          <Link to="/">Início</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/artigos">Artigos</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/sobre">Sobre</Link>
+          <span className="ed-sep">·</span>
+          <Link to="/contato">Contato</Link>
+        </nav>
+      </header>
 
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-6">
-              {article.title}
-            </h1>
+      {/* BREADCRUMB */}
+      <div className="ed-container">
+        <div className="pp-crumb">
+          <Link to="/">Nei Girão</Link>
+          <span className="pp-crumb-sep">/</span>
+          <Link to="/artigos">Artigos</Link>
+          <span className="pp-crumb-sep">/</span>
+          <span className="pp-crumb-current" style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{article.title}</span>
+        </div>
+      </div>
 
-            <div className="flex flex-wrap items-center gap-4 text-white/80">
-              {publishedDate && (
-                <span className="flex items-center gap-1.5 text-sm">
-                  <Calendar className="w-4 h-4" />
-                  {publishedDate}
-                </span>
-              )}
-              {article.reading_time_minutes && (
-                <span className="flex items-center gap-1.5 text-sm">
-                  <Clock className="w-4 h-4" />
-                  {article.reading_time_minutes} min de leitura
-                </span>
-              )}
-            </div>
-
-            {article.tags && article.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-4">
-                {article.tags.map((tag, i) => (
-                  <span
-                    key={i}
-                    className="inline-flex items-center gap-1 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-sm text-white/90"
-                  >
-                    <Tag className="w-3 h-3" />
-                    {tag}
-                  </span>
-                ))}
-              </div>
+      {/* HERO */}
+      <section className="pp-hero">
+        <div className="ed-container">
+          <div className="pp-brand-row">
+            {publishedDateShort && <span>{publishedDateShort}</span>}
+            {article.reading_time_minutes && (
+              <>
+                <span className="pp-brand-sep">·</span>
+                <span style={{ color: 'var(--ed-muted)' }}>{article.reading_time_minutes} min de leitura</span>
+              </>
             )}
           </div>
-        </header>
+          <h1 className="pp-title ed-display">{article.title}</h1>
+          {article.excerpt && (
+            <div className="pp-role">{article.excerpt}</div>
+          )}
+          {article.tags && article.tags.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 24 }}>
+              {article.tags.map((tag, i) => (
+                <span key={i} style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ed-accent)', background: 'rgba(179,58,45,0.07)', padding: '4px 10px', borderRadius: 3 }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
 
-        {/* Content */}
-        <main className="max-w-5xl mx-auto px-6 py-12">
-          <div className="flex gap-10 items-start">
-            <div className="flex-1 min-w-0">
-              {/* Cover Image */}
-              {article.cover_image_url && (
-                <Card className="mb-8 overflow-hidden shadow-elegant">
-                  <OptimizedImage
-                    src={article.cover_image_url}
-                    alt={article.title}
-                    className="w-full h-64 md:h-96"
-                    priority
-                  />
-                </Card>
+      {/* COVER IMAGE */}
+      {article.cover_image_url && (
+        <section className="pp-shot">
+          <div className="ed-container">
+            <div className="pp-shot-frame">
+              <OptimizedImage
+                src={article.cover_image_url}
+                alt={article.title}
+                className="w-full h-full"
+                priority
+              />
+            </div>
+            <div className="pp-shot-caption">{article.title}</div>
+          </div>
+        </section>
+      )}
+
+      {/* BODY */}
+      <section className="pp-body">
+        <div className="ed-container">
+          <div className="pp-grid">
+            {/* SIDEBAR */}
+            <aside className="pp-side">
+              {publishedDate && (
+                <div className="pp-side-block">
+                  <div className="pp-side-head">Publicado em</div>
+                  <div style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: 15, color: 'var(--ed-fg)', textTransform: 'none', letterSpacing: 0 }}>{publishedDate}</div>
+                </div>
               )}
 
-              {/* Article Content */}
-              <Card className="shadow-elegant border-2 border-border/50 mb-8">
-                <CardContent className="p-8 md:p-12">
-                  <SafeHTML
-                    html={article.content}
-                    className="prose prose-lg dark:prose-invert max-w-none leading-relaxed
-                      prose-headings:text-foreground prose-headings:font-bold
-                      prose-a:text-accent prose-a:underline
-                      prose-img:rounded-lg prose-img:shadow-md"
-                  />
-                </CardContent>
-              </Card>
+              {article.reading_time_minutes && (
+                <div className="pp-side-block">
+                  <div className="pp-side-head">Leitura</div>
+                  <div style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: 15, color: 'var(--ed-fg)', textTransform: 'none', letterSpacing: 0 }}>
+                    {article.reading_time_minutes} minutos
+                  </div>
+                </div>
+              )}
 
-              {/* Author Card */}
-              <Card className="shadow-elegant mb-8">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-secondary flex items-center justify-center text-white font-bold text-lg">
-                    NG
-                  </div>
-                  <div>
-                    <p className="font-semibold text-foreground">Nei Girão</p>
-                    <p className="text-sm text-muted-foreground">Product Manager | Observabilidade | Produtos Digitais</p>
-                  </div>
-                </CardContent>
-              </Card>
+              {article.tags && article.tags.length > 0 && (
+                <div className="pp-side-block">
+                  <div className="pp-side-head">Temas</div>
+                  {article.tags.map((tag, i) => (
+                    <span key={i} className="pp-outcome" style={{ marginBottom: 4 }}>{tag}</span>
+                  ))}
+                </div>
+              )}
+
+              <div className="pp-side-block">
+                <div className="pp-side-head">Autor</div>
+                <div style={{ fontFamily: 'Fraunces, serif', fontSize: 15, fontWeight: 440 }}>Nei Girão</div>
+                <div style={{ fontSize: 12, color: 'var(--ed-muted)', marginTop: 4, textTransform: 'none', letterSpacing: 0 }}>Product Manager</div>
+              </div>
+            </aside>
+
+            {/* MAIN */}
+            <div className="pp-main">
+              <div className="pp-section">
+                <SafeHTML
+                  html={article.content}
+                  className="pp-prose"
+                />
+              </div>
 
               {/* Related Articles */}
               <RelatedArticles currentArticle={article} />
-
-              {/* CTA */}
-              <div className="mt-12 text-center">
-                <p className="text-muted-foreground mb-4">
-                  Gostou deste artigo? Confira outros conteúdos ou entre em contato.
-                </p>
-                <div className="flex gap-3 justify-center">
-                  <Button variant="outline" onClick={() => navigate('/artigos')}>
-                    Ver Mais Artigos
-                  </Button>
-                  <Button onClick={() => navigate('/#contact')}>
-                    Entre em Contato
-                  </Button>
-                </div>
-              </div>
             </div>
-
-            <TableOfContents key={article.id} />
           </div>
-        </main>
-        <BackToTop />
-      </div>
-    </>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="pp-cta">
+        <div className="ed-container">
+          <div className="pp-cta-grid">
+            <h3>
+              Gostou deste <em>artigo</em>?
+            </h3>
+            <div className="pp-cta-actions">
+              <button className="pp-btn pp-btn-pri" onClick={() => navigate('/artigos')}>
+                Ver mais artigos
+              </button>
+              <button className="pp-btn pp-btn-sec" onClick={() => navigate('/#contact')}>
+                Entre em contato
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="pp-foot">
+        <div>© Nei Girão · 2026</div>
+        <div>
+          <Link to="/artigos" style={{ color: '#E27464' }}>← Voltar aos artigos</Link>
+        </div>
+      </footer>
+
+      <BackToTop />
+    </div>
   );
 }
