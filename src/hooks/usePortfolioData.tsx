@@ -8,6 +8,7 @@ export interface DbExperience {
   role: string;
   period: string;
   description: string;
+  excerpt: string | null;
   logo_url: string | null;
   slug: string | null;
   order_index: number;

@@ -7,6 +7,7 @@ interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> 
   fallback?: string;
   aspectRatio?: string;
   priority?: boolean;
+  fetchPriority?: 'high' | 'low' | 'auto';
 }
 
 export function OptimizedImage({
@@ -15,6 +16,7 @@ export function OptimizedImage({
   fallback = '/placeholder.svg',
   aspectRatio,
   priority = false,
+  fetchPriority,
   className,
   ...props
 }: OptimizedImageProps) {
@@ -63,6 +65,7 @@ export function OptimizedImage({
           src={imageSrc}
           alt={alt}
           loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={fetchPriority}
           decoding="async"
           onLoad={() => setIsLoaded(true)}
           onError={() => setHasError(true)}
