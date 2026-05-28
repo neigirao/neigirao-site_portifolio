@@ -121,7 +121,7 @@ export interface AdminLabProject {
 const queryOptions = {
   staleTime: 1000 * 60 * 5,
   gcTime: 1000 * 60 * 30,
-  refetchOnWindowFocus: true,
+  refetchOnWindowFocus: false,
 };
 
 export function useAdminExperiences() {

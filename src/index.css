@@ -806,3 +806,13 @@ All colors MUST be HSL.
   .ed-project:nth-child(2n) { border-right: none; }
   .ed-stack-grid { grid-template-columns: 1fr; }
 }
+
+/* GPU acceleration for scale hover animations */
+.hover\:scale-105:hover,
+.hover\:scale-110:hover,
+.group:hover .group-hover\:scale-105,
+.group:hover .group-hover\:scale-110 {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}

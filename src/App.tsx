@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
+import { prefetchPortfolioData } from '@/hooks/usePortfolioData';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -70,6 +71,9 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+// Prefetch critical data before first render
+prefetchPortfolioData(queryClient);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
