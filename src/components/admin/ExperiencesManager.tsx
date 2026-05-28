@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Pencil, Trash2, Eye, Copy, EyeOff, Search, X, ExternalLink } from 'lucide-react';
@@ -27,6 +28,7 @@ interface Experience {
   role: string;
   period: string;
   description: string;
+  excerpt: string | null;
   logo_url: string | null;
   order_index: number;
   meta_title: string | null;
@@ -46,7 +48,7 @@ interface ExperiencesManagerProps {
 }
 
 const emptyForm = {
-  company: '', role: '', period: '', description: '', logo_url: '',
+  company: '', role: '', period: '', description: '', excerpt: '', logo_url: '',
   meta_title: '', meta_description: '', slug: '',
   is_case: false, case_result: '', case_body: '', case_title: '', case_challenge: '', case_solution: '',
 };
@@ -107,7 +109,8 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
     const existingExp = editingId ? experiences.find(e => e.id === editingId) : null;
     const dataToSubmit = {
       company: formData.company, role: formData.role, period: formData.period,
-      description: formData.description, logo_url: formData.logo_url || null,
+      description: formData.description, excerpt: formData.excerpt || null,
+      logo_url: formData.logo_url || null,
       meta_title: formData.meta_title || null, meta_description: formData.meta_description || null,
       slug: slugToUse || null,
       is_case: formData.is_case,
@@ -137,7 +140,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
     setEditingId(exp.id);
     setFormData({
       company: exp.company, role: exp.role, period: exp.period,
-      description: exp.description, logo_url: exp.logo_url || '',
+      description: exp.description, excerpt: exp.excerpt || '', logo_url: exp.logo_url || '',
       meta_title: exp.meta_title || '', meta_description: exp.meta_description || '', slug: exp.slug || '',
       is_case: exp.is_case || false, case_result: exp.case_result || '', case_body: exp.case_body || '',
       case_title: exp.case_title || '', case_challenge: exp.case_challenge || '', case_solution: exp.case_solution || '',
@@ -273,6 +276,18 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
             </div>
             <ImageUploader value={formData.logo_url} onChange={(url) => setFormData({ ...formData, logo_url: url })} label="Logo da Empresa" folder="experiences" />
             <RichTextEditor value={formData.description} onChange={(value) => setFormData({ ...formData, description: value })} label="Descrição" />
+            <div className="space-y-2">
+              <Label htmlFor="excerpt">Excerpt / Resumo social</Label>
+              <Textarea
+                id="excerpt"
+                value={formData.excerpt}
+                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                placeholder="Breve resumo para OG e cards (máx. 280 chars)"
+                maxLength={280}
+                rows={3}
+              />
+              <p className="text-xs text-muted-foreground">{formData.excerpt.length}/280 chars — usado como meta description e preview social</p>
+            </div>
 
             {/* Campos para design editorial (Cases) */}
             <div className="space-y-3 p-3 border rounded-lg bg-muted/30">

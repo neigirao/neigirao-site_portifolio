@@ -47,7 +47,7 @@ export default function ExperienceDetail() {
     <div className="ed-root">
       <SEOHead
         title={experience.meta_title || `${experience.role} — ${experience.company}`}
-        description={experience.meta_description || experience.description.slice(0, 160)}
+        description={exp.excerpt || experience.meta_description || experience.description.slice(0, 160)}
         canonicalUrl={`${BASE_URL}/experiencia/${canonicalSlug}`}
         ogType="article"
         ogImage={experience.logo_url || undefined}
@@ -111,6 +111,9 @@ export default function ExperienceDetail() {
           </div>
           <h1 className="pp-title ed-display">{exp.case_title || experience.role}</h1>
           <div className="pp-role">{experience.company}</div>
+          {exp.excerpt && (
+            <p style={{ marginTop: 16, fontFamily: 'Source Serif 4, Georgia, serif', fontSize: 18, lineHeight: 1.6, color: 'var(--ed-muted)', maxWidth: 640 }}>{exp.excerpt}</p>
+          )}
         </div>
       </section>
 
@@ -126,6 +129,7 @@ export default function ExperienceDetail() {
                   <img
                     src={experience.logo_url}
                     alt={`${experience.company} logo`}
+                    loading="lazy"
                     style={{ maxWidth: 120, maxHeight: 60, objectFit: 'contain', display: 'block' }}
                   />
                 </div>

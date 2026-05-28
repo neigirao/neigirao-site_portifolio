@@ -216,6 +216,7 @@ export type Database = {
           company: string
           created_at: string
           description: string
+          excerpt: string | null
           id: string
           is_case: boolean
           is_visible: boolean
@@ -234,6 +235,7 @@ export type Database = {
           company: string
           created_at?: string
           description: string
+          excerpt?: string | null
           id?: string
           is_case?: boolean
           is_visible?: boolean
@@ -252,6 +254,7 @@ export type Database = {
           company?: string
           created_at?: string
           description?: string
+          excerpt?: string | null
           id?: string
           is_case?: boolean
           is_visible?: boolean

@@ -1,6 +1,6 @@
 # Roadmap
 
-Histórico de evoluções e próximos passos do portfolio de Nei Girão.
+Histórico de evoluções do portfolio de Nei Girão.
 
 ---
 
@@ -90,79 +90,18 @@ Histórico de evoluções e próximos passos do portfolio de Nei Girão.
 - Prefetch de rotas ao hover nos cards
 - `RichTextEditor` (Tiptap) em chunk separado (lazy load, só no admin)
 
+### Layout editorial — migração de páginas (Mai 2026)
+- `Sobre.tsx`, `Contato.tsx`, `ArticlesListing.tsx`, `ArticleDetail.tsx`, `SkillDetail.tsx` migrados do layout antigo (shadcn Cards + bg-gradient-hero) para o design system editorial (`ed-root`, `pp-hero`, `pp-body`, `pp-grid`)
+- Correção de rota `/admin` → redirect para `/admin/dashboard`
+
 ### Documentação (Mai 2026)
 - `CLAUDE.md`, `README.md`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, `docs/AI_MAINTENANCE_GUIDE.md`
 
----
-
-## Em aberto — prioridade alta
-
-### Busca em ArticlesManager
-- Filtro por título, tag ou status (publicado/rascunho)
-- Pattern já existente em ProjectsManager e ExperiencesManager
-
-### ContactMessagesManager — melhorias
-- Marcar como lida / arquivar
-- Notificação por email via Edge Function quando nova mensagem chega
-- Exportar CSV
-
-### Redator — Pitch de valor global
-- Chave `value_pitch` em `site_settings`: frase única (máx. 160 chars)
-- Usar como fallback de `meta_description` nas páginas sem descrição própria
+### Excerpt e performance (Mai 2026)
+- Campo `excerpt` em `experiences`: migration, types, interface, ExperiencesManager (textarea + char counter), ExperienceDetail (SEO description + pp-hero preview)
+- `loading="lazy"` no logo de empresa em `ExperienceDetail`
+- `fetchPriority` prop em `OptimizedImage`
 
 ---
 
-## Em aberto — prioridade média
-
-### Bulk actions nos managers
-- Seleção múltipla de itens para ocultar/mostrar/excluir em lote
-
-### Histórico simples de edições
-- Snapshot do registro antes de cada update
-- Tabela `edit_history` com `entity`, `entity_id`, `before`, `after`, `edited_at`
-
-### Redator — Excerpt para compartilhamento social
-- Campo `excerpt` (TEXT, máx. 280 chars) em `articles` e `experiences`
-- Usar como preview em cards de artigo e OG description
-
-### UX — Filtro/busca em ArticlesListing (página pública)
-- Input de busca por título, tag ou categoria em `ArticlesListing.tsx`
-
-### Conteúdo relacionado em ArticleDetail
-- Aplicar `useRelatedContent` na página de detalhe de artigo (já feito em Experience e Project)
-
----
-
-## Em aberto — prioridade baixa
-
-### Acessibilidade
-- `:focus-visible` ring consistente em todos os links interativos
-- `prefers-reduced-motion` nas transições de EssaySection e PullQuoteSection
-- Navegação por teclado no WorkSection
-- Revisão de tipografia em mobile 393px
-
-### Performance
-- `OptimizedImage` com `fetchpriority="high"` no LCP do CoverSection
-- `loading="lazy"` padronizado em todas as seções
-
-### Segurança e robustez
-- Auditoria de RLS — revisar policies
-- Substituir `from('faqs' as any)` por tipos gerados (`supabase gen types`)
-- Lint rule para proibir cores hardcoded fora dos tokens Tailwind
-
-### DX e testes
-- Smoke tests dos managers principais com Vitest + Testing Library
-- Storybook leve para componentes UI do admin
-
----
-
-## Notas de arquitetura
-
-- Migrations são aplicadas automaticamente pelo Lovable no merge de PR — nunca executar manualmente em produção
-- `src/integrations/supabase/types.ts` é gerado automaticamente — nunca editar manualmente
-- `src/components/ui/` é shadcn — não editar diretamente
-- Novo conteúdo sempre pelo admin `/admin`, nunca hardcoded
-
----
-
-*Última atualização: 2026-05-25 — auditoria completa, itens médio/baixo resolvidos*
+*Última atualização: 2026-05-28*
