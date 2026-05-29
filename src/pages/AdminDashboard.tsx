@@ -1,24 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { ExperiencesManager } from '@/components/admin/ExperiencesManager';
-import { ProjectsManager } from '@/components/admin/ProjectsManager';
-import { SkillsManager } from '@/components/admin/SkillsManager';
-import { EducationManager } from '@/components/admin/EducationManager';
-import { MetricsManager } from '@/components/admin/MetricsManager';
-import { CompaniesManager } from '@/components/admin/CompaniesManager';
-import { CertificationsManager } from '@/components/admin/CertificationsManager';
-import { TestimonialsManager } from '@/components/admin/TestimonialsManager';
-import { FAQsManager } from '@/components/admin/FAQsManager';
-import { LabManager } from '@/components/admin/LabManager';
-import { DashboardStats } from '@/components/admin/DashboardStats';
-import { BulkSlugGenerator } from '@/components/admin/BulkSlugGenerator';
-import { SiteSettingsManager } from '@/components/admin/SiteSettingsManager';
-import { ArticlesManager } from '@/components/admin/ArticlesManager';
-import { ContactMessagesManager } from '@/components/admin/ContactMessagesManager';
+const ExperiencesManager = lazy(() => import('@/components/admin/ExperiencesManager').then(m => ({ default: m.ExperiencesManager })));
+const ProjectsManager = lazy(() => import('@/components/admin/ProjectsManager').then(m => ({ default: m.ProjectsManager })));
+const SkillsManager = lazy(() => import('@/components/admin/SkillsManager').then(m => ({ default: m.SkillsManager })));
+const EducationManager = lazy(() => import('@/components/admin/EducationManager').then(m => ({ default: m.EducationManager })));
+const MetricsManager = lazy(() => import('@/components/admin/MetricsManager').then(m => ({ default: m.MetricsManager })));
+const CompaniesManager = lazy(() => import('@/components/admin/CompaniesManager').then(m => ({ default: m.CompaniesManager })));
+const CertificationsManager = lazy(() => import('@/components/admin/CertificationsManager').then(m => ({ default: m.CertificationsManager })));
+const TestimonialsManager = lazy(() => import('@/components/admin/TestimonialsManager').then(m => ({ default: m.TestimonialsManager })));
+const FAQsManager = lazy(() => import('@/components/admin/FAQsManager').then(m => ({ default: m.FAQsManager })));
+const LabManager = lazy(() => import('@/components/admin/LabManager').then(m => ({ default: m.LabManager })));
+const DashboardStats = lazy(() => import('@/components/admin/DashboardStats').then(m => ({ default: m.DashboardStats })));
+const BulkSlugGenerator = lazy(() => import('@/components/admin/BulkSlugGenerator').then(m => ({ default: m.BulkSlugGenerator })));
+const SiteSettingsManager = lazy(() => import('@/components/admin/SiteSettingsManager').then(m => ({ default: m.SiteSettingsManager })));
+const ArticlesManager = lazy(() => import('@/components/admin/ArticlesManager').then(m => ({ default: m.ArticlesManager })));
+const ContactMessagesManager = lazy(() => import('@/components/admin/ContactMessagesManager').then(m => ({ default: m.ContactMessagesManager })));
 import { useAdminDashboardData } from '@/hooks/useAdminData';
 import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
 import { supabase } from '@/integrations/supabase/client';
@@ -158,7 +158,7 @@ export default function AdminDashboard() {
           </div>
           <div className="flex items-center gap-2">
             <TooltipProvider delayDuration={300}>
-              <BulkSlugGenerator onComplete={refetchAll} />
+              <Suspense fallback={null}><BulkSlugGenerator onComplete={refetchAll} /></Suspense>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button onClick={handleExportJSON} variant="ghost" size="sm" disabled={isExporting} aria-label="Exportar backup JSON">
@@ -197,21 +197,23 @@ export default function AdminDashboard() {
       <main id="main-content" className="container mx-auto px-4 py-8" role="main">
         <section aria-labelledby="dashboard-heading" className="mb-8">
           <h2 id="dashboard-heading" className="sr-only">Estatísticas do Dashboard</h2>
-          <DashboardStats
-            experiences={experiences}
-            skills={skills}
-            education={education}
-            projects={projects}
-            articles={articles}
-            testimonials={testimonials}
-            certifications={certifications}
-            companies={companies}
-            metrics={metrics}
-            faqs={faqs}
-            unreadMessages={unreadMessages}
-            draftArticles={draftArticles}
-            isLoading={isLoading}
-          />
+          <Suspense fallback={null}>
+            <DashboardStats
+              experiences={experiences}
+              skills={skills}
+              education={education}
+              projects={projects}
+              articles={articles}
+              testimonials={testimonials}
+              certifications={certifications}
+              companies={companies}
+              metrics={metrics}
+              faqs={faqs}
+              unreadMessages={unreadMessages}
+              draftArticles={draftArticles}
+              isLoading={isLoading}
+            />
+          </Suspense>
         </section>
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
@@ -242,45 +244,47 @@ export default function AdminDashboard() {
             })}
           </div>
 
-          <TabsContent value="experiences">
-            <ExperiencesManager onDirtyChange={setIsDirty} />
-          </TabsContent>
-          <TabsContent value="projects">
-            <ProjectsManager onDirtyChange={setIsDirty} />
-          </TabsContent>
-          <TabsContent value="articles">
-            <ArticlesManager onDirtyChange={setIsDirty} />
-          </TabsContent>
-          <TabsContent value="lab">
-            <LabManager onDirtyChange={setIsDirty} />
-          </TabsContent>
-          <TabsContent value="skills">
-            <SkillsManager onDirtyChange={setIsDirty} />
-          </TabsContent>
-          <TabsContent value="education">
-            <EducationManager onDirtyChange={setIsDirty} />
-          </TabsContent>
-          <TabsContent value="metrics">
-            <MetricsManager onDirtyChange={setIsDirty} />
-          </TabsContent>
-          <TabsContent value="companies">
-            <CompaniesManager onDirtyChange={setIsDirty} />
-          </TabsContent>
-          <TabsContent value="certifications">
-            <CertificationsManager onDirtyChange={setIsDirty} />
-          </TabsContent>
-          <TabsContent value="testimonials">
-            <TestimonialsManager onDirtyChange={setIsDirty} />
-          </TabsContent>
-          <TabsContent value="faqs">
-            <FAQsManager onDirtyChange={setIsDirty} />
-          </TabsContent>
-          <TabsContent value="messages">
-            <ContactMessagesManager />
-          </TabsContent>
-          <TabsContent value="settings">
-            <SiteSettingsManager />
-          </TabsContent>
+          <Suspense fallback={<div className="py-12 text-center text-muted-foreground text-sm">Carregando…</div>}>
+            <TabsContent value="experiences">
+              <ExperiencesManager onDirtyChange={setIsDirty} />
+            </TabsContent>
+            <TabsContent value="projects">
+              <ProjectsManager onDirtyChange={setIsDirty} />
+            </TabsContent>
+            <TabsContent value="articles">
+              <ArticlesManager onDirtyChange={setIsDirty} />
+            </TabsContent>
+            <TabsContent value="lab">
+              <LabManager onDirtyChange={setIsDirty} />
+            </TabsContent>
+            <TabsContent value="skills">
+              <SkillsManager onDirtyChange={setIsDirty} />
+            </TabsContent>
+            <TabsContent value="education">
+              <EducationManager onDirtyChange={setIsDirty} />
+            </TabsContent>
+            <TabsContent value="metrics">
+              <MetricsManager onDirtyChange={setIsDirty} />
+            </TabsContent>
+            <TabsContent value="companies">
+              <CompaniesManager onDirtyChange={setIsDirty} />
+            </TabsContent>
+            <TabsContent value="certifications">
+              <CertificationsManager onDirtyChange={setIsDirty} />
+            </TabsContent>
+            <TabsContent value="testimonials">
+              <TestimonialsManager onDirtyChange={setIsDirty} />
+            </TabsContent>
+            <TabsContent value="faqs">
+              <FAQsManager onDirtyChange={setIsDirty} />
+            </TabsContent>
+            <TabsContent value="messages">
+              <ContactMessagesManager />
+            </TabsContent>
+            <TabsContent value="settings">
+              <SiteSettingsManager />
+            </TabsContent>
+          </Suspense>
         </Tabs>
       </main>
 
