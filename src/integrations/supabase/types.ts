@@ -212,7 +212,10 @@ export type Database = {
       experiences: {
         Row: {
           case_body: string | null
+          case_challenge: string | null
           case_result: string | null
+          case_solution: string | null
+          case_title: string | null
           company: string
           created_at: string
           description: string
@@ -231,7 +234,10 @@ export type Database = {
         }
         Insert: {
           case_body?: string | null
+          case_challenge?: string | null
           case_result?: string | null
+          case_solution?: string | null
+          case_title?: string | null
           company: string
           created_at?: string
           description: string
@@ -250,7 +256,10 @@ export type Database = {
         }
         Update: {
           case_body?: string | null
+          case_challenge?: string | null
           case_result?: string | null
+          case_solution?: string | null
+          case_title?: string | null
           company?: string
           created_at?: string
           description?: string
