@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,8 @@ import { ImageUploader } from './ImageUploader';
 import { SortableList } from './SortableList';
 import { AutosaveIndicator } from './AutosaveIndicator';
 import { useAutosave } from '@/hooks/useAutosave';
+import { useFormShortcuts } from '@/hooks/useFormShortcuts';
+import { CompletenessIndicator } from './CompletenessIndicator';
 
 interface Certification {
   id: string;
@@ -119,6 +121,12 @@ export function CertificationsManager({ onDirtyChange }: CertificationsManagerPr
 
   const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
+  const formRef = useRef<HTMLFormElement>(null);
+  useFormShortcuts({
+    onSave: () => formRef.current?.requestSubmit(),
+    onCancel: editingId ? resetForm : undefined,
+  });
+
   return (
     <div className="space-y-6">
       <Card>
@@ -129,7 +137,7 @@ export function CertificationsManager({ onDirtyChange }: CertificationsManagerPr
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Nome <span className="text-destructive" aria-hidden="true">*</span></Label>
@@ -180,6 +188,7 @@ export function CertificationsManager({ onDirtyChange }: CertificationsManagerPr
                   <div>
                     <span className="font-semibold">{c.name}</span>
                     <span className="ml-2 text-sm text-muted-foreground">{c.issuer}{c.year ? ` · ${c.year}` : ''}</span>
+                    <div className="mt-1"><CompletenessIndicator hasImage={!!c.logo_url} itemName={c.name} /></div>
                   </div>
                 </div>
                 <div className="flex gap-2 flex-shrink-0 ml-4 items-center">

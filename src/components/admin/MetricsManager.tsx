@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,7 @@ import { SortableList } from './SortableList';
 import { AutosaveIndicator } from './AutosaveIndicator';
 import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { useAutosave } from '@/hooks/useAutosave';
+import { useFormShortcuts } from '@/hooks/useFormShortcuts';
 
 interface Metric {
   id: string;
@@ -139,6 +140,12 @@ export function MetricsManager({ onDirtyChange }: MetricsManagerProps) {
 
   const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
+  const formRef = useRef<HTMLFormElement>(null);
+  useFormShortcuts({
+    onSave: () => formRef.current?.requestSubmit(),
+    onCancel: editingId ? resetForm : undefined,
+  });
+
   return (
     <div className="space-y-6">
       <Card>
@@ -149,7 +156,7 @@ export function MetricsManager({ onDirtyChange }: MetricsManagerProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="metric-value">Valor <span className="text-destructive" aria-hidden="true">*</span></Label>

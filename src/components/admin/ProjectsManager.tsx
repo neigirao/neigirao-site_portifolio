@@ -2,7 +2,7 @@
  * ProjectsManager Component
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,7 @@ import { PreviewModal } from './PreviewModal';
 import { CompletenessIndicator } from './CompletenessIndicator';
 import { AutosaveIndicator } from './AutosaveIndicator';
 import { useAutosave } from '@/hooks/useAutosave';
+import { useFormShortcuts } from '@/hooks/useFormShortcuts';
 
 interface Project {
   id: string;
@@ -274,6 +275,12 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
 
   const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
+  const formRef = useRef<HTMLFormElement>(null);
+  useFormShortcuts({
+    onSave: () => formRef.current?.requestSubmit(),
+    onCancel: editingId ? resetForm : undefined,
+  });
+
   const filteredProjects = searchQuery
     ? projects.filter(p =>
         p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -291,7 +298,7 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">Título</Label>
               <Input id="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
@@ -373,7 +380,8 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <Input
-              placeholder="Buscar por título ou tag..."
+              data-search-input
+              placeholder="Buscar por título ou tag... (atalho: /)"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="pl-9"

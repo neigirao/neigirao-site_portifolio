@@ -2,7 +2,7 @@
  * ExperiencesManager Component
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,7 @@ import { PreviewModal } from './PreviewModal';
 import { CompletenessIndicator } from './CompletenessIndicator';
 import { AutosaveIndicator } from './AutosaveIndicator';
 import { useAutosave } from '@/hooks/useAutosave';
+import { useFormShortcuts } from '@/hooks/useFormShortcuts';
 import { generateSlug } from '@/hooks/usePortfolioDetail';
 
 interface Experience {
@@ -205,6 +206,12 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
 
   const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
+  const formRef = useRef<HTMLFormElement>(null);
+  useFormShortcuts({
+    onSave: () => formRef.current?.requestSubmit(),
+    onCancel: editingId ? resetForm : undefined,
+  });
+
   const filteredExperiences = searchQuery
     ? experiences.filter(exp =>
         exp.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -259,7 +266,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="company">Empresa</Label>
@@ -354,6 +361,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
               onMetaDescriptionChange={(value) => setFormData({ ...formData, meta_description: value })}
               onSlugChange={(value) => setFormData({ ...formData, slug: value })}
               titleSource={`${formData.role} - ${formData.company}`}
+              existingSlugs={experiences.filter(e => e.id !== editingId && e.slug).map(e => e.slug!)}
             />
             <div className="flex gap-2">
               <Button type="submit">{editingId ? 'Atualizar' : 'Criar'}</Button>
@@ -371,7 +379,8 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <Input
-              placeholder="Buscar por cargo ou empresa..."
+              data-search-input
+              placeholder="Buscar por cargo ou empresa... (atalho: /)"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="pl-9"
