@@ -13,6 +13,7 @@ import { AutosaveIndicator } from './AutosaveIndicator';
 import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { useAutosave } from '@/hooks/useAutosave';
 import { useFormShortcuts } from '@/hooks/useFormShortcuts';
+import { CompletenessIndicator } from './CompletenessIndicator';
 
 interface Company {
   id: string;

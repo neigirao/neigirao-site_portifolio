@@ -13,6 +13,7 @@ import { SortableList } from './SortableList';
 import { AutosaveIndicator } from './AutosaveIndicator';
 import { useAutosave } from '@/hooks/useAutosave';
 import { useFormShortcuts } from '@/hooks/useFormShortcuts';
+import { CompletenessIndicator } from './CompletenessIndicator';
 
 interface Certification {
   id: string;
