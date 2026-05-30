@@ -234,15 +234,9 @@ export function LabManager({ onDirtyChange }: Props) {
               <Input value={formData.title} onChange={e => set('title', e.target.value)} placeholder="Snap Cards" required />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Slug (URL)</Label>
-                <Input value={formData.slug} onChange={e => set('slug', e.target.value)} placeholder="snap-cards" />
-              </div>
-              <div className="space-y-2">
-                <Label>Ano</Label>
-                <Input value={formData.year} onChange={e => set('year', e.target.value)} placeholder="2025" />
-              </div>
+            <div className="space-y-2">
+              <Label>Ano</Label>
+              <Input value={formData.year} onChange={e => set('year', e.target.value)} placeholder="2025" />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -287,11 +281,14 @@ export function LabManager({ onDirtyChange }: Props) {
             </div>
 
             <SEOFields
+              slug={formData.slug}
+              onSlugChange={v => set('slug', v)}
               metaTitle={formData.meta_title}
               onMetaTitleChange={v => set('meta_title', v)}
               metaDescription={formData.meta_description}
               onMetaDescriptionChange={v => set('meta_description', v)}
               titleSource={formData.title}
+              existingSlugs={items.filter(i => i.id !== editingId && i.slug).map(i => i.slug!)}
             />
 
             <div className="flex items-center gap-2">
@@ -354,7 +351,7 @@ export function LabManager({ onDirtyChange }: Props) {
                       <Button variant="ghost" size="sm" onClick={() => handleEdit(item)}>
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <DeleteConfirmButton onConfirm={() => handleDelete(item.id)} />
+                      <DeleteConfirmButton onConfirm={() => handleDelete(item.id)} itemName={item.title} />
                     </div>
                   </div>
                 </CardContent>

@@ -9,13 +9,13 @@ type SiteSettings = Record<string, string>;
 
 async function fetchSiteSettings(): Promise<SiteSettings> {
   const { data, error } = await supabase
-    .from('site_settings' as any)
+    .from('site_settings')
     .select('key, value');
   
   if (error) throw error;
   
   const settings: SiteSettings = {};
-  (data as any[])?.forEach((row: { key: string; value: string }) => {
+  data?.forEach((row) => {
     settings[row.key] = row.value;
   });
   return settings;
@@ -42,8 +42,8 @@ export function useUpdateSiteSetting() {
   return useMutation({
     mutationFn: async ({ key, value }: { key: string; value: string }) => {
       const { error } = await supabase
-        .from('site_settings' as any)
-        .upsert({ key, value } as any, { onConflict: 'key' });
+        .from('site_settings')
+        .upsert({ key, value }, { onConflict: 'key' });
       if (error) throw error;
     },
     onSuccess: () => {
