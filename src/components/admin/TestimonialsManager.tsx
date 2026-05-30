@@ -208,6 +208,7 @@ export function TestimonialsManager({ onDirtyChange }: TestimonialsManagerProps)
                       <span className="font-semibold">{t.author_name}</span>
                       <span className="ml-2 text-sm text-muted-foreground">{t.author_role}</span>
                       <p className="text-xs text-muted-foreground truncate max-w-md">"{t.quote.slice(0, 80)}{t.quote.length > 80 ? '...' : ''}"</p>
+                      <div className="mt-1"><CompletenessIndicator hasImage={!!t.author_photo_url} itemName={t.author_name} /></div>
                     </div>
                   </div>
                   <div className="flex gap-2 flex-shrink-0 ml-4">

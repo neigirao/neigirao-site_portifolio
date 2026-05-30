@@ -187,6 +187,7 @@ export function CertificationsManager({ onDirtyChange }: CertificationsManagerPr
                   <div>
                     <span className="font-semibold">{c.name}</span>
                     <span className="ml-2 text-sm text-muted-foreground">{c.issuer}{c.year ? ` · ${c.year}` : ''}</span>
+                    <div className="mt-1"><CompletenessIndicator hasImage={!!c.logo_url} itemName={c.name} /></div>
                   </div>
                 </div>
                 <div className="flex gap-2 flex-shrink-0 ml-4 items-center">
