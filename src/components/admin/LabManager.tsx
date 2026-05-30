@@ -287,6 +287,8 @@ export function LabManager({ onDirtyChange }: Props) {
             </div>
 
             <SEOFields
+              slug={formData.slug}
+              onSlugChange={v => set('slug', v)}
               metaTitle={formData.meta_title}
               onMetaTitleChange={v => set('meta_title', v)}
               metaDescription={formData.meta_description}
@@ -354,7 +356,7 @@ export function LabManager({ onDirtyChange }: Props) {
                       <Button variant="ghost" size="sm" onClick={() => handleEdit(item)}>
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <DeleteConfirmButton onConfirm={() => handleDelete(item.id)} />
+                      <DeleteConfirmButton onConfirm={() => handleDelete(item.id)} itemName={item.title} />
                     </div>
                   </div>
                 </CardContent>
