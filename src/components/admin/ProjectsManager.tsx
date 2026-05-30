@@ -380,7 +380,8 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <Input
-              placeholder="Buscar por título ou tag..."
+              data-search-input
+              placeholder="Buscar por título ou tag... (atalho: /)"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="pl-9"
