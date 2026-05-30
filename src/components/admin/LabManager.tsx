@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AdminLabProject } from '@/hooks/useAdminData';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import { AutosaveIndicator } from './AutosaveIndicator';
 import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { SEOFields } from './SEOFields';
 import { useAutosave } from '@/hooks/useAutosave';
+import { useFormShortcuts } from '@/hooks/useFormShortcuts';
 
 interface Props {
   onDirtyChange?: (dirty: boolean) => void;
@@ -136,6 +137,12 @@ export function LabManager({ onDirtyChange }: Props) {
     onDirtyChange?.(false);
   };
 
+  const formRef = useRef<HTMLFormElement>(null);
+  useFormShortcuts({
+    onSave: () => formRef.current?.requestSubmit(),
+    onCancel: editingId ? resetForm : undefined,
+  });
+
   const handleEdit = (item: AdminLabProject) => {
     setFormData(dbToForm(item));
     setEditingId(item.id);
@@ -228,7 +235,7 @@ export function LabManager({ onDirtyChange }: Props) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label>Título *</Label>
               <Input value={formData.title} onChange={e => set('title', e.target.value)} placeholder="Snap Cards" required />
