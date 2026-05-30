@@ -1,119 +1,117 @@
 
-# Análise da aplicação — Portfolio Nei Girão
+# Análise da aplicação — o que está errado e o que precisa evoluir
 
-Li toda a documentação (`CLAUDE.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `ROADMAP.md`, `docs/AI_MAINTENANCE_GUIDE.md`, `README.md`, `.lovable/plan.md`), os hooks principais, o schema (14 tabelas) e a configuração Supabase. Abaixo está o diagnóstico e a proposta de roadmap.
-
----
-
-## 1. O que está sólido ✅
-
-- **Arquitetura**: SPA React + Supabase com CMS completo e padrões consistentes (managers, autosave, undo, rollback de reorder, retry, ring de edição).
-- **Segurança base**: RLS ativo em todas as tabelas, role `admin` via `has_role()` + auto-assign para `neigirao@gmail.com`, bucket `portfolio-images` público só para leitura.
-- **SEO básico**: slug + meta_title + meta_description em quase todas as tabelas de conteúdo, sitemap/llms.txt/about.txt via edge functions, BreadcrumbSchema.
-- **Performance**: React Query com staleTime, prefetch de rotas, Tiptap em chunk separado, lazy do AdminDashboard.
-- **UX admin**: 23 managers padronizados, busca/filtro em alguns, validação de slug duplicado nos principais, completeness indicator existente.
-- **Acessibilidade**: skip-to-content, ARIA, contraste WCAG AA.
-- **Conteúdo**: site_settings como KV global, internal linking automatizado via `useRelatedContent`.
+Rodei build/linter/schema. Abaixo o diagnóstico real (não suposições) e o plano para corrigir.
 
 ---
 
-## 2. Lacunas e dívidas identificadas 🟡
+## 🔴 Bloqueadores (build quebrado agora)
 
-### CMS — inconsistências entre managers
-- `is_visible` ausente em `certifications` (sempre aparece) e ainda só parcialmente padronizado na UI (badge/opacity).
-- `CompletenessIndicator` existe mas não é usado em todos os cards de lista.
-- Validação SEO inline (≤60/≤160 + duplicidade) só cobre Experiences, Projects, Skills, Education — falta replicar em Articles/Certifications/Companies.
-- Alt text do `ImageUploader` opcional → imagens sem alt no site público.
-- `SiteSettingsManager` (491 linhas) tudo `textarea`, sem agrupamento por seção, sem reset, sem detecção de tipo (URL/cor/JSON).
-- Bulk actions / duplicar 1-clique faltam na maioria.
-- `DashboardStats` sem health checks (sem slug, sem meta, mensagens não lidas, slugs duplicados).
+1. **`LabManager` referencia tabela `lab_projects` que não existe no banco** — `SELECT to_regclass('public.lab_projects')` retorna `NULL`. Isso gera ~20 erros TypeScript em `LabManager.tsx` e `useAdminData.tsx` ("Argument of type 'lab_projects' is not assignable to parameter of type 'never'"). A app não compila.
+2. **`LabManager` usa API antiga de componentes**:
+   - `<SEOFields>` agora exige `slug` e `onSlugChange` — faltam.
+   - `<DeleteConfirmButton>` exige `itemName` — falta.
 
-### Conteúdo e Redator
-- `case_body`/`case_result` em Experiences ainda não validam quando `is_case = true`.
-- Projects: `challenge`, `solution`, `results`, `learnings`, `context` são textarea — deveriam ser RichTextEditor.
-- Articles: não há estado `draft`/`published` separado do Salvar, `reading_time_minutes` não é auto-calculado, sem agendamento.
-- Testimonials: `quote` sem contador/limite de caracteres.
-- Estrutura STAR (challenge/solution/result separados) prevista no ROADMAP ainda não implementada.
+## 🟠 Segurança (Supabase linter — 13 warnings)
 
-### Operação e auditoria
-- Sem audit log e sem versionamento de edições (risco de perda em update acidental).
-- Sem notificação por email quando entra nova mensagem em `contact_messages`.
-- Tabela `contact_messages` sem `archived_at` nem `tag` (lead/spam/parceria).
-- Sem command palette ⌘K e sem atalhos ⌘S/Esc nos forms.
+3. **`profiles` RLS permissiva**: policy `SELECT` com `USING (true)` para qualquer autenticado vê e-mail de todos os perfis. Restringir a `auth.uid() = user_id` ou admin-only.
+4. **Bucket público `portfolio-images` permite listing** — adicionar política que bloqueia `LIST` mantendo leitura por URL.
+5. **5 funções `SECURITY DEFINER` executáveis por `anon`/`authenticated`** (`generate_slug`, `has_role`, `update_updated_at_column`, `handle_new_user`, `auto_assign_admin_role`). Revogar `EXECUTE` de `public` e conceder só ao que precisa (triggers rodam como owner).
 
-### Segurança / boas práticas
-- Policy "Users can view all profiles" → qualquer autenticado vê todos os profiles (revisar para `auth.uid() = user_id` ou admin-only).
-- Uso de `from('site_settings' as any)` e `from('faqs' as any)` — types desatualizados.
-- Funções Postgres com `SECURITY DEFINER` ok, mas vale auditar `search_path`.
+## 🟡 Débitos do CMS
 
-### SEO e descoberta
-- Schema.org Article ainda não aplicado em ArticleDetail.
-- BreadcrumbList em todos os detalhes ainda parcial.
-- Sem fallback de `meta_description` a partir de `value_pitch` global.
+6. **`useSiteSettings` e outros usam `from('site_settings' as any)`** — types desatualizados (a tabela existe; basta remover o `as any` após regen).
+7. **`SiteSettingsManager` com 513 linhas**, sem agrupamento por seção, sem detecção de tipo (URL/cor/JSON), sem reset por campo.
+8. **`CompletenessIndicator` não é usado em todos os cards** (Companies, Certifications, FAQs, Testimonials, Metrics).
+9. **Validação SEO inline** (≤60/≤160 + duplicidade) ainda falta em Articles, Companies, Certifications.
+10. **`ImageUploader` alt text opcional** → imagens públicas sem alt.
+11. **Atalhos ⌘S/Esc/"/"** (`useFormShortcuts`) só instalados em Articles — falta nos outros 12 managers.
+12. **`is_visible` em `certifications` e `impact_metrics`** já existe no schema, mas a UI ainda não expõe toggle inline em todos.
+13. **`contact_messages`** sem `archived_at`/`tag`, sem notificação por e-mail de nova mensagem.
 
-### Performance / DX
-- Sem testes (Vitest), sem Storybook leve dos managers.
-- Sem lint rule contra cores hardcoded.
+## 🟡 Conteúdo / narrativa
+
+14. **Projects**: `challenge`, `solution`, `results`, `learnings`, `context` são `textarea` puro — deveriam usar `RichTextEditor`.
+15. **Experiences**: quando `is_case=true`, não valida que `case_challenge/solution/result` estejam preenchidos.
+16. **Articles**: `reading_time_minutes` manual; não calcula a partir do `content`.
+17. **Testimonials**: `quote` sem contador/limite (240–400 chars recomendado).
+18. **Schema.org Article** ainda não aplicado em `ArticleDetail`. `BreadcrumbList` parcial.
+
+## 🟡 Operação e auditoria
+
+19. **Sem audit log** — qualquer UPDATE acidental sobrescreve sem histórico.
+20. **Sem command palette ⌘K** no admin.
+21. **Sem testes** (Vitest) e sem lint rule contra cores hardcoded.
 
 ---
 
-## 3. Roadmap proposto
-
-Quatro sprints curtos, cada um entregando valor isolado.
+## Plano em 4 sprints
 
 ```text
-Sprint 1 — Consistência do CMS (1 sessão)
-  • is_visible em certifications (migration + toggle inline)
+Sprint 0 — Desbloquear build (URGENTE, ~30 min)
+  • Migration: criar tabela public.lab_projects (title, slug, category, year,
+    description, why, context, actions text[], outcomes text[], stack text[],
+    brand, is_visible, meta_title, meta_description, order_index, timestamps)
+    + GRANTs (anon SELECT, authenticated CRUD, service_role ALL)
+    + RLS (anyone SELECT, admin ALL)
+  • Aguardar regen de types.ts
+  • Ajustar LabManager: adicionar slug/onSlugChange ao <SEOFields>,
+    itemName ao <DeleteConfirmButton>
+  • Remover 'as any' de useSiteSettings após regen
+
+Sprint 1 — Segurança (fix dos 13 warnings)
+  • Migration: REVOKE EXECUTE ... FROM public, anon, authenticated nas
+    5 funções SECURITY DEFINER (triggers continuam funcionando)
+  • Migration: trocar policy "Users can view all profiles" por
+    USING (auth.uid() = user_id OR has_role(auth.uid(),'admin'))
+  • Migration: storage policy bloqueando LIST em portfolio-images
+    (mantém GET por URL)
+
+Sprint 2 — Consistência do CMS
   • CompletenessIndicator em todos os cards de lista
-  • Alt text obrigatório em ImageUploader quando público
   • Validação SEO inline universal (Articles, Companies, Certifications)
-  • Atalhos ⌘S / Esc / "/" via hook useFormShortcuts
+  • Alt text obrigatório no ImageUploader quando contexto público
+  • useFormShortcuts em todos os 13 managers + data-search-input nas buscas
   • Duplicar 1-clique nos managers que faltam
+  • Toggle is_visible inline em Certifications e Metrics
 
-Sprint 2 — Site Settings + Dashboard (1 sessão)
-  • Agrupar SiteSettings por seção (Accordion: Cover, Masthead, Essay,
-    Contact, Footer, SEO, Social, Analytics)
+Sprint 3 — SiteSettings + Dashboard + Narrativa
+  • Refatorar SiteSettingsManager em sub-componentes por seção
+    (Cover, Masthead, Essay, Contact, Footer, SEO, Social, Analytics)
   • Detectar tipo (texto/URL/cor/JSON) e renderizar input apropriado
-  • Reset para default por campo
-  • DashboardStats: health checks + atividade recente cross-table
-  • Quick actions ("+ Novo projeto/artigo") no dashboard
+  • DashboardStats: health checks (sem slug, sem meta, msgs não lidas,
+    slugs duplicados) + atividade recente cross-table
+  • Projects: RichTextEditor nos campos longos
+  • Articles: reading_time_minutes auto-calculado
+  • Testimonials: contador de chars 240–400
+  • Experiences: validar STAR quando is_case=true
+  • Schema.org Article + BreadcrumbList completos
 
-Sprint 3 — Redator e narrativa (1 sessão)
-  • Migrations: case_challenge / case_solution / case_result em
-    experiences e projects (STAR)
-  • Renderizar STAR em ExperienceDetail e ProjectDetail
-  • Projects: RichTextEditor nos campos longos + preview do card
-  • Articles: estado draft/published separado + reading_time automático
-    + agendamento
-  • Testimonials: contador 240–400 chars + preview
-  • Chave value_pitch como fallback de meta_description
-
-Sprint 4 — Operação, auditoria e segurança (1–2 sessões)
-  • Edge function: email de notificação de nova mensagem (Resend)
+Sprint 4 — Operação e auditoria
+  • Edge function: notificação de e-mail nova mensagem (Resend)
   • contact_messages: archived_at + tag (lead/spam/parceria)
-  • audit_log (entity, action, diff_json) + trigger nas tabelas-chave
-  • Snapshot simples antes de UPDATE (projects/experiences/articles/site_settings)
-  • Bulk actions nas listas grandes
+  • audit_log (entity, action, diff_json, actor) + triggers nas tabelas-chave
   • Command palette ⌘K
-  • Revisar RLS de profiles + Article schema + BreadcrumbList completo
+  • Bulk actions nas listas grandes
+  • Vitest com smoke tests nos hooks principais
 ```
 
 ---
 
-## 4. Detalhes técnicos por sprint
+## Detalhes técnicos por sprint
 
-- **Sprint 1** é puro frontend + 1 migration trivial (`is_visible` em certifications). Baixo risco.
-- **Sprint 2** mexe num arquivo grande (`SiteSettingsManager.tsx`, 491 linhas) — vale refatorar em sub-componentes por seção.
-- **Sprint 3** tem 1 migration nova por tabela (STAR) + ajustes em pages de detalhe + RichTextEditor já existe.
-- **Sprint 4** envolve edge function nova, secret `RESEND_API_KEY`, e triggers SQL.
+- **Sprint 0**: 1 migration + edits em 2 arquivos. Sem risco, é só restaurar o que está quebrado.
+- **Sprint 1**: 3 migrations curtas. As funções SECURITY DEFINER continuam rodando porque triggers executam com privilégio do owner; revogar `EXECUTE` de `public` só impede chamada direta via API.
+- **Sprint 2**: puro frontend, sem migrations.
+- **Sprint 3**: refatora arquivo grande (SiteSettingsManager) em sub-componentes; sem mudança de schema.
+- **Sprint 4**: nova edge function (precisa secret `RESEND_API_KEY`), 2 migrations (contact_messages + audit_log + triggers).
 
 ---
 
-## 5. Próximo passo
+## Próximo passo
 
-Confirma o que prefere:
-1. Seguir **Sprint 1 → 2 → 3 → 4** na ordem?
-2. Ou priorizar algum sprint específico (ex.: Sprint 4 pela notificação de email)?
-3. Algum item para remover ou adicionar?
+Confirme o que prefere:
 
-Assim que aprovar, começo pelo escolhido.
+1. **Recomendado**: começar pelo **Sprint 0 + Sprint 1** juntos (build + segurança — risco baixo e crítico)
+2. Só Sprint 0 (desbloquear build) e depois decidir
+3. Outra ordem / remover algum item
