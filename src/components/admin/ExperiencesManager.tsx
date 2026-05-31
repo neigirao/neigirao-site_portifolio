@@ -66,7 +66,7 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
   const { status: autosaveStatus, clearDraft } = useAutosave({
     key: 'experiences-form',
     data: formData,
-    onRecover: useCallback((data: typeof emptyForm) => { setFormData(data); }, []),
+    onRecover: useCallback((data: Partial<typeof emptyForm>) => { setFormData({ ...emptyForm, ...data }); }, []),
   });
 
   useEffect(() => {
