@@ -80,7 +80,7 @@ export default function LabDetail() {
       }) }} />
       <BreadcrumbSchema items={[
         { name: 'Início', url: '/' },
-        { name: 'Lab', url: '/#lab' },
+        { name: 'Lab', url: '/lab' },
         { name: project.title },
       ]} />
 
@@ -93,7 +93,7 @@ export default function LabDetail() {
         <nav className="ed-mast-right">
           <Link to="/">Início</Link>
           <span className="ed-sep">·</span>
-          <Link to="/#lab">Lab</Link>
+          <Link to="/lab">Lab</Link>
           <span className="ed-sep">·</span>
           <Link to="/#contact">Contato</Link>
         </nav>

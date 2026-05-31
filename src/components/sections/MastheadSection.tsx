@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { parseJsonSetting } from "@/lib/siteSettingsHelpers";
 
@@ -5,7 +6,7 @@ const DEFAULT_NAV = [
   { label: "Cases", href: "#cases" },
   { label: "Experiência", href: "#work" },
   { label: "Projetos", href: "#projects" },
-  { label: "Lab", href: "#lab" },
+  { label: "Lab", href: "/lab" },
   { label: "Contato", href: "#contact" },
 ];
 
@@ -27,7 +28,11 @@ export function MastheadSection() {
       <nav className="ed-mast-right">
         {nav.map((item, i) => (
           <span key={item.href + i} style={{ display: "inline" }}>
-            <a href={item.href}>{item.label}</a>
+            {item.href.startsWith("/") && !item.href.startsWith("/#") ? (
+              <Link to={item.href}>{item.label}</Link>
+            ) : (
+              <a href={item.href}>{item.label}</a>
+            )}
             {i < nav.length - 1 && <span className="ed-sep">·</span>}
           </span>
         ))}
