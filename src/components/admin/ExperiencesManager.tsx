@@ -287,13 +287,13 @@ export function ExperiencesManager({ onDirtyChange }: ExperiencesManagerProps) {
               <Label htmlFor="excerpt">Excerpt / Resumo social</Label>
               <Textarea
                 id="excerpt"
-                value={formData.excerpt}
+                value={formData.excerpt ?? ''}
                 onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                 placeholder="Breve resumo para OG e cards (máx. 280 chars)"
                 maxLength={280}
                 rows={3}
               />
-              <p className="text-xs text-muted-foreground">{formData.excerpt.length}/280 chars — usado como meta description e preview social</p>
+              <p className="text-xs text-muted-foreground">{(formData.excerpt ?? '').length}/280 chars — usado como meta description e preview social</p>
             </div>
 
             {/* Campos para design editorial (Cases) */}
