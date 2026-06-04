@@ -624,12 +624,9 @@ All colors MUST be HSL.
 .pp-shot { padding: 64px 0 16px; }
 .pp-shot-frame {
   position: relative; border-radius: 12px; overflow: hidden;
-  aspect-ratio: 16/9; background: var(--ed-paper);
-  border: 1px solid var(--ed-line);
   box-shadow: 0 30px 60px -20px rgba(28,26,20,0.18);
-  display: flex; align-items: center; justify-content: center;
 }
-.pp-shot-frame img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.pp-shot-frame img { width: 100%; height: auto; display: block; }
 .pp-shot-placeholder {
   position: absolute; inset: 0;
   display: flex; flex-direction: column; align-items: center;
