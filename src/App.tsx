@@ -29,6 +29,7 @@ const ArticleDetail = lazy(() => import("./pages/ArticleDetail"));
 
 // Lazy load - detail pages (SEO pages)
 const ExperienceDetail = lazy(() => import("./pages/ExperienceDetail"));
+const Lab = lazy(() => import("./pages/Lab"));
 const LabDetail = lazy(() => import("./pages/LabDetail"));
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
 const SkillDetail = lazy(() => import("./pages/SkillDetail"));
@@ -99,6 +100,7 @@ const App = () => (
               <Route path="/artigo/:slug" element={<ArticleDetail />} />
 
               {/* SEO Detail Pages */}
+              <Route path="/lab" element={<Lab />} />
               <Route path="/lab/:slug" element={<LabDetail />} />
               <Route path="/experiencia/:slug" element={<ExperienceDetail />} />
               <Route path="/projeto/:slug" element={<ProjectDetail />} />
