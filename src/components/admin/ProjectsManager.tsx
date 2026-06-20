@@ -88,7 +88,7 @@ const ProjectCard = ({ project, editingId, onEdit, onDuplicate, onDelete, onTogg
             {project.highlight_metric && (
               <span className="text-xs bg-teal-accent/10 text-teal-accent px-2 py-0.5 rounded-full font-medium">{project.highlight_metric}</span>
             )}
-            <CompletenessIndicator hasSeo={!!(project.meta_title && project.meta_description)} hasImage={!!project.image_url} hasSlug={!!project.slug} itemName={project.title} />
+            <CompletenessIndicator hasSeo={!!(project.meta_title && project.meta_description)} hasImage={!!project.image_url || (project.images?.length ?? 0) > 0} hasSlug={!!project.slug} itemName={project.title} />
           </div>
           {project.tags.length > 0 && (
             <div className="flex gap-2 mt-1 flex-wrap">
