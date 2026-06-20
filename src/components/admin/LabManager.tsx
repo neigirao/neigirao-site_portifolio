@@ -291,6 +291,15 @@ export function LabManager({ onDirtyChange }: Props) {
               <Textarea value={formData.stackRaw} onChange={e => set('stackRaw', e.target.value)} rows={3} placeholder={"React\nTailwind\nVite"} />
             </div>
 
+            <MultiImageUploader
+              value={formData.images}
+              onChange={(images) => setFormData(prev => ({ ...prev, images }))}
+              label="Imagens (carrossel)"
+              folder="lab-gallery"
+            />
+
+
+
             <SEOFields
               slug={formData.slug}
               onSlugChange={v => set('slug', v)}
