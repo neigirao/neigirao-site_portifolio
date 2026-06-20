@@ -224,3 +224,49 @@ export default function LabDetail() {
     </div>
   );
 }
+
+function LabGallery({ images, title, brand }: { images: string[]; title: string; brand: string | null }) {
+  const [api, setApi] = useState<any>(null);
+  const [current, setCurrent] = useState(1);
+  const count = images.length;
+
+  useEffect(() => {
+    if (!api) return;
+    const onSelect = () => setCurrent(api.selectedScrollSnap() + 1);
+    onSelect();
+    api.on('select', onSelect);
+    return () => { api.off('select', onSelect); };
+  }, [api]);
+
+  const caption = `${brand ? brand + ' · ' : ''}${title}${count > 1 ? ` · Imagem ${current} de ${count}` : ''}`;
+
+  return (
+    <section className="pp-shot">
+      <div className="ed-container">
+        {count === 1 ? (
+          <div className="pp-shot-frame">
+            <img src={images[0]} alt={title} loading="lazy" />
+          </div>
+        ) : (
+          <div className="pp-shot-carousel">
+            <Carousel setApi={setApi} opts={{ loop: true }}>
+              <CarouselContent>
+                {images.map((url, i) => (
+                  <CarouselItem key={url + i}>
+                    <div className="pp-shot-frame">
+                      <img src={url} alt={`${title} — imagem ${i + 1}`} loading={i === 0 ? 'eager' : 'lazy'} />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-2" />
+              <CarouselNext className="right-2" />
+            </Carousel>
+            <div className="pp-shot-counter">{current} / {count}</div>
+          </div>
+        )}
+        <div className="pp-shot-caption">{caption}</div>
+      </div>
+    </section>
+  );
+}
