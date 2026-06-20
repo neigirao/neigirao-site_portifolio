@@ -27,6 +27,7 @@ interface Project {
   title: string;
   description: string;
   image_url: string | null;
+  images: string[];
   link: string | null;
   tags: string[];
   order_index: number;
