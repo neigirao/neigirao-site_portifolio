@@ -84,6 +84,7 @@ function dbToForm(p: AdminLabProject): FormData {
     is_visible: p.is_visible,
     meta_title: p.meta_title || '',
     meta_description: p.meta_description || '',
+    images: p.images || [],
   };
 }
 
