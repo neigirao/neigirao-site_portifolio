@@ -356,6 +356,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          images: string[]
           is_visible: boolean
           meta_description: string | null
           meta_title: string | null
@@ -376,6 +377,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          images?: string[]
           is_visible?: boolean
           meta_description?: string | null
           meta_title?: string | null
@@ -396,6 +398,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          images?: string[]
           is_visible?: boolean
           meta_description?: string | null
           meta_title?: string | null
@@ -447,6 +450,7 @@ export type Database = {
           highlight_metric: string | null
           id: string
           image_url: string | null
+          images: string[]
           is_visible: boolean
           learnings: string | null
           link: string | null
@@ -470,6 +474,7 @@ export type Database = {
           highlight_metric?: string | null
           id?: string
           image_url?: string | null
+          images?: string[]
           is_visible?: boolean
           learnings?: string | null
           link?: string | null
@@ -493,6 +498,7 @@ export type Database = {
           highlight_metric?: string | null
           id?: string
           image_url?: string | null
+          images?: string[]
           is_visible?: boolean
           learnings?: string | null
           link?: string | null
