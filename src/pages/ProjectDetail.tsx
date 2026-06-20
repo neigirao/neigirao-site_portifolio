@@ -115,33 +115,13 @@ export default function ProjectDetail() {
         </div>
       </section>
 
-      {/* SCREENSHOT */}
-      <section className="pp-shot">
-        <div className="ed-container">
-          <div className="pp-shot-frame">
-            {project.image_url ? (
-              <img src={project.image_url} alt={project.title} loading="lazy" />
-            ) : (
-              <div className="pp-shot-placeholder">
-                <div className="pp-shot-glyph">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                    <rect x="3" y="5" width="18" height="14" rx="2"/>
-                    <circle cx="8.5" cy="10.5" r="1.5"/>
-                    <path d="M21 16l-5-5L8 19"/>
-                  </svg>
-                </div>
-                <div className="pp-shot-placeholder-title">Imagem do projeto</div>
-              </div>
-            )}
-          </div>
-          <div className="pp-shot-caption">
-            {project.image_url
-              ? `${project.brand ? project.brand + ' · ' : ''}${project.title}`
-              : '— Imagem não disponível —'
-            }
-          </div>
-        </div>
-      </section>
+      {/* SCREENSHOT / GALLERY */}
+      <ProjectGallery
+        images={[project.image_url, ...((project as any).images || [])].filter(Boolean) as string[]}
+        title={project.title}
+        brand={project.brand}
+      />
+
 
       {/* BODY */}
       <section className="pp-body">
