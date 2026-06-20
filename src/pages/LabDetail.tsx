@@ -117,6 +117,11 @@ export default function LabDetail() {
           </div>
         </section>
 
+        {/* Gallery */}
+        {project.images && project.images.length > 0 && (
+          <LabGallery images={project.images} title={project.title} brand={project.brand} />
+        )}
+
         {/* Body */}
         <div className="pp-body">
           <div className="pp-body-inner">
