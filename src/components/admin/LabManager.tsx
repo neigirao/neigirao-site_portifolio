@@ -15,6 +15,7 @@ import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { SEOFields } from './SEOFields';
 import { useAutosave } from '@/hooks/useAutosave';
 import { useFormShortcuts } from '@/hooks/useFormShortcuts';
+import { MultiImageUploader } from './MultiImageUploader';
 
 interface Props {
   onDirtyChange?: (dirty: boolean) => void;
