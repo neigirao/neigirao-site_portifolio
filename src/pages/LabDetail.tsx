@@ -25,6 +25,7 @@ function useLabDetail(slug: string) {
         actions: Array.isArray(data.actions) ? data.actions : [],
         outcomes: Array.isArray(data.outcomes) ? data.outcomes : [],
         stack: Array.isArray(data.stack) ? data.stack : [],
+        images: Array.isArray((data as any).images) ? (data as any).images : [],
       } as DbLabProject;
     },
     staleTime: 1000 * 60 * 5,
