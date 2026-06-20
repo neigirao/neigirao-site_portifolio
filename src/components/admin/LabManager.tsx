@@ -36,6 +36,7 @@ const emptyForm = {
   is_visible: true,
   meta_title: '',
   meta_description: '',
+  images: [] as string[],
 };
 
 type FormData = typeof emptyForm;
