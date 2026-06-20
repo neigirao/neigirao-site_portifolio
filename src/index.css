@@ -623,6 +623,11 @@ All colors MUST be HSL.
 
 .pp-shot { padding: 64px 0 16px; }
 .pp-shot-frame {
+  max-height: 480px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  background: var(--ed-fg-soft, #f5f3ee);
   position: relative; border-radius: 12px; overflow: hidden;
   box-shadow: 0 30px 60px -20px rgba(28,26,20,0.18);
 }
