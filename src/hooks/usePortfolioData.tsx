@@ -311,6 +311,7 @@ export interface DbLabProject {
   order_index: number;
   meta_title: string | null;
   meta_description: string | null;
+  images: string[];
 }
 
 export function useLabProjects() {
