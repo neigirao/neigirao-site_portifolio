@@ -289,6 +289,7 @@ export function useAdminLabProjects() {
         actions: Array.isArray(p.actions) ? p.actions : [],
         outcomes: Array.isArray(p.outcomes) ? p.outcomes : [],
         stack: Array.isArray(p.stack) ? p.stack : [],
+        images: Array.isArray((p as any).images) ? (p as any).images : [],
       })) as AdminLabProject[];
     },
     ...queryOptions,
