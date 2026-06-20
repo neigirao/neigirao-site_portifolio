@@ -64,6 +64,7 @@ function formToDb(f: FormData) {
     is_visible: f.is_visible,
     meta_title: f.meta_title || null,
     meta_description: f.meta_description || null,
+    images: f.images || [],
   };
 }
 
