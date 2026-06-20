@@ -12,6 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { Pencil, Eye, Copy, Search, X, ExternalLink, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
+import { MultiImageUploader } from './MultiImageUploader';
 import { RichTextEditor } from './RichTextEditor';
 import { SEOFields } from './SEOFields';
 import { SortableList } from './SortableList';
