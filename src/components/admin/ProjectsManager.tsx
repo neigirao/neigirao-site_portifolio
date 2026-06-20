@@ -310,7 +310,13 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
               <Input id="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
             </div>
             <RichTextEditor value={formData.description} onChange={(value) => setFormData({ ...formData, description: value })} label="Descrição" />
-            <ImageUploader value={formData.image_url} onChange={(url) => setFormData({ ...formData, image_url: url })} label="Imagem do Projeto" folder="projects" />
+            <ImageUploader value={formData.image_url} onChange={(url) => setFormData({ ...formData, image_url: url })} label="Imagem principal (capa)" folder="projects" />
+            <MultiImageUploader
+              value={formData.images}
+              onChange={(images) => setFormData({ ...formData, images })}
+              label="Galeria adicional (carrossel)"
+              folder="projects-gallery"
+            />
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="link">Link do Projeto</Label>
