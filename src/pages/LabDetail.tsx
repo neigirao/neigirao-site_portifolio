@@ -6,6 +6,8 @@ import { SEOHead } from '@/components/SEO/SEOHead';
 import { BreadcrumbSchema } from '@/components/SEO/BreadcrumbSchema';
 import { BASE_URL } from '@/config/constants';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { useEffect, useState } from 'react';
 
 function useLabDetail(slug: string) {
   return useQuery({
