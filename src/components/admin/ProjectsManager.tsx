@@ -66,6 +66,7 @@ const emptyForm = {
   learnings: '',
   brand: '',
   project_subtitle: '',
+  images: [] as string[],
 };
 
 interface ProjectCardProps {
