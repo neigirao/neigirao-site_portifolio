@@ -215,6 +215,7 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
       learnings: project.learnings || '',
       brand: project.brand || '',
       project_subtitle: project.project_subtitle || '',
+      images: project.images || [],
     });
   };
 
