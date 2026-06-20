@@ -15,6 +15,7 @@ import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { SEOFields } from './SEOFields';
 import { useAutosave } from '@/hooks/useAutosave';
 import { useFormShortcuts } from '@/hooks/useFormShortcuts';
+import { MultiImageUploader } from './MultiImageUploader';
 
 interface Props {
   onDirtyChange?: (dirty: boolean) => void;
@@ -35,6 +36,7 @@ const emptyForm = {
   is_visible: true,
   meta_title: '',
   meta_description: '',
+  images: [] as string[],
 };
 
 type FormData = typeof emptyForm;
@@ -62,6 +64,7 @@ function formToDb(f: FormData) {
     is_visible: f.is_visible,
     meta_title: f.meta_title || null,
     meta_description: f.meta_description || null,
+    images: f.images || [],
   };
 }
 
@@ -81,6 +84,7 @@ function dbToForm(p: AdminLabProject): FormData {
     is_visible: p.is_visible,
     meta_title: p.meta_title || '',
     meta_description: p.meta_description || '',
+    images: p.images || [],
   };
 }
 
@@ -286,6 +290,15 @@ export function LabManager({ onDirtyChange }: Props) {
               <Label>Stack (uma tecnologia por linha)</Label>
               <Textarea value={formData.stackRaw} onChange={e => set('stackRaw', e.target.value)} rows={3} placeholder={"React\nTailwind\nVite"} />
             </div>
+
+            <MultiImageUploader
+              value={formData.images}
+              onChange={(images) => setFormData(prev => ({ ...prev, images }))}
+              label="Imagens (carrossel)"
+              folder="lab-gallery"
+            />
+
+
 
             <SEOFields
               slug={formData.slug}

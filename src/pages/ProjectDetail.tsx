@@ -6,6 +6,8 @@ import { BreadcrumbSchema } from '@/components/SEO/BreadcrumbSchema';
 import { BASE_URL } from '@/config/constants';
 import { SafeHTML } from '@/components/admin/SafeHTML';
 import { useExperiencesForProject, useSkillsForProject } from '@/hooks/useRelatedContent';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { useEffect, useState } from 'react';
 
 export default function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -113,33 +115,13 @@ export default function ProjectDetail() {
         </div>
       </section>
 
-      {/* SCREENSHOT */}
-      <section className="pp-shot">
-        <div className="ed-container">
-          <div className="pp-shot-frame">
-            {project.image_url ? (
-              <img src={project.image_url} alt={project.title} loading="lazy" />
-            ) : (
-              <div className="pp-shot-placeholder">
-                <div className="pp-shot-glyph">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                    <rect x="3" y="5" width="18" height="14" rx="2"/>
-                    <circle cx="8.5" cy="10.5" r="1.5"/>
-                    <path d="M21 16l-5-5L8 19"/>
-                  </svg>
-                </div>
-                <div className="pp-shot-placeholder-title">Imagem do projeto</div>
-              </div>
-            )}
-          </div>
-          <div className="pp-shot-caption">
-            {project.image_url
-              ? `${project.brand ? project.brand + ' · ' : ''}${project.title}`
-              : '— Imagem não disponível —'
-            }
-          </div>
-        </div>
-      </section>
+      {/* SCREENSHOT / GALLERY */}
+      <ProjectGallery
+        images={[project.image_url, ...((project as any).images || [])].filter(Boolean) as string[]}
+        title={project.title}
+        brand={project.brand}
+      />
+
 
       {/* BODY */}
       <section className="pp-body">
@@ -322,5 +304,66 @@ export default function ProjectDetail() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function ProjectGallery({ images, title, brand }: { images: string[]; title: string; brand: string | null }) {
+  const [api, setApi] = useState<any>(null);
+  const [current, setCurrent] = useState(1);
+  const count = images.length;
+
+  useEffect(() => {
+    if (!api) return;
+    const onSelect = () => setCurrent(api.selectedScrollSnap() + 1);
+    onSelect();
+    api.on('select', onSelect);
+    return () => { api.off('select', onSelect); };
+  }, [api]);
+
+  const caption = count > 0
+    ? `${brand ? brand + ' · ' : ''}${title}${count > 1 ? ` · Imagem ${current} de ${count}` : ''}`
+    : '— Imagem não disponível —';
+
+  return (
+    <section className="pp-shot">
+      <div className="ed-container">
+        {count === 0 ? (
+          <div className="pp-shot-frame">
+            <div className="pp-shot-placeholder">
+              <div className="pp-shot-glyph">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <rect x="3" y="5" width="18" height="14" rx="2"/>
+                  <circle cx="8.5" cy="10.5" r="1.5"/>
+                  <path d="M21 16l-5-5L8 19"/>
+                </svg>
+              </div>
+              <div className="pp-shot-placeholder-title">Imagem do projeto</div>
+            </div>
+          </div>
+        ) : count === 1 ? (
+          <div className="pp-shot-frame">
+            <img src={images[0]} alt={title} loading="lazy" />
+          </div>
+        ) : (
+          <div className="pp-shot-carousel">
+            <Carousel setApi={setApi} opts={{ loop: true }}>
+              <CarouselContent>
+                {images.map((url, i) => (
+                  <CarouselItem key={url + i}>
+                    <div className="pp-shot-frame">
+                      <img src={url} alt={`${title} — imagem ${i + 1}`} loading={i === 0 ? 'eager' : 'lazy'} />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-2" />
+              <CarouselNext className="right-2" />
+            </Carousel>
+            <div className="pp-shot-counter">{current} / {count}</div>
+          </div>
+        )}
+        <div className="pp-shot-caption">{caption}</div>
+      </div>
+    </section>
   );
 }

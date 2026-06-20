@@ -311,6 +311,7 @@ export interface DbLabProject {
   order_index: number;
   meta_title: string | null;
   meta_description: string | null;
+  images: string[];
 }
 
 export function useLabProjects() {
@@ -328,6 +329,7 @@ export function useLabProjects() {
         actions: Array.isArray(p.actions) ? p.actions : [],
         outcomes: Array.isArray(p.outcomes) ? p.outcomes : [],
         stack: Array.isArray(p.stack) ? p.stack : [],
+        images: Array.isArray((p as any).images) ? (p as any).images : [],
       })) as DbLabProject[];
     },
     ...queryOptions,

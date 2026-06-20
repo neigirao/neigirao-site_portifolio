@@ -114,6 +114,7 @@ export interface AdminLabProject {
   order_index: number;
   meta_title: string | null;
   meta_description: string | null;
+  images: string[];
   created_at: string;
   updated_at: string;
 }
@@ -288,6 +289,7 @@ export function useAdminLabProjects() {
         actions: Array.isArray(p.actions) ? p.actions : [],
         outcomes: Array.isArray(p.outcomes) ? p.outcomes : [],
         stack: Array.isArray(p.stack) ? p.stack : [],
+        images: Array.isArray((p as any).images) ? (p as any).images : [],
       })) as AdminLabProject[];
     },
     ...queryOptions,
