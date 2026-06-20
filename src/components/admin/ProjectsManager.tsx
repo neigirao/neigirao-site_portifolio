@@ -228,6 +228,7 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
       highlight_metric: project.highlight_metric,
       context: project.context, challenge: project.challenge,
       solution: project.solution, results: project.results, learnings: project.learnings,
+      images: project.images || [],
       order_index: nextOrderIndex,
     }]);
     if (error) { toast.error(`Erro ao duplicar: ${error.message}`); return; }
