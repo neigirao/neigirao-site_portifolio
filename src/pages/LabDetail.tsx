@@ -8,6 +8,7 @@ import { BASE_URL } from '@/config/constants';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useEffect, useState } from 'react';
+import { buildSrcSet, GALLERY_SIZES } from '@/lib/imageSrcset';
 
 function useLabDetail(slug: string) {
   return useQuery({
@@ -245,7 +246,14 @@ function LabGallery({ images, title, brand }: { images: string[]; title: string;
       <div className="ed-container">
         {count === 1 ? (
           <div className="pp-shot-frame">
-            <img src={images[0]} alt={title} loading="lazy" />
+            <img
+              src={images[0]}
+              srcSet={buildSrcSet(images[0])}
+              sizes={GALLERY_SIZES}
+              alt={title}
+              loading="lazy"
+              decoding="async"
+            />
           </div>
         ) : (
           <div className="pp-shot-carousel">
@@ -254,7 +262,15 @@ function LabGallery({ images, title, brand }: { images: string[]; title: string;
                 {images.map((url, i) => (
                   <CarouselItem key={url + i}>
                     <div className="pp-shot-frame">
-                      <img src={url} alt={`${title} — imagem ${i + 1}`} loading={i === 0 ? 'eager' : 'lazy'} />
+                      <img
+                        src={url}
+                        srcSet={buildSrcSet(url)}
+                        sizes={GALLERY_SIZES}
+                        alt={`${title} — imagem ${i + 1}`}
+                        loading={i === 0 ? 'eager' : 'lazy'}
+                        decoding="async"
+                        fetchPriority={i === 0 ? 'high' : 'auto'}
+                      />
                     </div>
                   </CarouselItem>
                 ))}
