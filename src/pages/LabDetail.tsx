@@ -8,6 +8,7 @@ import { BASE_URL } from '@/config/constants';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useEffect, useState } from 'react';
+import { buildSrcSet, GALLERY_SIZES } from '@/lib/imageSrcset';
 
 function useLabDetail(slug: string) {
   return useQuery({
