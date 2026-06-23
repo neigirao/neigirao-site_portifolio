@@ -8,6 +8,7 @@ import { SafeHTML } from '@/components/admin/SafeHTML';
 import { useExperiencesForProject, useSkillsForProject } from '@/hooks/useRelatedContent';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useEffect, useState } from 'react';
+import { buildSrcSet, GALLERY_SIZES } from '@/lib/imageSrcset';
 
 export default function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>();
