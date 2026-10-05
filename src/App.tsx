@@ -34,6 +34,12 @@ const LabDetail = lazy(() => import("./pages/LabDetail"));
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
 const SkillDetail = lazy(() => import("./pages/SkillDetail"));
 
+// Lazy load - custom case study pages (specific slugs before generic /projeto/:slug)
+const CaseSeguroVida = lazy(() => import("./pages/cases/CaseSeguroVida"));
+const CaseMeuTIM = lazy(() => import("./pages/cases/CaseMeuTIM"));
+const CaseMinhaOi = lazy(() => import("./pages/cases/CaseMinhaOi"));
+const CasePrevidencia = lazy(() => import("./pages/cases/CasePrevidencia"));
+
 function FaviconInjector() {
   const { settings } = useSiteSettings();
   useEffect(() => {
@@ -103,6 +109,13 @@ const App = () => (
               <Route path="/lab" element={<Lab />} />
               <Route path="/lab/:slug" element={<LabDetail />} />
               <Route path="/experiencia/:slug" element={<ExperienceDetail />} />
+
+              {/* Custom case study pages — must come before the generic /projeto/:slug */}
+              <Route path="/projeto/ecommerce-seguro-de-vida-nei-girao" element={<CaseSeguroVida />} />
+              <Route path="/projeto/nei-girao-meu-tim-app-tim" element={<CaseMeuTIM />} />
+              <Route path="/projeto/minha-oi-app-nei-girao" element={<CaseMinhaOi />} />
+              <Route path="/projeto/nei-girao-ecommerce-previdencia-privada" element={<CasePrevidencia />} />
+
               <Route path="/projeto/:slug" element={<ProjectDetail />} />
               <Route path="/skill/:slug" element={<SkillDetail />} />
               
