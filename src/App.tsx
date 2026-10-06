@@ -34,6 +34,9 @@ const LabDetail = lazy(() => import("./pages/LabDetail"));
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
 const SkillDetail = lazy(() => import("./pages/SkillDetail"));
 
+// Lazy load - custom lab pages (specific slugs before generic /lab/:slug)
+const LendasDoFlu = lazy(() => import("./pages/lab/LendasDoFlu"));
+
 // Lazy load - custom case study pages (specific slugs before generic /projeto/:slug)
 const CaseSeguroVida = lazy(() => import("./pages/cases/CaseSeguroVida"));
 const CaseMeuTIM = lazy(() => import("./pages/cases/CaseMeuTIM"));
@@ -108,6 +111,8 @@ const App = () => (
 
               {/* SEO Detail Pages */}
               <Route path="/lab" element={<Lab />} />
+              {/* Custom lab pages — must come before the generic /lab/:slug */}
+              <Route path="/lab/lendas-do-flu" element={<LendasDoFlu />} />
               <Route path="/lab/:slug" element={<LabDetail />} />
               <Route path="/experiencia/:slug" element={<ExperienceDetail />} />
 
