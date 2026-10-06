@@ -464,6 +464,67 @@
   border-top: 1px solid rgba(255,255,255,.15); padding-top: 20px;
 }
 
+/* ── Observabilidade: flow steps ── */
+.case-page .c-flow {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--case-line);
+  border: 1px solid var(--case-line); border-radius: 10px;
+  overflow: hidden; margin: 32px 0;
+}
+.case-page .c-st {
+  background: var(--case-bg); padding: 22px 20px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.case-page .c-st.hl { background: var(--case-fg); color: var(--case-paper); }
+.case-page .c-st .t { font-family: 'Fraunces', serif; font-size: 20px; }
+.case-page .c-st .d { font-size: 14px; color: var(--case-muted); line-height: 1.5; }
+.case-page .c-st.hl .d { color: #B8B0A0; }
+
+/* ── Observabilidade: data pipeline ── */
+.case-page .c-pipe {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: var(--case-bg2); border: 1px solid var(--case-line);
+  border-radius: 8px; padding: 16px 20px; margin: 24px 0;
+  font-size: 14px; font-family: 'IBM Plex Mono', monospace;
+}
+.case-page .c-pipe b { white-space: nowrap; }
+.case-page .c-pipe b.hl {
+  background: var(--case-fg); color: var(--case-paper);
+  padding: 3px 10px; border-radius: 4px;
+}
+.case-page .c-pipe i { color: var(--case-muted); font-style: normal; }
+
+/* ── Observabilidade: dashboard panels ── */
+.case-page .c-dashes {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0;
+}
+.case-page .c-dash {
+  border: 1px solid var(--case-line); border-radius: 10px; overflow: hidden;
+}
+.case-page .c-dash.tech { border-color: var(--case-fg); }
+.case-page .c-dash .dh {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px; border-bottom: 1px solid var(--case-line);
+  background: var(--case-bg2);
+}
+.case-page .c-dash.tech .dh {
+  background: var(--case-fg); color: var(--case-paper);
+  border-color: transparent;
+}
+.case-page .c-dash .dh .t { font-weight: 600; font-size: 15px; }
+.case-page .c-dash ul { list-style: none; padding: 0; }
+.case-page .c-dash ul li {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 10px 16px; font-size: 14px;
+  border-bottom: 1px solid var(--case-line);
+}
+.case-page .c-dash ul li:last-child { border-bottom: none; }
+.case-page .c-dash ul li span { color: var(--case-muted); font-size: 12px; }
+.case-page .c-dash.tech ul li { border-color: rgba(255,255,255,.08); }
+
+/* ── Observabilidade: pair of screenshots ── */
+.case-page .c-pair-shots { display: flex; flex-direction: column; gap: 24px; margin: 28px 0 0; }
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .case-page .c-wrap { padding: 0 22px; }
@@ -496,4 +557,7 @@
   .case-page .c-shift { grid-template-columns: 1fr; }
   .case-page .c-shift .arrow { transform: rotate(90deg); justify-self: center; }
   .case-page .c-hero-art { grid-template-columns: 1fr; }
+  .case-page .c-flow { grid-template-columns: 1fr 1fr; }
+  .case-page .c-dashes { grid-template-columns: 1fr; }
+  .case-page .c-pipe { font-size: 12px; }
 }
