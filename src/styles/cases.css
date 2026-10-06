@@ -830,6 +830,42 @@
 }
 
 
+/* ── Rep Up specific ── */
+
+/* Phone scroll strip (horizontal) */
+.case-page .rup-phones {
+  display: flex;
+  gap: 14px;
+  margin: 28px 0 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 10px;
+}
+.case-page .rup-phones figure {
+  flex: 0 0 200px;
+  scroll-snap-align: start;
+  margin: 0;
+}
+.case-page .rup-phones img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  border: 1px solid var(--case-line);
+  background: #111;
+}
+
+/* App Store button accent */
+.case-page .rup-appbtn {
+  background: var(--case-accent);
+  border-color: var(--case-accent);
+  color: var(--case-paper);
+}
+.case-page .rup-appbtn:hover {
+  background: var(--case-accent-dark);
+  border-color: var(--case-accent-dark);
+}
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .case-page .c-wrap { padding: 0 22px; }
