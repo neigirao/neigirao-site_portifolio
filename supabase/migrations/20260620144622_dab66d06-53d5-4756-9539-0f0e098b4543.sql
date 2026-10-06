@@ -1,0 +1,2 @@
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS images TEXT[] NOT NULL DEFAULT '{}';
+ALTER TABLE public.lab_projects ADD COLUMN IF NOT EXISTS images TEXT[] NOT NULL DEFAULT '{}';

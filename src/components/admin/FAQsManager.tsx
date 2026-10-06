@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { SortableList } from './SortableList';
 import { AutosaveIndicator } from './AutosaveIndicator';
 import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { useAutosave } from '@/hooks/useAutosave';
+import { useFormShortcuts } from '@/hooks/useFormShortcuts';
 
 type FAQ = Database['public']['Tables']['faqs']['Row'];
 
@@ -111,6 +112,12 @@ export function FAQsManager({ onDirtyChange }: FAQsManagerProps) {
 
   const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
+  const formRef = useRef<HTMLFormElement>(null);
+  useFormShortcuts({
+    onSave: () => formRef.current?.requestSubmit(),
+    onCancel: editingId ? resetForm : undefined,
+  });
+
   return (
     <div className="space-y-6">
       <Card>
@@ -121,7 +128,7 @@ export function FAQsManager({ onDirtyChange }: FAQsManagerProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label>Pergunta <span className="text-destructive" aria-hidden="true">*</span></Label>
               <Input value={formData.question} onChange={e => setFormData({ ...formData, question: e.target.value })} placeholder="Ex: Você está disponível para novas oportunidades?" required />

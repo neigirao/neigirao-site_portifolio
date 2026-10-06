@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,8 @@ import { SortableList } from './SortableList';
 import { AutosaveIndicator } from './AutosaveIndicator';
 import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { useAutosave } from '@/hooks/useAutosave';
+import { useFormShortcuts } from '@/hooks/useFormShortcuts';
+import { CompletenessIndicator } from './CompletenessIndicator';
 
 interface Testimonial {
   id: string;
@@ -131,6 +133,12 @@ export function TestimonialsManager({ onDirtyChange }: TestimonialsManagerProps)
 
   const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
+  const formRef = useRef<HTMLFormElement>(null);
+  useFormShortcuts({
+    onSave: () => formRef.current?.requestSubmit(),
+    onCancel: editingId ? resetForm : undefined,
+  });
+
   return (
     <div className="space-y-6">
       <Card>
@@ -141,7 +149,7 @@ export function TestimonialsManager({ onDirtyChange }: TestimonialsManagerProps)
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Nome do Autor <span className="text-destructive" aria-hidden="true">*</span></Label>
@@ -201,6 +209,7 @@ export function TestimonialsManager({ onDirtyChange }: TestimonialsManagerProps)
                       <span className="font-semibold">{t.author_name}</span>
                       <span className="ml-2 text-sm text-muted-foreground">{t.author_role}</span>
                       <p className="text-xs text-muted-foreground truncate max-w-md">"{t.quote.slice(0, 80)}{t.quote.length > 80 ? '...' : ''}"</p>
+                      <div className="mt-1"><CompletenessIndicator hasImage={!!t.author_photo_url} itemName={t.author_name} /></div>
                     </div>
                   </div>
                   <div className="flex gap-2 flex-shrink-0 ml-4">
