@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { SEOHead } from '@/components/SEO/SEOHead';
 import { BreadcrumbSchema } from '@/components/SEO/BreadcrumbSchema';
 import { BASE_URL } from '@/config/constants';
@@ -12,7 +11,7 @@ export function RepUp() {
   useEffect(() => {
     const bar = progressRef.current;
     if (!bar) return;
-    const links = [...document.querySelectorAll<HTMLAnchorElement>('.case-rup .c-toc ol a')];
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('.case-repup .c-toc ol a')];
     const secs = links.map(a => document.querySelector<HTMLElement>(a.getAttribute('href') || ''));
 
     const onScroll = () => {
@@ -32,112 +31,73 @@ export function RepUp() {
     "@graph": [
       {
         "@type": "Article",
-        "@id": `${BASE_URL}/lab/rep-up#article`,
-        "headline": "Rep Up: app de musculação grátis para iPhone, offline e sem anúncios",
-        "description": "Rep Up é um app de treino grátis para iPhone: monta o treino em duas perguntas, ensina 876 exercícios e funciona sem internet. Veja como foi criado e aprovado na App Store.",
-        "image": `${BASE_URL}/lab/rep-up/og.png`,
-        "datePublished": "2026-10-05",
-        "dateModified": "2026-10-06",
+        "headline": "Rep Up: como criei um app de treino e passei pela revisão da Apple",
         "inLanguage": "pt-BR",
+        "datePublished": "2026-10-06",
         "author": { "@id": `${BASE_URL}/#person` },
-        "keywords": "app de musculação grátis, app de treino para iPhone, app de academia offline, Rep Up, treino sem internet, App Store, Capacitor, Supabase, vibe code, Nei Girão",
+        "about": { "@id": `${BASE_URL}/lab/rep-up#app` },
         "mainEntityOfPage": `${BASE_URL}/lab/rep-up`
       },
       {
         "@type": "Person",
         "@id": `${BASE_URL}/#person`,
         "name": "Nei Girão",
-        "jobTitle": "Product Manager",
         "url": `${BASE_URL}/`,
-        "sameAs": ["https://www.linkedin.com/in/neigirao/", "https://github.com/neigirao"],
-        "knowsAbout": ["Product Management", "Product Analytics", "Vibe coding", "React", "Supabase", "Capacitor", "iOS", "App Store"]
+        "sameAs": ["https://www.linkedin.com/in/neigirao/", "https://github.com/neigirao"]
       },
       {
         "@type": "MobileApplication",
-        "@id": "https://apps.apple.com/br/app/rep-up/id6812042720#app",
+        "@id": `${BASE_URL}/lab/rep-up#app`,
         "name": "Rep Up",
         "operatingSystem": "iOS",
         "applicationCategory": "HealthApplication",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "BRL"
-        },
+        "inLanguage": "pt-BR",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
         "url": "https://apps.apple.com/br/app/rep-up/id6812042720",
-        "sameAs": ["https://repupgym.lovable.app/", "https://github.com/neigirao/rep-up-buddy"],
-        "creator": { "@id": `${BASE_URL}/#person` },
-        "identifier": {
-          "@type": "PropertyValue",
-          "propertyID": "AppleAppStoreID",
-          "value": "6812042720"
-        }
+        "author": { "@id": `${BASE_URL}/#person` }
       },
       {
         "@type": "SoftwareSourceCode",
-        "name": "rep-up-buddy",
         "codeRepository": "https://github.com/neigirao/rep-up-buddy",
-        "programmingLanguage": ["TypeScript", "Swift", "SQL"],
-        "runtimePlatform": "React 18, Supabase, Capacitor",
-        "author": { "@id": `${BASE_URL}/#person` }
+        "programmingLanguage": ["TypeScript", "Swift"]
       },
       {
         "@type": "FAQPage",
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "O Rep Up é realmente gratuito?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Sim. O Rep Up é grátis, sem anúncio e sem compra dentro do app. O custo é zero para baixar e para usar."
-            }
+            "name": "O Rep Up é grátis?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Sim. É gratuito, sem anúncios e sem compra dentro do app." }
+          },
+          {
+            "@type": "Question",
+            "name": "Tem Rep Up para Android?",
+            "acceptedAnswer": { "@type": "Answer", "text": "A versão para Android está em desenvolvimento. Enquanto isso, a versão web funciona no navegador de qualquer celular." }
+          },
+          {
+            "@type": "Question",
+            "name": "O que é o Rep Up?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Um app gratuito de musculação para iPhone, para quem treina sozinho. Ele monta o treino da semana em duas perguntas e registra o que você levantou, sem anúncios e sem compra dentro do app." }
           },
           {
             "@type": "Question",
             "name": "O Rep Up funciona sem internet?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Sim. O treino é gravado no aparelho com IndexedDB (Dexie). A nuvem (Supabase) é cópia: sincroniza quando há sinal, mas o app funciona normalmente sem internet."
-            }
+            "acceptedAnswer": { "@type": "Answer", "text": "Sim. O treino fica gravado no aparelho e sincroniza com a nuvem quando há sinal. A conta serve para o histórico atravessar a troca de celular." }
           },
           {
             "@type": "Question",
-            "name": "Quantos exercícios o Rep Up tem?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "876 exercícios, com foto e passo a passo em português. Os dados vêm do Free Exercise DB, adaptado e traduzido."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Por que o Rep Up não tem IA na versão 1.0?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "A Apple rejeitou o app por causa das diretrizes 5.1.1(i) e 5.1.2(i), que exigem consentimento específico para coletar dados de saúde com IA. Para lançar sem cobrar do usuário, desliguei a IA na versão 1.0. A próxima versão traz a IA de volta com o fluxo de consentimento correto."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "O Rep Up é para iPhone mesmo? E o Android?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "A versão 1.0 é para iPhone (iOS). Há também uma versão web em repupgym.lovable.app. A versão Android está em desenvolvimento."
-            }
+            "name": "O Rep Up usa inteligência artificial?",
+            "acceptedAnswer": { "@type": "Answer", "text": "A versão 1.0 saiu sem IA, para cumprir as regras de privacidade da Apple. Na versão seguinte, a IA volta só para montar o plano, com consentimento, declaração de idade e região, e sem dado pessoal no envio." }
           },
           {
             "@type": "Question",
             "name": "Como o Rep Up foi construído?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Com vibe code, usando Lovable, Claude Code, Codex e Instinct, sobre React, TypeScript, Dexie/IndexedDB, Supabase e Capacitor para iOS. O app passou pela revisão da Apple e está na App Store desde 05/10/2026."
-            }
+            "acceptedAnswer": { "@type": "Answer", "text": "Em cerca de cinco semanas, com Lovable, Claude Code, Codex e Instinct. Começou no Lovable como web app, com React, TypeScript, IndexedDB e Supabase. Depois virou app de iPhone com Capacitor e Swift, com builds na nuvem pelo Codemagic." }
           },
           {
             "@type": "Question",
-            "name": "O código do Rep Up é aberto?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Sim. O repositório está no GitHub em github.com/neigirao/rep-up-buddy."
-            }
+            "name": "Quem criou o Rep Up?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Nei Girão, Product Manager, como projeto pessoal, trabalhando com agentes de IA que escrevem o código enquanto ele decide o produto." }
           }
         ]
       },
@@ -153,7 +113,7 @@ export function RepUp() {
   };
 
   return (
-    <div className="case-page case-rup">
+    <div className="case-page case-repup">
       <SEOHead
         title="Rep Up: app de musculação grátis para iPhone, offline e sem anúncios | Nei Girão"
         description="Rep Up é um app de treino grátis para iPhone: monta o treino em duas perguntas, ensina 876 exercícios e funciona sem internet. Veja como foi criado e aprovado na App Store."
@@ -166,9 +126,6 @@ export function RepUp() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Helmet>
-        <meta name="apple-itunes-app" content="app-id=6812042720" />
-      </Helmet>
       <BreadcrumbSchema items={[
         { name: 'Início', url: '/' },
         { name: 'Lab', url: '/#lab' },
@@ -184,6 +141,14 @@ export function RepUp() {
             <Link to="/#projects" className="lnk">Projetos</Link>
             <Link to="/#lab" className="lnk">Lab</Link>
             <Link to="/#contact" className="lnk">Contato</Link>
+            <a
+              className="c-btn pri sm"
+              href="https://apps.apple.com/br/app/rep-up/id6812042720"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              App Store
+            </a>
           </nav>
         </div>
       </header>
@@ -197,76 +162,49 @@ export function RepUp() {
           </nav>
 
           <header className="c-hero">
-            <div className="c-kicker c-mono">Lab · App iOS · Treino · Vibe code</div>
+            <div className="c-kicker c-mono">Lab · App iOS · Vibe code · 2026</div>
             <h1 className="c-disp">
-              Construí um app de treino para iPhone. <em>Do zero à App Store em 5 semanas.</em>
+              Rep Up: um app de treino feito para{' '}
+              <em>a mão suada, entre séries, sem sinal</em>
             </h1>
             <p className="c-dek">
-              Rep Up é um app de musculação grátis para iPhone: duas perguntas montam a semana, um toque registra a série e o descanso começa sozinho. Funciona sem sinal.
+              Criei o Rep Up porque os apps de treino que eu encontrava eram pagos, e eu só queria aprender a fazer cada exercício.
+              Ele monta a semana em duas perguntas e registra o que você levantou. Nada além disso. Este é o caso de como ele saiu
+              do Lovable, virou app de iPhone e passou pela revisão da Apple em cinco semanas.
             </p>
-            <div className="c-facts">
-              <div className="c-fact">
-                <div className="k c-mono">Meu papel</div>
-                <div className="v">Produto, design e código</div>
-              </div>
-              <div className="c-fact">
-                <div className="k c-mono">Plataforma</div>
-                <div className="v">iPhone e web</div>
-              </div>
-              <div className="c-fact">
-                <div className="k c-mono">Preço</div>
-                <div className="v">Grátis, sem anúncio</div>
-              </div>
-              <div className="c-fact">
-                <div className="k c-mono">Da 1ª linha à loja</div>
-                <div className="v big">5 semanas</div>
-              </div>
-            </div>
-
-            <div className="rup-hero-btns" style={{ marginTop: '28px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <div className="c-hero-btns">
               <a
-                className="c-btn pri rup-appbtn"
+                className="c-appbtn"
                 href="https://apps.apple.com/br/app/rep-up/id6812042720"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                ↓ Baixar na App Store
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="22" height="22">
+                  <path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.7-1-2.7-4.1zM13.9 5c.7-.9 1.2-2 1-3.2-1 0-2.2.7-3 1.5-.6.7-1.2 1.9-1.1 3.1 1.2.1 2.3-.6 3.1-1.4z" />
+                </svg>
+                <span>
+                  <small>Baixar na</small>
+                  <b>App Store</b>
+                </span>
               </a>
-              <a
-                className="c-btn"
-                href="https://repupgym.lovable.app/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Versão web ↗
-              </a>
-              <a
-                className="c-btn"
-                href="https://github.com/neigirao/rep-up-buddy"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                GitHub ↗
-              </a>
+              <a className="c-btn" href="https://repupgym.lovable.app/" target="_blank" rel="noopener noreferrer">Versão web (PWA) ↗</a>
+              <a className="c-btn" href="https://github.com/neigirao/rep-up-buddy" target="_blank" rel="noopener noreferrer">Código no GitHub ↗</a>
             </div>
-
-            <figure className="c-shot" style={{ marginTop: '36px' }}>
-              <img
-                src="/lab/rep-up/og.png"
-                alt="Rep Up: app de musculação grátis para iPhone"
-                width={1200}
-                height={630}
-                fetchPriority="high"
-                style={{ display: 'block', width: '100%', height: 'auto', borderRadius: '10px', border: '1px solid var(--case-line)' }}
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-              />
+            <div className="c-facts">
+              <div className="c-fact"><div className="k c-mono">Meu papel</div><div className="v">Produto, design e código</div></div>
+              <div className="c-fact"><div className="k c-mono">Plataforma</div><div className="v">iPhone e web</div></div>
+              <div className="c-fact"><div className="k c-mono">Preço</div><div className="v">Grátis, sem anúncio</div></div>
+              <div className="c-fact"><div className="k c-mono">Da 1ª linha à loja</div><div className="v big">5 semanas</div></div>
+            </div>
+            <figure className="c-og">
+              <img src="/lab/rep-up/og.png" alt="Rep Up: seu treino, sem enrolação" width="1200" height="630" fetchPriority="high" />
             </figure>
           </header>
         </div>
 
         <div className="c-wrap c-body">
-          <aside className="c-toc" aria-label="Neste projeto">
-            <span className="c-mono">Neste projeto</span>
+          <aside className="c-toc" aria-label="Nesta página">
+            <span className="c-mono">Nesta página</span>
             <ol>
               <li><a href="#problema">O problema</a></li>
               <li><a href="#solucao">A solução</a></li>
@@ -292,7 +230,6 @@ export function RepUp() {
           </aside>
 
           <article>
-            {/* TLDR */}
             <div className="c-tldr">
               <span className="c-mono">Resumo em 30 segundos</span>
               <ul>
@@ -304,536 +241,337 @@ export function RepUp() {
               </ul>
             </div>
 
-            {/* O que este projeto mostra */}
             <aside className="c-hire" aria-label="O que este projeto mostra">
               <div className="hd"><span className="c-mono">O que este projeto mostra</span></div>
               <ul>
-                <li>
-                  <b>Dono do produto, de ponta a ponta</b>
-                  <span>Da ideia à App Store, passando por design, código e revisão da Apple. <a href="#lancamento">Ver o lançamento</a></span>
-                </li>
-                <li>
-                  <b>Coragem de cortar escopo</b>
-                  <span>Três abas, sem calorias, sem rede social, sem cobrança. <a href="#decisoes">Ver as decisões</a></span>
-                </li>
-                <li>
-                  <b>Fluência técnica</b>
-                  <span>Offline-first, sincronia em transação e app nativo com Capacitor e Swift. <a href="#arquitetura">Ver a arquitetura</a></span>
-                </li>
-                <li>
-                  <b>Privacidade e conformidade</b>
-                  <span>Desliguei a IA para cumprir as regras da Apple sem cobrar do usuário. <a href="#ia">Ver a decisão</a></span>
-                </li>
-                <li>
-                  <b>Construção com IA</b>
-                  <span>Agentes de IA escrevem o código; eu decido o produto. <a href="#processo">Ver o processo</a></span>
-                </li>
+                <li><b>Dono do produto, de ponta a ponta</b><span>Da ideia à App Store, passando por design, código e revisão da Apple. <a href="#lancamento">Ver o lançamento</a></span></li>
+                <li><b>Coragem de cortar escopo</b><span>Três abas, sem calorias, sem rede social, sem cobrança. <a href="#decisoes">Ver as decisões</a></span></li>
+                <li><b>Fluência técnica</b><span>Offline-first, sincronia em transação e app nativo com Capacitor e Swift. <a href="#arquitetura">Ver a arquitetura</a></span></li>
+                <li><b>Privacidade e conformidade</b><span>Desliguei a IA para cumprir as regras da Apple sem cobrar do usuário. <a href="#ia">Ver a decisão</a></span></li>
+                <li><b>Construção com IA</b><span>Agentes de IA escrevem o código; eu decido o produto. <a href="#processo">Ver o processo</a></span></li>
               </ul>
             </aside>
 
-            {/* S01 — O problema */}
-            <section id="problema" style={{ scrollMarginTop: '90px', marginBottom: '72px' }}>
-              <h2>
-                <span className="n">01 — O problema</span>
-                Apps de treino comuns pedem demais antes de mostrar qualquer coisa.
-              </h2>
-              <p>
-                A cena que guiou o design: <em>"De pé na academia, entre séries. Uma mão livre, suada. Celular às vezes no chão. Luz de subsolo, sem sinal. Noventa segundos de descanso."</em>
-              </p>
-              <p>
-                Apps comuns pedem peso, altura e dados antes de mostrar qualquer coisa. Têm calorias, metas e rede social que ninguém pediu. Precisam de internet. Mandam notificação cobrando todo dia.
-              </p>
-
-              <div className="c-shift" style={{ margin: '32px 0 8px' }}>
-                <div className="side">
-                  <span className="c-mono">Apps comuns</span>
+            {/* 01 — O problema */}
+            <section id="problema">
+              <h2><span className="n">01 — O problema</span>Quem treina sozinho não sabe montar treino</h2>
+              <p>A maioria dos apps de treino pergunta peso, altura, idade e objetivo antes de mostrar qualquer coisa. Depois, enche a tela de calorias, metas e notificações. Quem só quer saber o que treinar hoje desiste no cadastro.</p>
+              <p>Foi o meu caso: os apps que mostravam como fazer cada exercício cobravam assinatura. Eu queria um app grátis que me ensinasse o movimento e me dissesse o que treinar hoje.</p>
+              <div className="c-shift">
+                <div className="side"><span className="c-mono">Apps de treino comuns</span>
                   <ul>
-                    <li>Cadastro: peso, altura, idade</li>
-                    <li>Calorias, metas, rede social</li>
+                    <li>Cadastro com peso, altura e idade</li>
+                    <li>Calorias, metas e rede social</li>
                     <li>Precisam de internet</li>
                     <li>Notificação cobrando todo dia</li>
                   </ul>
                 </div>
-                <div className="arrow">→</div>
-                <div className="side to">
-                  <span className="c-mono">Rep Up</span>
+                <div className="arrow" aria-hidden="true">→</div>
+                <div className="side to"><span className="c-mono">Rep Up</span>
                   <ul>
-                    <li>Duas perguntas e treino pronto</li>
-                    <li>Só treino e o que levantou</li>
+                    <li>Duas perguntas e o treino está pronto</li>
+                    <li>Só treino e o que você levantou</li>
                     <li>Funciona sem sinal</li>
                     <li>Nenhuma bolinha vermelha</li>
                   </ul>
                 </div>
               </div>
+              <p>Desenhei o Rep Up a partir de uma cena concreta:</p>
+              <div className="c-scene">
+                <span className="c-mono">A cena que guiou cada decisão</span>
+                <p>De pé na academia, entre séries. Uma mão livre, suada. Celular às vezes no chão. Luz de subsolo, sem sinal. Noventa segundos de descanso.</p>
+              </div>
             </section>
 
-            {/* S02 — A solução */}
-            <section id="solucao" style={{ scrollMarginTop: '90px', marginBottom: '72px' }}>
-              <h2>
-                <span className="n">02 — A solução</span>
-                Um toque registra a série. O descanso começa sozinho.
-              </h2>
-
+            {/* 02 — A solução */}
+            <section id="solucao">
+              <h2><span className="n">02 — A solução</span>Seu treino, sem enrolação</h2>
               <div className="c-reads">
-                <div className="c-read">
-                  <div className="a">Uma mão livre, suada</div>
-                  <div className="ar">→</div>
-                  <div className="b">Um toque registra a série. Sem digitar nada.</div>
-                </div>
-                <div className="c-read">
-                  <div className="a">Sem sinal no subsolo</div>
-                  <div className="ar">→</div>
-                  <div className="b">Tudo funciona offline e sincroniza depois.</div>
-                </div>
-                <div className="c-read">
-                  <div className="a">Noventa segundos</div>
-                  <div className="ar">→</div>
-                  <div className="b">O descanso começa sozinho e avisa com a tela apagada.</div>
-                </div>
-                <div className="c-read">
-                  <div className="a">Não sei fazer o exercício</div>
-                  <div className="ar">→</div>
-                  <div className="b">Foto e passo a passo em português para 876 exercícios.</div>
-                </div>
+                <div className="c-read"><div className="a">Uma mão livre, suada</div><div className="ar">→</div><div className="b">Um toque registra a série. Sem digitar nada.</div></div>
+                <div className="c-read"><div className="a">Sem sinal no subsolo</div><div className="ar">→</div><div className="b">Tudo funciona offline e sincroniza depois.</div></div>
+                <div className="c-read"><div className="a">Noventa segundos</div><div className="ar">→</div><div className="b">O descanso começa sozinho e avisa com a tela apagada.</div></div>
+                <div className="c-read"><div className="a">Não sei fazer o exercício</div><div className="ar">→</div><div className="b">Foto e passo a passo em português para 876 exercícios.</div></div>
               </div>
-
-              {/* Phone strip */}
-              <div className="rup-phones" style={{ display: 'flex', gap: '14px', margin: '28px 0 8px', overflowX: 'auto', scrollSnapType: 'x mandatory', paddingBottom: '10px' }}>
-                {[
-                  { src: '/lab/rep-up/1-treino.png', width: 1242, height: 2688, alt: 'Tela Treino: próximo treino A, lista de exercícios e dias da semana', caption: 'Treino' },
-                  { src: '/lab/rep-up/2-sessao.png', width: 1242, height: 2688, alt: 'Sessão de treino: supino reto, contador de séries, peso e repetições', caption: 'Sessão' },
-                  { src: '/lab/rep-up/3-descanso.png', width: 1242, height: 2688, alt: 'Descanso automático: cronômetro de 2:28 e próximo exercício', caption: 'Descanso' },
-                  { src: '/lab/rep-up/4-voce.png', width: 1242, height: 2688, alt: 'Tela Você: tom do professor e configurações pessoais', caption: 'Você' },
-                  { src: '/lab/rep-up/5-numeros.png', width: 1242, height: 2688, alt: 'Tela Números: treinos e séries da semana e histórico', caption: 'Números' },
-                ].map(({ src, width, height, alt, caption }) => (
-                  <figure key={src} style={{ flex: '0 0 200px', scrollSnapAlign: 'start', margin: 0 }}>
-                    <img
-                      src={src}
-                      alt={alt}
-                      width={width}
-                      height={height}
-                      loading="lazy"
-                      style={{ display: 'block', width: '100%', height: 'auto', borderRadius: '14px', border: '1px solid var(--case-line)', background: '#111' }}
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                    />
-                    <figcaption style={{ textAlign: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--case-muted)', marginTop: '8px' }}>
-                      {caption}
-                    </figcaption>
-                  </figure>
-                ))}
+              <p>O app começa com duas perguntas: quais dias você treina e quais exercícios faz. Ele monta a divisão, escolhe séries e repetições e diz qual é o treino de hoje. Não pergunta peso, altura nem idade.</p>
+              <div className="c-phones-scroll">
+                <figure>
+                  <img src="/lab/rep-up/1-treino.png" alt="Tela Treino: próximo treino A (peito, ombro, tríceps), botão Bora treinar e o plano com os exercícios" width="1242" height="2688" loading="lazy" />
+                  <figcaption>Treino</figcaption>
+                </figure>
+                <figure>
+                  <img src="/lab/rep-up/2-sessao.png" alt="Sessão de treino: supino reto com a carga da última vez, recorde e botão Fiz para registrar a série" width="1242" height="2688" loading="lazy" />
+                  <figcaption>Sessão</figcaption>
+                </figure>
+                <figure>
+                  <img src="/lab/rep-up/3-descanso.png" alt="Descanso automático: cronômetro de 2:28 com botões Fixar, +30s e Pular" width="1242" height="2688" loading="lazy" />
+                  <figcaption>Descanso</figcaption>
+                </figure>
+                <figure>
+                  <img src="/lab/rep-up/4-voce.png" alt="Tela Você: tom do professor (acolhe ou empurra), dias por semana, descanso padrão e exportar dados" width="1242" height="2688" loading="lazy" />
+                  <figcaption>Você</figcaption>
+                </figure>
+                <figure>
+                  <img src="/lab/rep-up/5-numeros.png" alt="Tela Números: treinos e séries da semana, kg levantados e recordes por exercício" width="1242" height="2688" loading="lazy" />
+                  <figcaption>Números</figcaption>
+                </figure>
               </div>
-
-              <div className="c-reads" style={{ marginTop: '24px' }}>
-                <div className="c-read">
-                  <div className="a">Ficha do professor</div>
-                  <div className="ar">→</div>
-                  <div className="b">Duas perguntas (divisão e dias por semana) montam a semana inteira automaticamente.</div>
-                </div>
-                <div className="c-read">
-                  <div className="a">Trocar um exercício</div>
-                  <div className="ar">→</div>
-                  <div className="b">Substitua qualquer exercício por outro do mesmo grupo muscular, sem refazer o treino.</div>
-                </div>
-                <div className="c-read">
-                  <div className="a">Progresso honesto</div>
-                  <div className="ar">→</div>
-                  <div className="b">Histórico por exercício: o que você levantou, quando e quantas séries.</div>
-                </div>
-                <div className="c-read">
-                  <div className="a">Seus dados</div>
-                  <div className="ar">→</div>
-                  <div className="b">Tudo fica no aparelho. A nuvem sincroniza, mas não é obrigatória.</div>
-                </div>
+              <div className="c-reads">
+                <div className="c-read"><div className="a">Ficha do professor</div><div className="ar">→</div><div className="b">Fotografe ou cole o texto, e o app transforma em semana de treino.</div></div>
+                <div className="c-read"><div className="a">Trocar um exercício</div><div className="ar">→</div><div className="b">Vale só para hoje e não reescreve o plano.</div></div>
+                <div className="c-read"><div className="a">Progresso honesto</div><div className="ar">→</div><div className="b">Recordes e volume semanal por músculo. Sem série registrada, a tela fica vazia: número inventado não ajuda ninguém.</div></div>
+                <div className="c-read"><div className="a">Seus dados</div><div className="ar">→</div><div className="b">Exporte tudo em JSON aberto. Apague a conta dentro do app, sem e-mail e sem formulário.</div></div>
               </div>
             </section>
 
-            {/* S03 — Decisões de produto */}
-            <section id="decisoes" style={{ scrollMarginTop: '90px', marginBottom: '72px' }}>
-              <h2>
-                <span className="n">03 — Decisões de produto</span>
-                O que entrou, o que ficou de fora e por quê.
-              </h2>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', margin: '24px 0 8px' }}>
-                <div style={{ border: '1px solid var(--case-line)', borderRadius: '8px', padding: '18px', background: 'var(--case-paper)' }}>
-                  <span className="c-mono" style={{ color: 'var(--case-accent)', display: 'block', marginBottom: '10px' }}>Entrou</span>
-                  <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '15px', lineHeight: 1.6 }}>
-                    <li>Treino em 2 perguntas</li>
-                    <li>Registro com 1 toque</li>
+            {/* 03 — Decisões de produto */}
+            <section id="decisoes">
+              <h2><span className="n">03 — Decisões de produto</span>O que ficou de fora, de propósito</h2>
+              <p>A parte mais difícil foi dizer não. Três abas (Treino, Números e Você) são o teto, e não há bolinha vermelha cobrando nada.</p>
+              <div className="c-cols2">
+                <div className="c-box">
+                  <span className="c-mono">Entrou</span>
+                  <ul>
+                    <li>Treino montado em duas perguntas</li>
+                    <li>Registro com um toque</li>
                     <li>Descanso automático</li>
-                    <li>Offline com sincronização</li>
-                    <li>Catálogo indexável (876 exercícios)</li>
-                    <li>Tom do professor à escolha</li>
+                    <li>Funciona sem sinal</li>
+                    <li>Catálogo público, indexável pelo Google</li>
+                    <li>Tom à escolha: acolhe ou provoca</li>
                   </ul>
                 </div>
-                <div style={{ border: '1px solid var(--case-line)', borderRadius: '8px', padding: '18px', background: 'var(--case-paper)', opacity: 0.7 }}>
-                  <span className="c-mono" style={{ color: 'var(--case-muted)', display: 'block', marginBottom: '10px' }}>Ficou de fora</span>
-                  <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '15px', lineHeight: 1.6, color: 'var(--case-muted)' }}>
-                    <li>Calorias e macros</li>
-                    <li>Rede social e conquistas</li>
-                    <li>Wearable e vídeo</li>
-                    <li>Câmera de forma</li>
+                <div className="c-box c-box-out">
+                  <span className="c-mono">Ficou de fora</span>
+                  <ul>
+                    <li>Calorias e dieta</li>
+                    <li>Rede social</li>
+                    <li>Wearable e vídeo de treino</li>
+                    <li>Análise de forma por câmera</li>
                     <li>Moeda virtual</li>
                     <li>Foto de progresso</li>
                   </ul>
                 </div>
               </div>
-
-              <div className="c-decisions" style={{ marginTop: '32px' }}>
+              <div className="c-trade"><b>Trade-off</b> Menos funcionalidades significam menos argumentos na loja e menos motivos para quem compara apps. Apostei que quem treina sozinho quer menos, não mais.</div>
+              <p>O catálogo de exercícios também ficou aberto, sem login: uma página por exercício e um sitemap com 881 URLs, feito para o Google encontrar o app.</p>
+              <h3 className="c-h3">Três regras de produto que estavam no primeiro prompt</h3>
+              <div className="c-decisions">
                 <div className="c-dec">
                   <div className="num">1</div>
                   <div>
-                    <h3>Offline-first, nuvem como cópia</h3>
-                    <p>O dado do treino fica no aparelho (IndexedDB via Dexie). A nuvem (Supabase) é backup e sincronia entre dispositivos. O app nunca fica indisponível por falta de sinal.</p>
-                    <div className="trade"><b>Trade-off</b> Sincronia em transação exigiu lógica de conflito e merge. Mais complexidade, mas o usuário nunca perde um treino.</div>
+                    <h3>Dois professores, e nenhum fala na hora da queda</h3>
+                    <p>Você escolhe a voz do app: o professor que empurra ou o que acolhe. O que empurra cutuca treino pulado e carga parada, nunca corpo, peso ou aparência. E nos momentos frágeis (a volta depois de semanas sumido, a semana pausada, a série abaixo do alvo) as duas vozes dizem exatamente a mesma frase.</p>
+                    <div className="trade"><b>Trade-off</b> Cada frase do app existe em duas versões, lado a lado no mesmo arquivo, para nunca ficarem diferentes por engano. Números nunca mudam de tom: a carga aparece igual nas duas vozes.</div>
                   </div>
                 </div>
                 <div className="c-dec">
                   <div className="num">2</div>
                   <div>
-                    <h3>Grátis, sem anúncio, sem compra</h3>
-                    <p>A decisão de não cobrar e não mostrar anúncio foi tomada antes da primeira linha de código. O app é laboratório de produto, não negócio.</p>
-                    <div className="trade"><b>Trade-off</b> Sem receita, o custo de infraestrutura sai do bolso. Aceitável para o escopo atual.</div>
+                    <h3>A sequência conta semanas, não dias</h3>
+                    <p>Musculação exige descanso. Uma sequência diária premiaria treinar todo dia, que é justamente o que não se deve fazer. No Rep Up, a sequência conta semanas cumpridas, e uma semana marcada como viagem, doença ou descanso não quebra nada.</p>
+                    <div className="trade"><b>Trade-off</b> Uma sequência semanal anda devagar e dá menos "recompensa" diária. Preferi um número que não empurra para o treino errado.</div>
                   </div>
                 </div>
                 <div className="c-dec">
                   <div className="num">3</div>
                   <div>
-                    <h3>Três abas, sem mais</h3>
-                    <p>O app tem exatamente três abas: Treino, Números e Você. Qualquer feature nova precisa caber em uma delas ou justificar uma quarta.</p>
-                    <div className="trade"><b>Trade-off</b> Algumas features legais (ex.: registro de aparelhos da academia) foram descartadas por não se encaixar sem forçar a estrutura.</div>
+                    <h3>O app cede sempre, concorda nunca e insiste uma vez</h3>
+                    <p>Se você sobe a carga quando o app sugeriu aliviar, ele aceita na hora e guarda as duas coisas: o que sugeriu e o que você escolheu. Se a carga cair depois de três avisos ignorados, ele fala uma vez. Nunca duas, e nunca bloqueia.</p>
+                    <div className="trade"><b>Trade-off</b> Respeitar a escolha da pessoa às vezes significa deixá-la errar. O app registra, avisa uma vez e segue.</div>
                   </div>
                 </div>
               </div>
-
-              <p style={{ marginTop: '20px', color: 'var(--case-muted)', fontSize: '15px', fontStyle: 'italic' }}>
-                Uma ideia que não entrou: cadastrar os aparelhos de cada academia. Seria útil, mas adicionaria uma quarta aba e dependência de dados externos. Ficou para depois.
-              </p>
+              <p>Uma ideia do primeiro prompt saiu no caminho: cadastrar os aparelhos de cada academia. A lista ficava velha assim que a academia comprava um aparelho, custava uma pergunta no início e mesmo assim errava. A dúvida real era pontual, "consigo fazer este exercício aqui?", e virou uma foto de um aparelho com um veredito: serve, serve com ajuste ou não serve.</p>
             </section>
 
-            {/* S04 — A arquitetura */}
-            <section id="arquitetura" style={{ scrollMarginTop: '90px', marginBottom: '72px' }}>
-              <h2>
-                <span className="n">04 — A arquitetura</span>
-                Cinco regras que guiaram cada decisão técnica.
-              </h2>
-
-              <ol className="c-lessons" style={{ counterReset: 'l', listStyle: 'none', padding: 0, margin: '24px 0 0' }}>
-                <li>
-                  <strong>O dado do treino pertence ao usuário, não ao servidor.</strong>
-                  Tudo vai para o IndexedDB primeiro. O Supabase recebe a cópia depois.
-                </li>
-                <li>
-                  <strong>Nenhuma tela depende de rede para funcionar.</strong>
-                  Se a sincronização falha, o usuário nem percebe. O treino continua.
-                </li>
-                <li>
-                  <strong>Cada escrita é uma transação.</strong>
-                  Série registrada, descanso iniciado e histórico atualizado em uma operação. Sem estado parcial.
-                </li>
-                <li>
-                  <strong>O código nativo é mínimo.</strong>
-                  Capacitor cuida da ponte iOS. O Swift customizado cobre só o que o Capacitor não entrega nativamente.
-                </li>
-                <li>
-                  <strong>Observabilidade desde o início.</strong>
-                  GA4, Sentry e Crashlytics antes de qualquer usuário real.
-                </li>
+            {/* 04 — Arquitetura */}
+            <section id="arquitetura">
+              <h2><span className="n">04 — A arquitetura</span>Cinco regras que não se quebram</h2>
+              <p>O app nasceu no Lovable, como web mobile-first instalável. Depois, o mesmo código foi empacotado com Capacitor para virar app de iPhone, com plugins próprios em Swift. Antes de investir nisso, testei no navegador que o build estático funcionava sozinho.</p>
+              <p>Em uma frase: o app grava tudo no celular primeiro e copia para a nuvem depois. Por isso ele funciona no subsolo.</p>
+              <p>Cada uma destas regras já foi quebrada uma vez, e por isso virou regra:</p>
+              <ol className="c-rules">
+                <li><div><b>O treino mora no aparelho.</b> Nada de treino no localStorage. O IndexedDB é a fonte da verdade, e o Supabase é a cópia.</div></li>
+                <li><div><b>Gravar e sincronizar são uma coisa só.</b> A escrita e a fila de sincronia entram na mesma transação. Senão a série aparece registrada na tela, e o servidor nunca fica sabendo. Essa regra existe porque isso aconteceu sete vezes, e as sete estão documentadas no histórico do código.</div></li>
+                <li><div><b>Nenhuma função essencial depende de IA.</b> Toda chamada de IA passa pelo servidor, e o app funciona inteiro sem ela.</div></li>
+                <li><div><b>Nenhum dado sai do aparelho sem conta.</b> A conta existe para o histórico atravessar a troca de celular.</div></li>
+                <li><div><b>Nenhum texto mora no código da tela.</b> Tudo vem de um arquivo de textos, e um teste varre as telas atrás de português solto.</div></li>
               </ol>
-
-              <h3 className="c-h3">Stack</h3>
-              <div className="c-stack">
-                <div className="ly">
-                  <span className="c-mono">Interface</span>
-                  <div className="t">React + TypeScript</div>
-                  <div className="d">Vite, Tailwind, shadcn-ui.</div>
+              <div className="c-cols2">
+                <div className="c-box">
+                  <span className="c-mono">Stack</span>
+                  <ul>
+                    <li>React + TypeScript (Lovable)</li>
+                    <li>IndexedDB (Dexie) no aparelho</li>
+                    <li>Supabase: Postgres, Auth, Storage e Edge Functions</li>
+                    <li>Capacitor + Swift no iPhone</li>
+                    <li>Codemagic para builds de iOS na nuvem</li>
+                  </ul>
                 </div>
-                <div className="ly">
-                  <span className="c-mono">Dados locais</span>
-                  <div className="t">IndexedDB (Dexie)</div>
-                  <div className="d">Treinos, séries e histórico gravados no aparelho.</div>
-                </div>
-                <div className="ly">
-                  <span className="c-mono">Nuvem</span>
-                  <div className="t">Supabase</div>
-                  <div className="d">Postgres, autenticação, storage e RLS.</div>
-                </div>
-                <div className="ly">
-                  <span className="c-mono">iOS</span>
-                  <div className="t">Capacitor + Swift</div>
-                  <div className="d">App nativo via Capacitor. Notificações em Swift.</div>
-                </div>
-                <div className="ly">
-                  <span className="c-mono">CI/CD</span>
-                  <div className="t">Codemagic</div>
-                  <div className="d">Build automático, TestFlight e App Store Connect.</div>
-                </div>
-                <div className="ly">
-                  <span className="c-mono">Qualidade</span>
-                  <div className="t">GA4 · Sentry · Crashlytics</div>
-                  <div className="d">Testes, CI, observabilidade e crash reports.</div>
+                <div className="c-box">
+                  <span className="c-mono">Qualidade e medição</span>
+                  <ul>
+                    <li>Testes automatizados, incluindo um que procura texto solto nas telas</li>
+                    <li>CI "tudo ou nada", incluindo o build nativo</li>
+                    <li>GA4 só com o funil de cadastro, sem dado pessoal</li>
+                    <li>Sentry só para erro, Crashlytics para travamento</li>
+                  </ul>
                 </div>
               </div>
+              <div className="c-trade"><b>Trade-off</b> Gravar primeiro no aparelho exige uma fila de sincronia, conferência das duas pontas e "lápides" para o que foi apagado. É bem mais trabalho que gravar direto na nuvem, mas é o que faz o app funcionar no subsolo.</div>
+              <p>O build nativo entrou na checagem obrigatória depois que uma otimização de velocidade do site (que valia 10 pontos no Lighthouse) quebrou o app de iPhone, passou por todos os testes e chegou ao código principal sem ninguém ver. E, em vez de declarar rastreadores na etiqueta de privacidade da Apple, eu os cortei.</p>
             </section>
 
-            {/* S05 — A IA e a Apple */}
-            <section id="ia" style={{ scrollMarginTop: '90px', marginBottom: '72px' }}>
-              <h2>
-                <span className="n">05 — A IA e a Apple</span>
-                A Apple rejeitou o app por causa da IA. Desliguei a IA.
-              </h2>
-              <p>
-                O build 26 foi reprovado pelas diretrizes <strong>5.1.1(i) e 5.1.2(i)</strong>: features de IA que processam dados de saúde exigem consentimento explícito e fluxo de privacidade específico.
-              </p>
-              <p>Três caminhos possíveis:</p>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '12px', margin: '24px 0 8px' }}>
-                <div style={{ border: '1px solid var(--case-line)', borderRadius: '8px', padding: '18px', background: 'var(--case-paper)', opacity: 0.6 }}>
-                  <span className="c-mono" style={{ display: 'block', marginBottom: '8px', color: 'var(--case-muted)' }}>Opção A — Descartada</span>
-                  <div style={{ fontFamily: "'Fraunces', serif", fontSize: '18px', marginBottom: '8px' }}>Adicionar paywall</div>
-                  <div style={{ fontSize: '14px', color: 'var(--case-muted)', lineHeight: 1.5 }}>Cobrar pelo plano com IA. Cumpre a diretriz, mas contradiz a premissa do app ser gratuito.</div>
+            {/* 05 — A IA e a Apple */}
+            <section id="ia">
+              <h2><span className="n">05 — A IA e a Apple</span>A rejeição que me fez desligar a IA</h2>
+              <p>O Rep Up usava o Gemini em quatro fluxos: montar o plano, ler a ficha por foto, buscar exercício e avaliar um aparelho por foto ("Posso fazer aqui?"). A chave ficava só no servidor.</p>
+              <p>A Apple rejeitou o build 26 pelas diretrizes 5.1.1(i) e 5.1.2(i). O app mandava dados do usuário ao Gemini sem uma tela de consentimento, e a política de privacidade citava a camada grátis do Gemini, cujos termos não permitem dado pessoal.</p>
+              <div className="c-opts">
+                <div className="c-opt"><span className="c-mono">Opção A</span>Pagar a camada paga do Gemini, com consentimento e política nova.</div>
+                <div className="c-opt"><span className="c-mono">Opção B</span>Um modelo híbrido, com parte da IA ligada.</div>
+                <div className="c-opt c-opt-pick"><span className="c-mono">Escolhi</span>Desligar a IA nesta versão, sem ligar cobrança, e reenviar.</div>
+              </div>
+              <div className="c-trade"><b>Trade-off</b> Saíram da versão 1.0 a leitura da ficha por foto, a busca inteligente e o "Posso fazer aqui?". Em troca, o app chegou à loja sem cobrança e sem dado pessoal indo para terceiros.</div>
+              <p>A IA ficou atrás de uma chave: a interface escondida, o código mantido e a política atualizada dizendo que esta versão não usa IA. O build 27 foi reenviado em 03/10/2026. Como a regra 3 já garantia que nada essencial dependia de IA, o app continuou inteiro.</p>
+              <p>Logo depois, decidi religar a IA, mas só em um fluxo: montar o plano. Foto, texto livre, busca e câmera continuam desligados. É assim que ela volta:</p>
+              <div className="c-cols2">
+                <div className="c-box">
+                  <span className="c-mono">O que vai para o Gemini</span>
+                  <ul>
+                    <li>Quantos dias por semana você treina (de 2 a 6)</li>
+                    <li>Sua experiência: iniciante, intermediário ou avançado</li>
+                    <li>Nada mais: sem nome, sem e-mail, sem identificador</li>
+                  </ul>
                 </div>
-                <div style={{ border: '1px solid var(--case-line)', borderRadius: '8px', padding: '18px', background: 'var(--case-paper)', opacity: 0.6 }}>
-                  <span className="c-mono" style={{ display: 'block', marginBottom: '8px', color: 'var(--case-muted)' }}>Opção B — Descartada</span>
-                  <div style={{ fontFamily: "'Fraunces', serif", fontSize: '18px', marginBottom: '8px' }}>Modo híbrido</div>
-                  <div style={{ fontSize: '14px', color: 'var(--case-muted)', lineHeight: 1.5 }}>IA opcional com tela de consentimento. Mais complexidade, mais prazo para revisão.</div>
-                </div>
-                <div style={{ border: '2px solid var(--case-accent)', borderRadius: '8px', padding: '18px', background: 'var(--case-paper)' }}>
-                  <span className="c-mono" style={{ display: 'block', marginBottom: '8px', color: 'var(--case-accent)' }}>Escolhida</span>
-                  <div style={{ fontFamily: "'Fraunces', serif", fontSize: '18px', marginBottom: '8px' }}>Desligar a IA na 1.0</div>
-                  <div style={{ fontSize: '14px', color: 'var(--case-muted)', lineHeight: 1.5 }}>Remover completamente a IA da v1.0. Lançar rápido, trazer a IA de volta na próxima versão com o fluxo correto.</div>
+                <div className="c-box">
+                  <span className="c-mono">O que precisa acontecer antes</span>
+                  <ul>
+                    <li>Você declara ter 18 anos ou mais</li>
+                    <li>Você declara estar fora da União Europeia, do Reino Unido e da Suíça</li>
+                    <li>Você aceita o envio ao Google</li>
+                    <li>Se qualquer checagem falhar, nada é enviado</li>
+                  </ul>
                 </div>
               </div>
-
-              <div className="trade" style={{ marginTop: '16px', fontSize: '15px', color: 'var(--case-muted)', borderLeft: '2px solid var(--case-accent)', paddingLeft: '14px' }}>
-                <b style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--case-accent)', marginRight: '6px' }}>Trade-off</b>
-                A versão 1.0 não tem sugestão inteligente de treino. Mas entrou na loja sem cobrar do usuário e sem complexidade de consentimento.
-              </div>
-
-              <p style={{ marginTop: '20px' }}>
-                A IA volta na próxima versão com: apenas dias/semana e experiência (sem dados pessoais), consentimento explícito obrigatório e declaração de faixa etária e região.
-              </p>
+              <p>Lesões só filtram exercícios dentro do aparelho e não entram no pedido. Se a IA falhar, o motor de regras, que monta o plano sem IA e é coberto por testes, assume no lugar. Num teste real, um pedido com um campo a mais foi recusado antes de chegar ao Gemini.</p>
             </section>
 
-            {/* S06 — O lançamento */}
-            <section id="lancamento" style={{ scrollMarginTop: '90px', marginBottom: '72px' }}>
-              <h2>
-                <span className="n">06 — O lançamento</span>
-                5 semanas, 2 rejeições, 1 app no ar.
-              </h2>
-
-              <div style={{ borderTop: '2px solid var(--case-fg)', marginTop: '24px' }}>
-                {[
-                  { date: '29/08/2026', event: 'Primeira versão do banco. Começa o projeto.' },
-                  { date: 'Build 26', event: 'Reprovado pelas diretrizes 5.1.1 e 5.1.2, por causa da IA.' },
-                  { date: '01/10/2026', event: 'Correção da diretriz 4.0 (logo Apple). Conta de demonstração desativada e substituída.' },
-                  { date: '03/10/2026', event: 'Build 27 reenviado, com IA desligada.' },
-                  { date: '05/10/2026', event: 'Versão 1.0 no ar. 🎉', highlight: true },
-                ].map(({ date, event, highlight }) => (
-                  <div
-                    key={date}
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '120px minmax(0, 1fr)',
-                      gap: '20px',
-                      padding: '18px 0',
-                      borderBottom: '1px solid var(--case-line)',
-                      alignItems: 'baseline',
-                      ...(highlight ? { background: 'transparent' } : {}),
-                    }}
-                  >
-                    <span className="c-mono" style={{ color: highlight ? 'var(--case-accent)' : 'var(--case-muted)', fontSize: '11px' }}>{date}</span>
-                    <span style={{ fontSize: '16px', fontWeight: highlight ? 600 : 400, color: highlight ? 'var(--case-fg)' : undefined }}>{event}</span>
-                  </div>
-                ))}
-              </div>
+            {/* 06 — O lançamento */}
+            <section id="lancamento">
+              <h2><span className="n">06 — O lançamento</span>Do primeiro build à App Store</h2>
+              <ol className="c-tl">
+                <li><span className="when">29/08/2026</span><div className="what">Primeira versão do banco de dados. Começa o projeto.</div></li>
+                <li><span className="when">Build 26</span><div className="what">Reprovado pelas diretrizes 5.1.1 e 5.1.2, por causa da IA.</div></li>
+                <li><span className="when">01/10/2026</span><div className="what">Correção da diretriz 4.0: o botão "Iniciar sessão com a Apple" usava um logo desenhado por nós. A Apple exige a arte oficial, sem recorte nem cor nova. Troquei pela arte gerada no próprio serviço da Apple, uma versão por idioma, e reenviei o build 26.</div></li>
+                <li><span className="when">Conta de demonstração</span><div className="what">A primeira foi desativada e precisou ser trocada. A nota ao revisor prometia histórico, mas a conta estava vazia.</div></li>
+                <li><span className="when">03/10/2026</span><div className="what">Build 27 reenviado, com a IA desligada e uma nota pedindo ao revisor para montar um plano no início.</div></li>
+                <li><span className="when">05/10/2026</span><div className="what">Versão 1.0 no ar, no Brasil, nos EUA e em quase todos os países. A União Europeia ficou de fora, por falta da declaração de "trader status" que a Apple exige lá.</div></li>
+              </ol>
+              <p>A exclusão de conta dentro do app é exigência da Apple. Fiz com confirmação digitada ("EXCLUIR"), teste real e backup antes de qualquer mudança no banco de produção.</p>
             </section>
 
-            {/* S07 — Como trabalhei */}
-            <section id="processo" style={{ scrollMarginTop: '90px', marginBottom: '72px' }}>
-              <h2>
-                <span className="n">07 — Como trabalhei</span>
-                Agentes de IA escrevem o código. Eu decido o produto.
-              </h2>
-              <p>
-                Lovable construiu a primeira versão. Claude Code, Codex e Instinct foram os agentes de código. Sete prompts colados um a um geraram a estrutura inicial.
-              </p>
-              <p>
-                Para cada nova feature, passei por quatro revisores de IA antes de aceitar o código:
-              </p>
+            <blockquote>
+              <p>Conta de demonstração, nota ao revisor, política, etiqueta de privacidade e o comportamento do build têm que contar a mesma história.</p>
+              <cite className="c-mono">— A lição da revisão</cite>
+            </blockquote>
 
+            {/* 07 — Como trabalhei */}
+            <section id="processo">
+              <h2><span className="n">07 — Como trabalhei</span>Eu decido, os agentes executam</h2>
+              <p>Trabalhei com as mesmas ferramentas do Lendas do Flu: Lovable, Claude Code, Codex e Instinct. Os agentes escrevem código, abrem PR, rodam build e preenchem o App Store Connect. Eu decido, muitas vezes respondendo só um número ("1, sim"). Mergear no main não publica nada: quem publica sou eu.</p>
+              <p>O app começou com sete prompts colados no Lovable, um por vez: fundação e catálogo, motor do plano, sessão de treino, tela Hoje, os dois professores, sincronia e câmera. Colar tudo de uma vez não funciona: com um prompt gigante, o Lovable ignora partes do meio, e você só descobre ao testar. Guardei esses prompts no repositório, porque quase toda decisão do produto está neles.</p>
+              <p>Depois de cada leva de mudanças, quatro revisores de IA leem o app, cada um procurando uma coisa:</p>
               <div className="c-reads">
-                <div className="c-read">
-                  <div className="a">Engenheiro</div>
-                  <div className="ar">→</div>
-                  <div className="b">Revisou arquitetura, tipagem e edge cases. Apontou o risco da sincronia sem transação.</div>
-                </div>
-                <div className="c-read">
-                  <div className="a">UX</div>
-                  <div className="ar">→</div>
-                  <div className="b">Revisou fluxos, microcopy e estados de erro. Pediu o aviso de descanso na tela apagada.</div>
-                </div>
-                <div className="c-read">
-                  <div className="a">Designer</div>
-                  <div className="ar">→</div>
-                  <div className="b">Revisou hierarquia visual e contraste. Simplificou a tela de sessão.</div>
-                </div>
-                <div className="c-read">
-                  <div className="a">Personal trainer</div>
-                  <div className="ar">→</div>
-                  <div className="b">Validou a lógica de montagem de treino e os tempos de descanso padrão.</div>
-                </div>
+                <div className="c-read"><div className="a">Engenheiro</div><div className="ar">→</div><div className="b">O que vai quebrar em um ano: dados, sincronia, falhas sem sinal.</div></div>
+                <div className="c-read"><div className="a">UX</div><div className="ar">→</div><div className="b">Onde o app atrapalha quem está tentando fazer algo.</div></div>
+                <div className="c-read"><div className="a">Designer</div><div className="ar">→</div><div className="b">O que está feio, ilegível ou incoerente. Ele abre o navegador e lê as telas.</div></div>
+                <div className="c-read"><div className="a">Personal trainer</div><div className="ar">→</div><div className="b">Treina no app como um profissional e diz o que falta: série errada, descanso sem tempo, dia que promete 75 minutos e entrega 53.</div></div>
               </div>
+              <p>A regra que mais economizou tempo foi provar em vez de argumentar: ao consertar algo que falhava em silêncio, eu voltava o código ao estado antigo e media de novo. Numa rodada, duas correções propostas com confiança faziam o oposto do previsto quando medidas. Uma delas levava o treino de bíceps de 4 séries por semana a zero.</p>
+              <p>Os textos da loja foram revisados antes de subir, e as telas da loja usam capturas reais com dados de exemplo.</p>
+              <p>O Rep Up virou referência para os meus outros apps: login com Google e Apple, testadores no TestFlight, exclusão de conta e painel de admin só para o meu usuário.</p>
             </section>
 
-            {/* S08 — O que deu errado */}
-            <section id="licoes" style={{ scrollMarginTop: '90px', marginBottom: '72px' }}>
-              <h2>
-                <span className="n">08 — O que deu errado</span>
-                Quatro lições que custaram tempo.
-              </h2>
+            {/* 08 — O que deu errado */}
+            <section id="licoes">
+              <h2><span className="n">08 — O que eu mudei</span>O que deu errado e o que mudei</h2>
               <ol className="c-lessons">
-                <li>
-                  <strong>Não ler as diretrizes da Apple antes de implementar IA.</strong>
-                  A rejeição por 5.1.1 e 5.1.2 era previsível. Bastava ler antes de codar.
-                </li>
-                <li>
-                  <strong>Conta de demonstração hardcoded.</strong>
-                  A Apple pediu uma conta de demonstração funcional. A que eu criei tinha dados hardcoded que quebraram no review. Precisou de um build extra só para isso.
-                </li>
-                <li>
-                  <strong>Logo da Apple no onboarding.</strong>
-                  A diretriz 4.0 proíbe usar o logo da Apple de qualquer jeito. Usei para indicar "login com Apple" na tela de entrada. Teve que sair.
-                </li>
-                <li>
-                  <strong>Confiar demais na IA para decisões de produto.</strong>
-                  A IA sugeriu calorias e macros na primeira versão do plano. Levei dois dias para perceber que isso contrariava tudo que eu queria construir.
-                </li>
+                <li><strong>Prometer o que a conta de teste não mostra.</strong> A nota ao revisor falava em histórico, e a conta estava vazia. Agora, ou a conta tem histórico, ou a nota muda.</li>
+                <li><strong>Tratar IA como detalhe técnico.</strong> Para a Apple, IA é dado do usuário saindo do aparelho. Consentimento e política vêm antes do código.</li>
+                <li><strong>Deixar o build nativo fora da checagem.</strong> Uma mudança quebrou o iPhone sem ninguém ver. Agora o CI só passa se o build nativo também passar.</li>
+                <li><strong>Medir demais.</strong> Rastreador que precisa ser declarado na etiqueta de privacidade é rastreador que eu posso cortar.</li>
               </ol>
             </section>
 
-            {/* S09 — O que vem depois */}
-            <section id="depois" style={{ scrollMarginTop: '90px', marginBottom: '72px' }}>
-              <h2>
-                <span className="n">09 — O que vem depois</span>
-                v1.0.1 em TestFlight. Android em desenvolvimento.
-              </h2>
-              <p>O que está em TestFlight agora:</p>
-
-              <div className="c-stack">
-                <div className="ly">
-                  <span className="c-mono">IA de volta</span>
-                  <div className="t">Conexão com Gemini</div>
-                  <div className="d">Com o fluxo de consentimento correto, sem dados pessoais.</div>
-                </div>
-                <div className="ly">
-                  <span className="c-mono">Saúde</span>
-                  <div className="t">Apple Saúde</div>
-                  <div className="d">Sincronização de treinos com o app Saúde do iPhone.</div>
-                </div>
-                <div className="ly">
-                  <span className="c-mono">UX</span>
-                  <div className="t">Seletor em roda</div>
-                  <div className="d">Selecionar peso e reps com o wheel picker nativo do iOS.</div>
-                </div>
-                <div className="ly">
-                  <span className="c-mono">Onboarding</span>
-                  <div className="t">Novo fluxo de entrada</div>
-                  <div className="d">Menos fricção para o primeiro treino.</div>
-                </div>
-              </div>
-
-              <p style={{ marginTop: '20px' }}>
-                <strong>Android:</strong> em desenvolvimento. A base React + Capacitor facilita o porte, mas a revisão do Google tem seu próprio processo.
-              </p>
+            {/* 09 — O que vem depois */}
+            <section id="depois">
+              <h2><span className="n">09 — O que vem depois</span>A versão 1.0.1, em andamento</h2>
+              <p>Hoje no TestFlight, ainda não publicada:</p>
+              <ul>
+                <li><strong>Conexão com a IA (Gemini),</strong> com as proteções descritas na seção 05.</li>
+                <li><strong>Apple Saúde:</strong> só escrita e só o treino (tipo, início e fim). Sem caloria, porque o app não tem sensor e o número seria inventado.</li>
+                <li><strong>Seletor em roda</strong> para carga e repetições.</li>
+                <li><strong>Novo fluxo de entrada</strong>, com quatro caminhos para começar.</li>
+              </ul>
+              <p>Fora da 1.0.1, a versão para <strong>Android</strong> já está em desenvolvimento.</p>
+              <p><strong>Onde está hoje:</strong> versão 1.0 publicada na App Store, gratuita e sem anúncios.</p>
             </section>
 
-            {/* S10 — FAQ */}
-            <section id="faq" style={{ scrollMarginTop: '90px', marginBottom: '72px' }}>
-              <h2>
-                <span className="n">10 — Perguntas frequentes</span>
-                Sobre o Rep Up
-              </h2>
+            {/* 10 — FAQ */}
+            <section id="faq">
+              <h2><span className="n">10 — Perguntas frequentes</span>Sobre o Rep Up</h2>
               <div className="c-faq">
-                <details>
-                  <summary>O Rep Up é realmente gratuito?</summary>
-                  <p>Sim. O Rep Up é grátis, sem anúncio e sem compra dentro do app. O custo é zero para baixar e para usar.</p>
-                </details>
-                <details>
-                  <summary>O Rep Up funciona sem internet?</summary>
-                  <p>Sim. O treino é gravado no aparelho com IndexedDB (Dexie). A nuvem (Supabase) é cópia: sincroniza quando há sinal, mas o app funciona normalmente sem internet.</p>
-                </details>
-                <details>
-                  <summary>Quantos exercícios o Rep Up tem?</summary>
-                  <p>876 exercícios, com foto e passo a passo em português. Os dados vêm do Free Exercise DB, adaptado e traduzido.</p>
-                </details>
-                <details>
-                  <summary>Por que o Rep Up não tem IA na versão 1.0?</summary>
-                  <p>A Apple rejeitou o app por causa das diretrizes 5.1.1(i) e 5.1.2(i), que exigem consentimento específico para coletar dados de saúde com IA. Para lançar sem cobrar do usuário, desliguei a IA na versão 1.0. A próxima versão traz a IA de volta com o fluxo de consentimento correto.</p>
-                </details>
-                <details>
-                  <summary>O Rep Up é para iPhone mesmo? E o Android?</summary>
-                  <p>A versão 1.0 é para iPhone (iOS). Há também uma versão web em <a href="https://repupgym.lovable.app/" target="_blank" rel="noopener noreferrer">repupgym.lovable.app</a>. A versão Android está em desenvolvimento.</p>
-                </details>
-                <details>
-                  <summary>Como o Rep Up foi construído?</summary>
-                  <p>Com vibe code, usando Lovable, Claude Code, Codex e Instinct, sobre React, TypeScript, Dexie/IndexedDB, Supabase e Capacitor para iOS. O app passou pela revisão da Apple e está na App Store desde 05/10/2026.</p>
-                </details>
-                <details>
-                  <summary>O código do Rep Up é aberto?</summary>
-                  <p>Sim. O repositório está no GitHub em <a href="https://github.com/neigirao/rep-up-buddy" target="_blank" rel="noopener noreferrer">github.com/neigirao/rep-up-buddy</a>.</p>
-                </details>
+                <details><summary>O Rep Up é grátis?</summary><p>Sim. É gratuito, sem anúncios e sem compra dentro do app.</p></details>
+                <details><summary>Tem Rep Up para Android?</summary><p>A versão para Android está em desenvolvimento. Enquanto isso, a versão web funciona no navegador de qualquer celular.</p></details>
+                <details><summary>O que é o Rep Up?</summary><p>Um app gratuito de musculação para iPhone, para quem treina sozinho. Ele monta o treino da semana em duas perguntas e registra o que você levantou, sem anúncios e sem compra dentro do app.</p></details>
+                <details><summary>O Rep Up funciona sem internet?</summary><p>Sim. O treino fica gravado no aparelho e sincroniza com a nuvem quando há sinal. A conta serve para o histórico atravessar a troca de celular.</p></details>
+                <details><summary>O Rep Up usa inteligência artificial?</summary><p>A versão 1.0 saiu sem IA, para cumprir as regras de privacidade da Apple. Na versão seguinte, a IA volta só para montar o plano, com consentimento, declaração de idade e região, e sem dado pessoal no envio.</p></details>
+                <details><summary>Como o Rep Up foi construído?</summary><p>Em cerca de cinco semanas, com Lovable, Claude Code, Codex e Instinct. Começou no Lovable como web app, com React, TypeScript, IndexedDB e Supabase. Depois virou app de iPhone com Capacitor e Swift, com builds na nuvem pelo Codemagic.</p></details>
+                <details><summary>Quem criou o Rep Up?</summary><p>Nei Girão, Product Manager, como projeto pessoal, trabalhando com agentes de IA que escrevem o código enquanto ele decide o produto.</p></details>
               </div>
             </section>
 
-            {/* Ferramentas */}
             <section style={{ marginBottom: 0 }}>
               <span className="c-mono" style={{ color: 'var(--case-muted)', display: 'block', marginBottom: '14px' }}>Ferramentas</span>
               <div className="c-chips">
-                {[
-                  'Lovable', 'Free Exercise DB', 'Claude Code', 'Codex', 'Instinct',
-                  'React · TypeScript', 'Dexie / IndexedDB', 'Supabase', 'Capacitor',
-                  'Swift', 'Codemagic', 'TestFlight', 'GA4', 'Sentry', 'Crashlytics',
-                ].map(tool => (
-                  <span key={tool} className="c-chip">{tool}</span>
-                ))}
+                <span className="c-chip">Lovable</span>
+                <span className="c-chip">Free Exercise DB</span>
+                <span className="c-chip">Claude Code</span>
+                <span className="c-chip">Codex</span>
+                <span className="c-chip">Instinct</span>
+                <span className="c-chip">React · TypeScript</span>
+                <span className="c-chip">Dexie / IndexedDB</span>
+                <span className="c-chip">Supabase</span>
+                <span className="c-chip">Capacitor · Swift</span>
+                <span className="c-chip">Codemagic</span>
+                <span className="c-chip">TestFlight</span>
+                <span className="c-chip">GA4 · Sentry · Crashlytics</span>
               </div>
             </section>
           </article>
         </div>
 
-        {/* CTA */}
         <section className="c-cta">
           <div className="c-wrap">
-            <h2>Seu treino, <em>sem enrolação.</em></h2>
+            <h2>Seu treino, <em>sem enrolação</em>.</h2>
             <div className="acts">
-              <a
-                className="c-btn pri"
-                href="https://apps.apple.com/br/app/rep-up/id6812042720"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                ↓ App Store
+              <a className="c-appbtn" href="https://apps.apple.com/br/app/rep-up/id6812042720" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="22" height="22">
+                  <path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.7-1-2.7-4.1zM13.9 5c.7-.9 1.2-2 1-3.2-1 0-2.2.7-3 1.5-.6.7-1.2 1.9-1.1 3.1 1.2.1 2.3-.6 3.1-1.4z" />
+                </svg>
+                <span><small>Baixar na</small><b>App Store</b></span>
               </a>
               <a className="c-btn" href="mailto:neigirao@gmail.com?subject=Sobre%20o%20Rep%20Up">Falar comigo</a>
-              <a
-                className="c-btn"
-                href="https://github.com/neigirao/rep-up-buddy"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                GitHub ↗
-              </a>
+              <a className="c-btn" href="https://github.com/neigirao/rep-up-buddy" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
             </div>
           </div>
         </section>
 
-        {/* Next */}
         <nav className="c-wrap c-next" aria-label="Outro projeto">
-          <Link to="/#lab">
+          <Link to="/lab/lendas-do-flu">
             <div>
-              <span className="c-mono">Voltar ao Lab</span>
-              <div className="t">Todos os projetos</div>
+              <span className="c-mono">Outro no Lab</span>
+              <div className="t">Lendas do Flu</div>
             </div>
             <span className="arr">→</span>
           </Link>
