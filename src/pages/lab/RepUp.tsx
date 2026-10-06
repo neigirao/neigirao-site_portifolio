@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { SEOHead } from '@/components/SEO/SEOHead';
 import { BreadcrumbSchema } from '@/components/SEO/BreadcrumbSchema';
 import { BASE_URL } from '@/config/constants';
@@ -34,6 +35,7 @@ export function RepUp() {
         "headline": "Rep Up: como criei um app de treino e passei pela revisão da Apple",
         "inLanguage": "pt-BR",
         "datePublished": "2026-10-06",
+        "image": `${BASE_URL}/lab/rep-up/og.png`,
         "author": { "@id": `${BASE_URL}/#person` },
         "about": { "@id": `${BASE_URL}/lab/rep-up#app` },
         "mainEntityOfPage": `${BASE_URL}/lab/rep-up`
@@ -122,6 +124,9 @@ export function RepUp() {
         ogType="article"
         keywords={['app de musculação grátis', 'app de treino para iPhone', 'app de academia offline', 'Rep Up', 'treino sem internet', 'App Store', 'Capacitor', 'Supabase', 'vibe code', 'Nei Girão']}
       />
+      <Helmet>
+        <meta name="apple-itunes-app" content="app-id=6812042720" />
+      </Helmet>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
