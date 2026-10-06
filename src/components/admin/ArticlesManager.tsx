@@ -17,6 +17,7 @@ import { SortableList } from './SortableList';
 import { AutosaveIndicator } from './AutosaveIndicator';
 import { CompletenessIndicator } from './CompletenessIndicator';
 import { useAutosave } from '@/hooks/useAutosave';
+import { useFormShortcuts } from '@/hooks/useFormShortcuts';
 import { estimateReadingTime } from '@/hooks/useArticles';
 
 interface Article {
@@ -185,6 +186,11 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
 
   const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
+  useFormShortcuts({
+    onSave: () => formRef.current?.requestSubmit(),
+    onCancel: editingId ? resetForm : undefined,
+  });
+
   return (
     <div className="space-y-6">
       <Card>
@@ -290,10 +296,11 @@ export function ArticlesManager({ onDirtyChange }: ArticlesManagerProps) {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <Input
-              placeholder="Buscar por título, resumo ou tag..."
+              placeholder="Buscar por título, resumo ou tag... (atalho: /)"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="pl-9"
+              data-search-input
             />
           </div>
           {searchQuery && (

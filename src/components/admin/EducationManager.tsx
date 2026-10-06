@@ -2,7 +2,7 @@
  * EducationManager Component
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,7 @@ import { PreviewModal } from './PreviewModal';
 import { CompletenessIndicator } from './CompletenessIndicator';
 import { AutosaveIndicator } from './AutosaveIndicator';
 import { useAutosave } from '@/hooks/useAutosave';
+import { useFormShortcuts } from '@/hooks/useFormShortcuts';
 
 interface Education {
   id: string;
@@ -147,6 +148,12 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
 
   const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
+  const formRef = useRef<HTMLFormElement>(null);
+  useFormShortcuts({
+    onSave: () => formRef.current?.requestSubmit(),
+    onCancel: editingId ? resetForm : undefined,
+  });
+
   return (
     <div className="space-y-6">
       <Card>
@@ -157,7 +164,7 @@ export function EducationManager({ onDirtyChange }: EducationManagerProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="institution">Instituição <span className="text-destructive" aria-hidden="true">*</span></Label>

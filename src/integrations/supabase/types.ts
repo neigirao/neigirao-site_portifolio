@@ -73,6 +73,7 @@ export type Database = {
           created_at: string
           credential_url: string | null
           id: string
+          is_visible: boolean
           issuer: string
           logo_url: string | null
           name: string
@@ -84,6 +85,7 @@ export type Database = {
           created_at?: string
           credential_url?: string | null
           id?: string
+          is_visible?: boolean
           issuer: string
           logo_url?: string | null
           name: string
@@ -95,6 +97,7 @@ export type Database = {
           created_at?: string
           credential_url?: string | null
           id?: string
+          is_visible?: boolean
           issuer?: string
           logo_url?: string | null
           name?: string
@@ -209,7 +212,10 @@ export type Database = {
       experiences: {
         Row: {
           case_body: string | null
+          case_challenge: string | null
           case_result: string | null
+          case_solution: string | null
+          case_title: string | null
           company: string
           created_at: string
           description: string
@@ -228,7 +234,10 @@ export type Database = {
         }
         Insert: {
           case_body?: string | null
+          case_challenge?: string | null
           case_result?: string | null
+          case_solution?: string | null
+          case_title?: string | null
           company: string
           created_at?: string
           description: string
@@ -247,7 +256,10 @@ export type Database = {
         }
         Update: {
           case_body?: string | null
+          case_challenge?: string | null
           case_result?: string | null
+          case_solution?: string | null
+          case_title?: string | null
           company?: string
           created_at?: string
           description?: string
@@ -303,6 +315,7 @@ export type Database = {
           description: string
           icon: string
           id: string
+          is_visible: boolean
           label: string
           order_index: number
           updated_at: string
@@ -314,6 +327,7 @@ export type Database = {
           description: string
           icon?: string
           id?: string
+          is_visible?: boolean
           label: string
           order_index?: number
           updated_at?: string
@@ -325,10 +339,77 @@ export type Database = {
           description?: string
           icon?: string
           id?: string
+          is_visible?: boolean
           label?: string
           order_index?: number
           updated_at?: string
           value?: string
+        }
+        Relationships: []
+      }
+      lab_projects: {
+        Row: {
+          actions: string[]
+          brand: string
+          category: string | null
+          context: string | null
+          created_at: string
+          description: string | null
+          id: string
+          images: string[]
+          is_visible: boolean
+          meta_description: string | null
+          meta_title: string | null
+          order_index: number
+          outcomes: string[]
+          slug: string | null
+          stack: string[]
+          title: string
+          updated_at: string
+          why: string | null
+          year: string | null
+        }
+        Insert: {
+          actions?: string[]
+          brand?: string
+          category?: string | null
+          context?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[]
+          is_visible?: boolean
+          meta_description?: string | null
+          meta_title?: string | null
+          order_index?: number
+          outcomes?: string[]
+          slug?: string | null
+          stack?: string[]
+          title: string
+          updated_at?: string
+          why?: string | null
+          year?: string | null
+        }
+        Update: {
+          actions?: string[]
+          brand?: string
+          category?: string | null
+          context?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[]
+          is_visible?: boolean
+          meta_description?: string | null
+          meta_title?: string | null
+          order_index?: number
+          outcomes?: string[]
+          slug?: string | null
+          stack?: string[]
+          title?: string
+          updated_at?: string
+          why?: string | null
+          year?: string | null
         }
         Relationships: []
       }
@@ -369,6 +450,7 @@ export type Database = {
           highlight_metric: string | null
           id: string
           image_url: string | null
+          images: string[]
           is_visible: boolean
           learnings: string | null
           link: string | null
@@ -392,6 +474,7 @@ export type Database = {
           highlight_metric?: string | null
           id?: string
           image_url?: string | null
+          images?: string[]
           is_visible?: boolean
           learnings?: string | null
           link?: string | null
@@ -415,6 +498,7 @@ export type Database = {
           highlight_metric?: string | null
           id?: string
           image_url?: string | null
+          images?: string[]
           is_visible?: boolean
           learnings?: string | null
           link?: string | null

@@ -180,7 +180,7 @@ export function ImageCropper({ file, open, onConfirm, onCancel }: Props) {
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Zoom: {zoom.toFixed(1)}×</Label>
             <Slider
-              min={0.5} max={3} step={0.05}
+              min={0.1} max={5} step={0.05}
               value={[zoom]}
               onValueChange={([v]) => setZoom(v)}
             />

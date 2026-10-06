@@ -62,7 +62,7 @@ export function DynamicSchema({ baseUrl = BASE_URL }: SchemaProps) {
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Nei Girão - Portfolio",
+    "name": "Nei Girão",
     "url": baseUrl,
     "description": "Portfolio profissional de Nei Girão, Product Leader em Transformação Digital e Observabilidade",
     "author": {

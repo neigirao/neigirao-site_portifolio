@@ -2,7 +2,7 @@
  * ProjectsManager Component
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { Pencil, Eye, Copy, Search, X, ExternalLink, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ImageUploader } from './ImageUploader';
+import { MultiImageUploader } from './MultiImageUploader';
 import { RichTextEditor } from './RichTextEditor';
 import { SEOFields } from './SEOFields';
 import { SortableList } from './SortableList';
@@ -19,12 +20,14 @@ import { PreviewModal } from './PreviewModal';
 import { CompletenessIndicator } from './CompletenessIndicator';
 import { AutosaveIndicator } from './AutosaveIndicator';
 import { useAutosave } from '@/hooks/useAutosave';
+import { useFormShortcuts } from '@/hooks/useFormShortcuts';
 
 interface Project {
   id: string;
   title: string;
   description: string;
   image_url: string | null;
+  images: string[];
   link: string | null;
   tags: string[];
   order_index: number;
@@ -63,6 +66,7 @@ const emptyForm = {
   learnings: '',
   brand: '',
   project_subtitle: '',
+  images: [] as string[],
 };
 
 interface ProjectCardProps {
@@ -84,7 +88,7 @@ const ProjectCard = ({ project, editingId, onEdit, onDuplicate, onDelete, onTogg
             {project.highlight_metric && (
               <span className="text-xs bg-teal-accent/10 text-teal-accent px-2 py-0.5 rounded-full font-medium">{project.highlight_metric}</span>
             )}
-            <CompletenessIndicator hasSeo={!!(project.meta_title && project.meta_description)} hasImage={!!project.image_url} hasSlug={!!project.slug} itemName={project.title} />
+            <CompletenessIndicator hasSeo={!!(project.meta_title && project.meta_description)} hasImage={!!project.image_url || (project.images?.length ?? 0) > 0} hasSlug={!!project.slug} itemName={project.title} />
           </div>
           {project.tags.length > 0 && (
             <div className="flex gap-2 mt-1 flex-wrap">
@@ -168,6 +172,7 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
       learnings: formData.learnings || null,
       brand: formData.brand || null,
       project_subtitle: formData.project_subtitle || null,
+      images: formData.images || [],
       order_index: editingId ? projects.find(p => p.id === editingId)?.order_index || 0 : nextOrderIndex,
     };
 
@@ -210,6 +215,7 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
       learnings: project.learnings || '',
       brand: project.brand || '',
       project_subtitle: project.project_subtitle || '',
+      images: project.images || [],
     });
   };
 
@@ -222,6 +228,7 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
       highlight_metric: project.highlight_metric,
       context: project.context, challenge: project.challenge,
       solution: project.solution, results: project.results, learnings: project.learnings,
+      images: project.images || [],
       order_index: nextOrderIndex,
     }]);
     if (error) { toast.error(`Erro ao duplicar: ${error.message}`); return; }
@@ -274,6 +281,12 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
 
   const resetForm = () => { setEditingId(null); setFormData(emptyForm); clearDraft(); onDirtyChange?.(false); };
 
+  const formRef = useRef<HTMLFormElement>(null);
+  useFormShortcuts({
+    onSave: () => formRef.current?.requestSubmit(),
+    onCancel: editingId ? resetForm : undefined,
+  });
+
   const filteredProjects = searchQuery
     ? projects.filter(p =>
         p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -291,13 +304,19 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">Título</Label>
               <Input id="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
             </div>
             <RichTextEditor value={formData.description} onChange={(value) => setFormData({ ...formData, description: value })} label="Descrição" />
-            <ImageUploader value={formData.image_url} onChange={(url) => setFormData({ ...formData, image_url: url })} label="Imagem do Projeto" folder="projects" />
+            <ImageUploader value={formData.image_url} onChange={(url) => setFormData({ ...formData, image_url: url })} label="Imagem principal (capa)" folder="projects" />
+            <MultiImageUploader
+              value={formData.images}
+              onChange={(images) => setFormData({ ...formData, images })}
+              label="Galeria adicional (carrossel)"
+              folder="projects-gallery"
+            />
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="link">Link do Projeto</Label>
@@ -373,7 +392,8 @@ export function ProjectsManager({ onDirtyChange }: ProjectsManagerProps) {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <Input
-              placeholder="Buscar por título ou tag..."
+              data-search-input
+              placeholder="Buscar por título ou tag... (atalho: /)"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="pl-9"

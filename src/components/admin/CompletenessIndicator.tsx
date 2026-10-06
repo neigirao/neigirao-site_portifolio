@@ -3,22 +3,29 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CheckCircle, AlertCircle, XCircle } from 'lucide-react';
 
 interface CompletenessIndicatorProps {
-  hasSeo: boolean;
-  /** Pass `undefined` when the entity has no image field (skips the check). */
+  /** Passe `undefined` para pular o check (entidade não tem SEO). */
+  hasSeo?: boolean;
+  /** Passe `undefined` para pular o check (entidade não tem imagem). */
   hasImage?: boolean;
-  hasSlug: boolean;
+  /** Passe `undefined` para pular o check (entidade não tem slug). */
+  hasSlug?: boolean;
   itemName: string;
 }
 
 export function CompletenessIndicator({ hasSeo, hasImage, hasSlug, itemName }: CompletenessIndicatorProps) {
-  const checks = [hasSeo, hasSlug];
+  const checks: boolean[] = [];
+  if (hasSeo !== undefined) checks.push(hasSeo);
+  if (hasSlug !== undefined) checks.push(hasSlug);
   if (hasImage !== undefined) checks.push(hasImage);
+
+  if (checks.length === 0) return null;
+
   const isComplete = checks.every(Boolean);
   const isPartial = checks.some(Boolean) && !isComplete;
 
   const missingItems: string[] = [];
-  if (!hasSeo) missingItems.push('SEO (título e descrição)');
-  if (!hasSlug) missingItems.push('Slug');
+  if (hasSeo === false) missingItems.push('SEO (título e descrição)');
+  if (hasSlug === false) missingItems.push('Slug');
   if (hasImage === false) missingItems.push('Imagem');
 
   if (isComplete) {

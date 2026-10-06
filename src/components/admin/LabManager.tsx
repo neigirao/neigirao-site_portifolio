@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AdminLabProject } from '@/hooks/useAdminData';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,8 @@ import { AutosaveIndicator } from './AutosaveIndicator';
 import { DeleteConfirmButton } from './DeleteConfirmButton';
 import { SEOFields } from './SEOFields';
 import { useAutosave } from '@/hooks/useAutosave';
+import { useFormShortcuts } from '@/hooks/useFormShortcuts';
+import { MultiImageUploader } from './MultiImageUploader';
 
 interface Props {
   onDirtyChange?: (dirty: boolean) => void;
@@ -34,6 +36,7 @@ const emptyForm = {
   is_visible: true,
   meta_title: '',
   meta_description: '',
+  images: [] as string[],
 };
 
 type FormData = typeof emptyForm;
@@ -61,6 +64,7 @@ function formToDb(f: FormData) {
     is_visible: f.is_visible,
     meta_title: f.meta_title || null,
     meta_description: f.meta_description || null,
+    images: f.images || [],
   };
 }
 
@@ -80,6 +84,7 @@ function dbToForm(p: AdminLabProject): FormData {
     is_visible: p.is_visible,
     meta_title: p.meta_title || '',
     meta_description: p.meta_description || '',
+    images: p.images || [],
   };
 }
 
@@ -135,6 +140,12 @@ export function LabManager({ onDirtyChange }: Props) {
     clearDraft();
     onDirtyChange?.(false);
   };
+
+  const formRef = useRef<HTMLFormElement>(null);
+  useFormShortcuts({
+    onSave: () => formRef.current?.requestSubmit(),
+    onCancel: editingId ? resetForm : undefined,
+  });
 
   const handleEdit = (item: AdminLabProject) => {
     setFormData(dbToForm(item));
@@ -228,21 +239,15 @@ export function LabManager({ onDirtyChange }: Props) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label>Título *</Label>
               <Input value={formData.title} onChange={e => set('title', e.target.value)} placeholder="Snap Cards" required />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Slug (URL)</Label>
-                <Input value={formData.slug} onChange={e => set('slug', e.target.value)} placeholder="snap-cards" />
-              </div>
-              <div className="space-y-2">
-                <Label>Ano</Label>
-                <Input value={formData.year} onChange={e => set('year', e.target.value)} placeholder="2025" />
-              </div>
+            <div className="space-y-2">
+              <Label>Ano</Label>
+              <Input value={formData.year} onChange={e => set('year', e.target.value)} placeholder="2025" />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -286,12 +291,24 @@ export function LabManager({ onDirtyChange }: Props) {
               <Textarea value={formData.stackRaw} onChange={e => set('stackRaw', e.target.value)} rows={3} placeholder={"React\nTailwind\nVite"} />
             </div>
 
+            <MultiImageUploader
+              value={formData.images}
+              onChange={(images) => setFormData(prev => ({ ...prev, images }))}
+              label="Imagens (carrossel)"
+              folder="lab-gallery"
+            />
+
+
+
             <SEOFields
+              slug={formData.slug}
+              onSlugChange={v => set('slug', v)}
               metaTitle={formData.meta_title}
               onMetaTitleChange={v => set('meta_title', v)}
               metaDescription={formData.meta_description}
               onMetaDescriptionChange={v => set('meta_description', v)}
               titleSource={formData.title}
+              existingSlugs={items.filter(i => i.id !== editingId && i.slug).map(i => i.slug!)}
             />
 
             <div className="flex items-center gap-2">
@@ -354,7 +371,7 @@ export function LabManager({ onDirtyChange }: Props) {
                       <Button variant="ghost" size="sm" onClick={() => handleEdit(item)}>
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <DeleteConfirmButton onConfirm={() => handleDelete(item.id)} />
+                      <DeleteConfirmButton onConfirm={() => handleDelete(item.id)} itemName={item.title} />
                     </div>
                   </div>
                 </CardContent>

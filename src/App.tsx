@@ -42,6 +42,7 @@ const CaseSeguroVida = lazy(() => import("./pages/cases/CaseSeguroVida"));
 const CaseMeuTIM = lazy(() => import("./pages/cases/CaseMeuTIM"));
 const CaseMinhaOi = lazy(() => import("./pages/cases/CaseMinhaOi"));
 const CasePrevidencia = lazy(() => import("./pages/cases/CasePrevidencia"));
+const CaseObservabilidade = lazy(() => import("./pages/cases/CaseObservabilidade"));
 
 function FaviconInjector() {
   const { settings } = useSiteSettings();
@@ -120,6 +121,7 @@ const App = () => (
               <Route path="/projeto/nei-girao-meu-tim-app-tim" element={<CaseMeuTIM />} />
               <Route path="/projeto/minha-oi-app-nei-girao" element={<CaseMinhaOi />} />
               <Route path="/projeto/nei-girao-ecommerce-previdencia-privada" element={<CasePrevidencia />} />
+              <Route path="/projeto/nei-girao-observabilidade-icatu" element={<CaseObservabilidade />} />
 
               <Route path="/projeto/:slug" element={<ProjectDetail />} />
               <Route path="/skill/:slug" element={<SkillDetail />} />
