@@ -830,6 +830,253 @@
 }
 
 
+/* ── Rep Up specific ── */
+
+/* Phone scroll strip (horizontal) */
+.case-page .rup-phones {
+  display: flex;
+  gap: 14px;
+  margin: 28px 0 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 10px;
+}
+.case-page .rup-phones figure {
+  flex: 0 0 200px;
+  scroll-snap-align: start;
+  margin: 0;
+}
+.case-page .rup-phones img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  border: 1px solid var(--case-line);
+  background: #111;
+}
+
+/* App Store button accent */
+.case-page .rup-appbtn {
+  background: var(--case-accent);
+  border-color: var(--case-accent);
+  color: var(--case-paper);
+}
+.case-page .rup-appbtn:hover {
+  background: var(--case-accent-dark);
+  border-color: var(--case-accent-dark);
+}
+
+/* Phone scroll strip */
+.case-page .c-phones-scroll {
+  display: flex;
+  gap: 14px;
+  margin: 28px 0 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 10px;
+}
+.case-page .c-phones-scroll figure {
+  flex: 0 0 200px;
+  scroll-snap-align: start;
+  margin: 0;
+}
+.case-page .c-phones-scroll img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  border: 1px solid var(--case-line);
+  background: #111;
+}
+.case-page .c-phones-scroll figcaption {
+  text-align: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--case-muted);
+  margin-top: 8px;
+}
+
+/* App Store button */
+.case-page .c-appbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #000;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 18px;
+  text-decoration: none;
+  font-family: -apple-system, system-ui, sans-serif;
+}
+.case-page .c-appbtn small {
+  display: block;
+  font-size: 10px;
+  opacity: .8;
+  line-height: 1;
+}
+.case-page .c-appbtn b {
+  display: block;
+  font-size: 18px;
+  line-height: 1.1;
+  font-weight: 600;
+}
+.case-page .c-appbtn svg { width: 22px; height: 22px; }
+
+/* Hero CTA buttons row */
+.case-page .c-hero-btns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 24px;
+}
+
+/* OG image wrapper */
+.case-page .c-og {
+  margin: 28px 0 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--case-line);
+}
+.case-page .c-og img { display: block; width: 100%; height: auto; }
+
+/* Scene quote box */
+.case-page .c-scene {
+  background: var(--case-fg);
+  color: var(--case-paper);
+  border-radius: 10px;
+  padding: 28px 32px;
+  margin: 24px 0 8px;
+}
+.case-page .c-scene .c-mono { color: #E27464; display: block; margin-bottom: 10px; }
+.case-page .c-scene p {
+  font-family: 'Fraunces', serif;
+  font-size: 24px;
+  line-height: 1.35;
+  margin: 0;
+}
+
+/* Numbered rules list */
+.case-page .c-rules {
+  list-style: none;
+  margin: 20px 0 8px;
+  padding: 0;
+  counter-reset: r;
+  border-top: 2px solid var(--case-fg);
+}
+.case-page .c-rules li {
+  counter-increment: r;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--case-line);
+  font-size: 16px;
+  line-height: 1.55;
+}
+.case-page .c-rules li::before {
+  content: counter(r);
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 28px;
+  color: var(--case-accent);
+  line-height: 1;
+}
+.case-page .c-rules b { font-weight: 600; }
+
+/* 2-col grid */
+.case-page .c-cols2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0 8px;
+}
+
+/* Bordered box */
+.case-page .c-box {
+  border: 1px solid var(--case-line);
+  border-radius: 10px;
+  padding: 20px;
+  background: var(--case-paper);
+}
+.case-page .c-box .c-mono { color: var(--case-accent); display: block; margin-bottom: 10px; font-size: 10px; }
+.case-page .c-box ul { margin: 0; padding-left: 18px; }
+.case-page .c-box li { margin: 4px 0; font-size: 15px; }
+.case-page .c-box-out { background: transparent; border-style: dashed; }
+
+/* Options grid */
+.case-page .c-opts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 20px 0 8px;
+}
+.case-page .c-opt {
+  border: 1px solid var(--case-line);
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 15px;
+  background: var(--case-paper);
+}
+.case-page .c-opt .c-mono { display: block; color: var(--case-muted); margin-bottom: 6px; font-size: 10px; }
+.case-page .c-opt-pick { border: 2px solid var(--case-accent); }
+.case-page .c-opt-pick .c-mono { color: var(--case-accent); }
+
+/* Timeline */
+.case-page .c-tl {
+  list-style: none;
+  margin: 24px 0 8px;
+  padding: 0;
+  border-left: 2px solid var(--case-fg);
+}
+.case-page .c-tl li {
+  position: relative;
+  padding: 0 0 22px 24px;
+}
+.case-page .c-tl li::before {
+  content: '';
+  position: absolute;
+  left: -7px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--case-bg);
+  border: 2px solid var(--case-accent);
+}
+.case-page .c-tl li:last-child { padding-bottom: 0; }
+.case-page .c-tl li:last-child::before { background: var(--case-accent); }
+.case-page .c-tl .when {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--case-accent);
+  display: block;
+  margin-bottom: 4px;
+}
+.case-page .c-tl .what { font-size: 16px; line-height: 1.55; }
+
+/* Standalone trade-off callout */
+.case-page .c-trade {
+  font-size: 15px;
+  color: var(--case-muted);
+  border-left: 2px solid var(--case-accent);
+  padding-left: 14px;
+  margin: 16px 0;
+}
+.case-page .c-trade b {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--case-accent);
+  font-weight: 500;
+  margin-right: 6px;
+}
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .case-page .c-wrap { padding: 0 22px; }
@@ -877,4 +1124,8 @@
   .case-page .c-arch .col:first-child { border-top: 0; }
   .case-page .c-honest { grid-template-columns: 1fr; }
   .case-page .c-honest .tags { flex-direction: row; flex-wrap: wrap; }
+  .case-page .c-cols2 { grid-template-columns: 1fr; }
+  .case-page .c-opts { grid-template-columns: 1fr; }
+  .case-page .c-scene p { font-size: 20px; }
+  .case-page .c-rules li { grid-template-columns: 40px minmax(0, 1fr); }
 }
