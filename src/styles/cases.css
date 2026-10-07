@@ -1058,6 +1058,47 @@
   margin-bottom: 4px;
 }
 .case-page .c-tl .what { font-size: 16px; line-height: 1.55; }
+.case-page .c-tl a { color: var(--case-accent); text-decoration: underline; text-underline-offset: 3px; }
+.case-page .c-tl a:hover { color: var(--case-accent-dark); }
+
+/* Google Analytics / Alura course page */
+.case-ga-alura .c-ga-chaps {
+  list-style: none;
+  margin: 24px 0 8px;
+  padding: 0;
+  border-top: 2px solid var(--case-fg);
+  counter-reset: ch;
+}
+.case-ga-alura .c-ga-chaps li {
+  counter-increment: ch;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--case-line);
+}
+.case-ga-alura .c-ga-chaps li::before {
+  content: counter(ch, decimal-leading-zero);
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-size: 26px;
+  color: var(--case-accent);
+  line-height: 1;
+}
+.case-ga-alura .c-ga-chaps b {
+  display: block;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 460;
+  font-size: 19px;
+  margin-bottom: 2px;
+}
+.case-ga-alura .c-ga-chaps span { font-size: 14.5px; color: var(--case-muted); }
+
+.case-ga-alura .c-ga-shot { max-width: 320px; margin: 28px auto 0; }
+.case-ga-alura .c-ga-shot img { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--case-line); }
+.case-ga-alura .c-ga-shot figcaption { text-align: center; margin-top: 12px; color: var(--case-muted); font-size: 14px; font-style: italic; }
+
+.case-ga-alura .c-ga-note { font-size: 13.5px; color: var(--case-muted); margin-top: 8px; }
 
 /* Standalone trade-off callout */
 .case-page .c-trade {
@@ -1128,4 +1169,6 @@
   .case-page .c-opts { grid-template-columns: 1fr; }
   .case-page .c-scene p { font-size: 20px; }
   .case-page .c-rules li { grid-template-columns: 40px minmax(0, 1fr); }
+  .case-ga-alura .c-ga-shot { max-width: 100%; }
+  .case-ga-alura .c-ga-shot img { max-width: 280px; }
 }

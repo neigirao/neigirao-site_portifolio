@@ -460,35 +460,23 @@ export function RepUp() {
               </p>
               <div className="c-phones-scroll">
                 <figure>
-                  <img src="/lab/rep-up/1-treino.webp" alt="Tela Treino" width="1242" height="2688" loading="lazy" />
+                  <img src="/lab/rep-up/1-treino.webp" alt="Tela Treino: próximo treino A (peito, ombro, tríceps), botão Bora treinar e o plano com os exercícios" width="1242" height="2688" loading="lazy" />
                   <figcaption>Treino</figcaption>
                 </figure>
                 <figure>
-                  <img
-                    src="/lab/rep-up/2-sessao.webp"
-                    alt="Sessão de treino"
-                    width="1242"
-                    height="2688"
-                    loading="lazy"
-                  />
+                  <img src="/lab/rep-up/2-sessao.webp" alt="Sessão de treino: supino reto com a carga da última vez, recorde e botão Fiz para registrar a série" width="1242" height="2688" loading="lazy" />
                   <figcaption>Sessão</figcaption>
                 </figure>
                 <figure>
-                  <img
-                    src="/lab/rep-up/3-descanso.webp"
-                    alt="Descanso automático"
-                    width="1242"
-                    height="2688"
-                    loading="lazy"
-                  />
+                  <img src="/lab/rep-up/3-descanso.webp" alt="Descanso automático: cronômetro de 2:28 com botões Fixar, +30s e Pular" width="1242" height="2688" loading="lazy" />
                   <figcaption>Descanso</figcaption>
                 </figure>
                 <figure>
-                  <img src="/lab/rep-up/4-voce.webp" alt="Tela Você" width="1242" height="2688" loading="lazy" />
+                  <img src="/lab/rep-up/4-voce.webp" alt="Tela Você: tom do professor (acolhe ou empurra), dias por semana, descanso padrão e exportar dados" width="1242" height="2688" loading="lazy" />
                   <figcaption>Você</figcaption>
                 </figure>
                 <figure>
-                  <img src="/lab/rep-up/5-numeros.webp" alt="Tela Números" width="1242" height="2688" loading="lazy" />
+                  <img src="/lab/rep-up/5-numeros.webp" alt="Tela Números: treinos e séries da semana, kg levantados e recordes por exercício" width="1242" height="2688" loading="lazy" />
                   <figcaption>Números</figcaption>
                 </figure>
               </div>
