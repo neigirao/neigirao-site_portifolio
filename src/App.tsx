@@ -17,7 +17,6 @@ import NotFound from "./pages/NotFound";
 // Lazy load - admin routes (heavy components)
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
-const SitemapRedirect = lazy(() => import("./pages/SitemapRedirect"));
 const LlmsTxtRedirect = lazy(() => import("./pages/LlmsTxtRedirect"));
 const AboutTxtRedirect = lazy(() => import("./pages/AboutTxtRedirect"));
 
@@ -99,7 +98,6 @@ const App = () => (
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/sitemap.xml" element={<SitemapRedirect />} />
               <Route path="/llms.txt" element={<LlmsTxtRedirect />} />
               <Route path="/about.txt" element={<AboutTxtRedirect />} />
               
