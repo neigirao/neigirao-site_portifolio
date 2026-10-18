@@ -36,6 +36,7 @@ const SkillDetail = lazy(() => import("./pages/SkillDetail"));
 // Lazy load - custom lab pages (specific slugs before generic /lab/:slug)
 const LendasDoFlu = lazy(() => import("./pages/lab/LendasDoFlu"));
 const RepUp = lazy(() => import("./pages/lab/RepUp"));
+const PileOfBooks = lazy(() => import("./pages/lab/PileOfBooks"));
 const CursoGaAlura = lazy(() => import("./pages/lab/CursoGaAlura"));
 
 // Lazy load - custom case study pages (specific slugs before generic /projeto/:slug)
@@ -114,6 +115,7 @@ const App = () => (
               {/* Custom lab pages — must come before the generic /lab/:slug */}
               <Route path="/lab/lendas-do-flu" element={<LendasDoFlu />} />
               <Route path="/lab/rep-up" element={<RepUp />} />
+              <Route path="/lab/pile-of-books" element={<PileOfBooks />} />
               <Route path="/lab/curso-google-analytics-alura" element={<CursoGaAlura />} />
               <Route path="/lab/:slug" element={<LabDetail />} />
               <Route path="/experiencia/:slug" element={<ExperienceDetail />} />
