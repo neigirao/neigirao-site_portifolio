@@ -86,7 +86,7 @@ export function PileOfBooks() {
             name: "O que é o Pile of Books?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Uma estante pessoal de livros, HQs e mangás, com diário de leitura, estatísticas de verdade e retrospectiva do ano. Grátis, para iPhone e web.",
+              text: "Uma estante pessoal de livros, HQs e mangás, com diário de leitura, estatísticas de verdade e retrospectiva do ano. Grátis e sem anúncio, para iPhone e web.",
             },
           },
           {
@@ -102,7 +102,7 @@ export function PileOfBooks() {
             name: "Meus dados ficam presos no Pile of Books?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Não. Você importa sua biblioteca em CSV e exporta tudo em CSV ou JSON, além de uma API aberta só de leitura, protegida por token.",
+              text: "Não. Você importa sua biblioteca em CSV e exporta tudo em CSV ou JSON, além de uma API só de leitura, protegida por token.",
             },
           },
           {
@@ -145,8 +145,8 @@ export function PileOfBooks() {
   return (
     <div className="case-page case-pile">
       <SEOHead
-        title="Pile of Books: estante de livros, HQs e mangás grátis para iPhone | Nei Girão"
-        description="Pile of Books é uma estante grátis de livros, HQs e mangás para iPhone e web: diário de leitura, estatísticas de verdade e retrospectiva. Veja como foi criado e chegou à App Store em 26 dias."
+        title="Pile of Books: app de estante de livros, HQs e mangás grátis | Nei Girão"
+        description="Estante grátis de livros, HQs e mangás para iPhone e web: diário de leitura, estatísticas de verdade e retrospectiva. Da ideia à App Store em 26 dias."
         canonicalUrl={`${BASE_URL}/lab/pile-of-books`}
         ogImage={`${BASE_URL}/lab/pile-of-books/og.png`}
         ogType="article"
@@ -154,12 +154,12 @@ export function PileOfBooks() {
           "app de estante de livros",
           "app de livros para iPhone",
           "organizar HQs e mangás",
-          "Pile of Books",
+          "letterboxd de livros",
+          "alternativa ao skoob",
+          "diário de leitura",
           "estatísticas de leitura",
+          "Pile of Books",
           "App Store",
-          "Capacitor",
-          "Supabase",
-          "vibe code",
           "Nei Girão",
         ]}
       />
@@ -257,7 +257,7 @@ export function PileOfBooks() {
               </div>
               <div className="c-fact">
                 <div className="k c-mono">Preço</div>
-                <div className="v">Grátis</div>
+                <div className="v">Grátis, sem anúncio</div>
               </div>
               <div className="c-fact">
                 <div className="k c-mono">Da ideia à loja</div>
@@ -329,7 +329,7 @@ export function PileOfBooks() {
               <ul>
                 <li>
                   <strong>O app:</strong> estante de livros, HQs e mangás, com diário de leitura e estatísticas.
-                  Grátis, para iPhone e web.
+                  Grátis e sem anúncio, para iPhone e web.
                 </li>
                 <li>
                   <strong>A ideia:</strong> tudo do Skoob mais tudo do Letterboxd, só que para livros e HQ.
@@ -457,7 +457,7 @@ export function PileOfBooks() {
                 <div className="c-read">
                   <div className="a">Diário que prevê</div>
                   <div className="ar">→</div>
-                  <div className="b">Sessões, ritmo e previsão de término baseada no seu passo recente.</div>
+                  <div className="b">Sessões, ritmo e previsão de término baseada no seu ritmo recente.</div>
                 </div>
               </div>
               <p>
@@ -539,9 +539,9 @@ export function PileOfBooks() {
                   <span className="c-mono">Ficou de fora</span>
                   <ul>
                     <li>Rede social aberta</li>
+                    <li>Migração direta do Skoob (ficou o CSV)</li>
                     <li>Compra e venda de livros</li>
                     <li>Feed de atividades de desconhecidos</li>
-                    <li>Resenha pública obrigatória</li>
                     <li>Moeda virtual</li>
                     <li>Anúncio</li>
                   </ul>
@@ -654,7 +654,7 @@ export function PileOfBooks() {
                     <li>Testes automatizados e typecheck no CI</li>
                     <li>Smoke test depois de cada deploy</li>
                     <li>GA4 só com o funil de cadastro</li>
-                    <li>Sem Hotjar e sem Sentry</li>
+                    <li>Sem Hotjar. Sentry só de erros, sem replay e sem dado pessoal</li>
                   </ul>
                 </div>
               </div>
@@ -673,13 +673,13 @@ export function PileOfBooks() {
                 uma casca nativa. Passou na revisão e entrou no ar em 14/10/2026, em 175 países.
               </p>
               <p>
-                Mas shell não é produto. A 1.1 já está empacotada com o código nativo de verdade, como o Rep Up. O que
+                Mas shell não é produto. A 1.1 já está empacotada com o código nativo de verdade, <Link to="/lab/rep-up">como o Rep Up</Link>. O que
                 segura o envio: a Apple exige excluir a conta dentro do app, e a etiqueta de privacidade precisa
-                declarar Fotos, porque as capas identificadas por foto vão para o Storage.
+                declarar Fotos e Vídeos, porque as capas identificadas por foto vão para o Storage.
               </p>
               <div className="c-trade">
-                <b>Trade-off</b> O shell colocou o app na loja em 26 dias, mas cobrou o preço: a 1.1 refaz o empacote
-                e ainda aguarda a exclusão de conta. Atalho bom é o que você paga uma vez só.
+                <b>Trade-off</b> O shell colocou o app na loja em 26 dias. O preço veio depois: a 1.1 refaz o empacote e ainda
+                aguarda a exclusão de conta.
               </div>
             </section>
 
@@ -821,7 +821,7 @@ export function PileOfBooks() {
                   <summary>O que é o Pile of Books?</summary>
                   <p>
                     Uma estante pessoal de livros, HQs e mangás, com diário de leitura, estatísticas de verdade e
-                    retrospectiva do ano. Grátis, para iPhone e web.
+                    retrospectiva do ano. Grátis e sem anúncio, para iPhone e web.
                   </p>
                 </details>
                 <details>
@@ -831,8 +831,8 @@ export function PileOfBooks() {
                 <details>
                   <summary>Meus dados ficam presos no Pile of Books?</summary>
                   <p>
-                    Não. Você importa sua biblioteca em CSV e exporta tudo em CSV ou JSON, além de uma API aberta só
-                    de leitura, protegida por token.
+                    Não. Você importa sua biblioteca em CSV e exporta tudo em CSV ou JSON, além de uma API só de
+                    leitura, protegida por token.
                   </p>
                 </details>
                 <details>
