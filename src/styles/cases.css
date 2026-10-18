@@ -155,7 +155,9 @@
 .case-page .c-toc .share { margin-top: 28px; display: flex; flex-direction: column; gap: 8px; }
 
 /* Article */
-.case-page article { max-width: 700px; }
+.case-page article { max-width: 700px; min-width: 0; }
+.case-page .c-body > * { min-width: 0; }
+.case-page .c-phones-scroll { min-width: 0; }
 .case-page .c-tldr {
   background: var(--case-paper); border: 1px solid var(--case-line);
   border-radius: 8px; padding: 28px 32px; margin-bottom: 64px;
