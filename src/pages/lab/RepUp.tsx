@@ -102,7 +102,7 @@ export function RepUp() {
             name: "O Rep Up usa inteligência artificial?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "A versão 1.0 saiu sem IA, para cumprir as regras de privacidade da Apple. Na versão seguinte, a IA volta só para montar o plano, com consentimento, declaração de idade e região, e sem dado pessoal no envio.",
+              text: "Sim. A 1.0 saiu sem IA, para cumprir as regras de privacidade da Apple. A IA voltou na 1.1, só para montar o plano, com consentimento, declaração de idade e região, e sem dado pessoal no envio.",
             },
           },
           {
@@ -338,6 +338,10 @@ export function RepUp() {
                   <strong>A virada:</strong> a Apple rejeitou o app por causa da IA. Desliguei a IA, reenviei, e a
                   versão 1.0 entrou no ar em 05/10/2026.
                 </li>
+                <li>
+                  <strong>Hoje:</strong> a loja está na 1.4, com a IA de volta desde a 1.1. A 1.5, com o app de
+                  Apple Watch, está no TestFlight.
+                </li>
               </ul>
             </div>
 
@@ -531,7 +535,7 @@ export function RepUp() {
                   <ul>
                     <li>Calorias e dieta</li>
                     <li>Rede social</li>
-                    <li>Wearable e vídeo de treino</li>
+                    <li>Vídeo de treino</li>
                     <li>Análise de forma por câmera</li>
                     <li>Moeda virtual</li>
                     <li>Foto de progresso</li>
@@ -691,7 +695,7 @@ export function RepUp() {
               </p>
               <div className="c-cols2">
                 <div className="c-box">
-                  <span className="c-mono">O que vai para o Gemini (v1.0.1)</span>
+                  <span className="c-mono">O que vai para o Gemini (desde a 1.1)</span>
                   <ul>
                     <li>Quantos dias por semana você treina (de 2 a 6)</li>
                     <li>Sua experiência: iniciante, intermediário ou avançado</li>
@@ -817,25 +821,32 @@ export function RepUp() {
 
             <section id="depois">
               <h2>
-                <span className="n">09 — O que vem depois</span>A versão 1.0.1, em andamento
+                <span className="n">09 — O que vem depois</span>A 1.5, com app de Apple Watch
               </h2>
-              <p>Hoje no TestFlight, ainda não publicada:</p>
+              <p>O que entrou na loja depois da 1.0 (hoje na 1.4):</p>
               <ul>
                 <li>
-                  <strong>Conexão com a IA (Gemini),</strong> com as proteções descritas na seção 05.
+                  <strong>A IA voltou (1.1):</strong> monta o plano no nível gratuito do Gemini, com as proteções da
+                  seção 05.
                 </li>
                 <li>
                   <strong>Apple Saúde:</strong> só escrita e só o treino (tipo, início e fim).
                 </li>
                 <li>
-                  <strong>Seletor em roda</strong> para carga e repetições.
+                  <strong>Seletor em roda</strong> para carga e repetições, e novo fluxo de entrada com três
+                  caminhos.
                 </li>
                 <li>
-                  <strong>Novo fluxo de entrada,</strong> com quatro caminhos para começar.
+                  <strong>Widget "Treino de hoje"</strong> e Live Activity do descanso na tela bloqueada.
+                </li>
+                <li>
+                  <strong>Busca com apelidos de academia</strong> ("remada serrote", "leg press 45") e tolerância a
+                  erro de digitação (1.4).
                 </li>
               </ul>
               <p>
-                Fora da 1.0.1, a versão para <strong>Android</strong> já está em desenvolvimento.
+                Hoje no TestFlight, ainda não publicada: a <strong>1.5, com o app de Apple Watch</strong>. E a versão
+                para <strong>Android</strong> já está em desenvolvimento.
               </p>
             </section>
 
@@ -869,8 +880,8 @@ export function RepUp() {
                 <details>
                   <summary>O Rep Up usa inteligência artificial?</summary>
                   <p>
-                    A versão 1.0 saiu sem IA, para cumprir as regras de privacidade da Apple. Na versão seguinte, a IA
-                    volta só para montar o plano, com consentimento e sem dado pessoal no envio.
+                    Sim. A 1.0 saiu sem IA, para cumprir as regras de privacidade da Apple. A IA voltou na 1.1, só
+                    para montar o plano, com consentimento e sem dado pessoal no envio.
                   </p>
                 </details>
                 <details>
@@ -971,3 +982,4 @@ export function RepUp() {
 }
 
 export default RepUp;
+
